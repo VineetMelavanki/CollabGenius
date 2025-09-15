@@ -1,3 +1,10 @@
 const mongoose=require("mongoose");
 const express=require("exoress");
 const app=express();
+const fs=require("fs");
+const Userroutes=require("./routes/User");
+const Teamroutes=require("./routes/Team");
+const User= require("./model/User");
+const Team=require("./model/Team");
+app.use("/api/Team",Teamroutes);
+app.use("/api/User",Userroutes);

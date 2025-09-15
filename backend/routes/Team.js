@@ -1,9 +1,10 @@
 const express= require("express");
-const {CreateTeam} =require("../controllers/Team");
+const {CreateTeam,GetTeamById,Memberofwhichteam,GetAllTeams} =require("../controllers/Team");
 const TeamRouter= express.Router();
-TeamRouter.route("/new")
-.post(CreateTeam);
-
+TeamRouter.post("/Createteam",CreateTeam);
+TeamRouter.get("/allteams ",GetAllTeams);
+TeamRouter.get("/:id",GetTeamById);
+TeamRouter.get("/memberinfo",Memberofwhichteam);
 module.exports=TeamRouter;
 
 

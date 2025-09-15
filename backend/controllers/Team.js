@@ -55,6 +55,7 @@ async function GetTeamById(req,res)
     {
         return res.status(400).json({msg : "Team does not exists"});
     }
+    return res.status(200).json(Team);
 }
 async function Memberofwhichteam(req,res)
 {

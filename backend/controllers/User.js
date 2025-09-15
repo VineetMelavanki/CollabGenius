@@ -51,3 +51,4 @@ async function UserLogin(req,res)
     }
     return res.status(200).json({status:"Successfull login"});
 }
+module.exports={UserLogin,UserRegisteration};
