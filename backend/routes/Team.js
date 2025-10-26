@@ -3,7 +3,7 @@ const {CreateTeam,GetTeamById,Memberofwhichteam,GetAllTeams} =require("../contro
 const TeamRouter= express.Router();
 TeamRouter.post("/Createteam",CreateTeam);
 TeamRouter.get("/allteams ",GetAllTeams);
-TeamRouter.get("/:id",GetTeamById);
+TeamRouter.get("/Teamid",GetTeamById);
 TeamRouter.get("/memberinfo",Memberofwhichteam);
 module.exports=TeamRouter;
 

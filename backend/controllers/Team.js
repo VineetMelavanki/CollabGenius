@@ -2,63 +2,72 @@ const Team= require("../model/Team");
 const User= require("../model/User");
 async function CreateTeam(req,res)
 {
-    const {name,owner,roles,members}= req.body;
-    if(!name ||!owner)
+   try {
+    const{name,owner,members,roles}= req.body;
+    if(!owner || !name )
     {
-        return res.status(400).json({msg : "All fields are required"});
+        return res.status(400).json({msg : "owner and team name is required ",success : false});
     }
-
+    const Teamname= await Team.findOne({name});
+    if(Teamname)
+    {
+        return res.status(409).json({msg : "Team already exists "});
+    }
+    const ownerexists =await User.findById(owner);
+    if(!ownerexists)
+    {
+        return res.status(404).json({msg : "Owner does not exists "});
+    }
     let memberIds=[];
-    if(Array.isArray(members) &&members.length >0)
+    if(Array.isArray(members) && members.length > 0)
     {
         memberIds=members;
     }
-    const existingTeam = await Team.findOne({name});
-    //validate if team exists
-    if(existingTeam)
+    const rolemap= new Map();
+    rolemap.set(owner,'admin');
+    if(memberIds.length > 0)
     {
-        return res.status(409).json({msg : "Team already exists"});
-    }
-    //validate if owner exist
-    const Ownerexists = await User.findById(owner);
-    if(!Ownerexists)
-    {
-        return res.status(400).json({msg:"Owner does not exists as user "});
-    }
-    const RoleMap= new Map();
-    RoleMap.set(owner,'admin');
-    if(memberIds.length >0 )
-    {
-        memberIds.forEach(id => {
+        memberIds.forEach(id=>{
             if(id!=owner)
             {
-                RoleMap.set(id,'editor');
+                rolemap.set(id,'editor');
             }
         });
     }
-    const NewTeam= await Team.create({
+    const newTeam = await Team.create({
         name,
         owner,
-        roles :RoleMap,
-        members : memberIds,
-
+        roles: rolemap,
+        members : membersIds,
     });
-    console.log("Result ",NewTeam);
-    return res.status(201).json({status :"success"});
+    return res.status(201).json({msg : "Team created successfully ", success : true });
+   }catch(error)
+   {
+     console.log("Error in team creation ",error );
+     return res.status(500).json({success : false , msg : "Error team creating ", error : error.message});
+   }
+   
 }
 
 async function GetTeamById(req,res)
 {
-    const {TeamId}= req.params
-    const Team = await Team.findById(TeamId);
-    if(!Team)
+    try{
+        const {TeamId}=req.params;
+        const Teamexists= await Team.findById(TeamId);
+        if(!Teamexists)
+        {
+            return res.status(404).json({msg : "Team does not exists ",success : false});
+        }
+        return res.status(200).json(Teamexists);
+    }catch(error)
     {
-        return res.status(400).json({msg : "Team does not exists"});
+        console.log("Error in finding team ",error);
+        return res.status(500).json({msg : "Internal server error  ",success : false , error : error.message});
     }
-    return res.status(200).json(Team);
 }
 async function Memberofwhichteam(req,res)
 {
+    try {
     const {userId}= req.params;
     const teams= await Team.find({
         $or:[
@@ -66,7 +75,12 @@ async function Memberofwhichteam(req,res)
             {members : userId},
         ]
     });
-    return res.status(200).json({status : "success"});
+    return res.status(200).json({status : "success", teams, count : teams.length});
+}catch(error)
+{
+    console.log("Error of detecting member belong to whivh team ", error);
+    return res.status(500).json({msg :"Error in member detection ", success : false , error: error.message});
+}
 }
 async function GetAllTeams(req,res)
 {
@@ -80,5 +94,6 @@ async function ChangeMemberRole(req,res)
     const {TeamId}= req.params;
     const{UserId}=req.params;
     const NewRole = await User.findByIdAndUpdate(MyRole.set(UserId,'Admin'));
+    return res.status(200).json(NewRole);
 }
 module.exports={CreateTeam,GetTeamById,Memberofwhichteam,GetAllTeams};
