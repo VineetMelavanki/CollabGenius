@@ -84,8 +84,14 @@ async function Memberofwhichteam(req,res)
 }
 async function GetAllTeams(req,res)
 {
+    try{
     const AllTeams= await Team.find({});
-    return res.status(200).json(AllTeams);
+    return res.status(200).json({msg : AllTeams.length ? "Team exists" : "No Team exists",data : AllTeams,success : true});
+}catch(error)
+{
+    console.log(error);
+    return res.status(500).json({msg :"Internal server error ", success : false , error : error.message });
+}
 }
 async function ChangeMemberRole(req,res)
 {

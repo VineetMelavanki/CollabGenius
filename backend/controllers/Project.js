@@ -41,3 +41,4 @@ async function Getallprojects(req,res)
         return res.status(500).json({msg : "Internal server error ",success : false, error : error.message});
     }
 }
+module.exports={CreateProject,Getallprojects};
