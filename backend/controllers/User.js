@@ -34,23 +34,18 @@ async function UserRegisteration(req,res)
 async function UserLogin(req,res)
 {
     try{
-    const{Name,email,password}=req.body;
-    if(!Name ||!email ||!password)
+    const{email,password}=req.body;
+    if(!email ||!password)
     {
         return res.status(400).json({msg :"All fields are required"});
     }
 
-    const emailexists= await User.findOne({email})
-    if(!emailexists)
+    const user1= await User.findOne({email})
+    if(!user1)
     {
         return res.status(404).json({msg :"email not found"});
     }
-    const User= await User.findone({Name});
-    if(!User)
-    {
-        return res.status(404).json({msg:"User not found"});
-    }
-    const Validpassword= await bcrypt.compare(password,User.password);
+    const Validpassword= await bcrypt.compare(password,user1.password);
     if(!Validpassword)
     {
         return res.status(400).json({msg:"Please enter a valid password"});
@@ -62,4 +57,32 @@ async function UserLogin(req,res)
     return res.status(500).json({msg : "Internal server error ", success : false, error : error.message});
 }
 }
-module.exports={UserLogin,UserRegisteration};
+async function getuserbyId(req,res)
+{
+    try{
+    const{UserId}=req.params;
+    const getUser = await User.findById(UserId);
+    if(!getUser)
+    {
+        return res.status(404).json({msg : "User does not exists ",success : false});
+    }
+    return res.status(200).json({msg :"User found",data :getUser,success : true});
+    }catch(error)
+    {
+        console.log(error);
+        return res.status(500).json({msg : "Internal server error ",success : false, error : error.message});
+    }
+
+}
+async function getallusers(req,res)
+{
+    try{
+        const getall=await User.find({});
+        return res.status(200).json({msg :getall.length ? "Users exists" : "No user exists",data : getall, success : true});
+    }catch(error)
+    {
+        console.log(error);
+        return res.status(500).json({msg : "Internal server error ",success : false , error : error.message});
+    }
+}
+module.exports={UserLogin,UserRegisteration,getuserbyId,getallusers};

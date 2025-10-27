@@ -40,7 +40,7 @@ async function CreateTeam(req,res)
         roles: rolemap,
         members : membersIds,
     });
-    return res.status(201).json({msg : "Team created successfully ", success : true });
+    return res.status(201).json({msg : "Team created successfully ", success : true,data :newTeam });
    }catch(error)
    {
      console.log("Error in team creation ",error );
@@ -102,4 +102,4 @@ async function ChangeMemberRole(req,res)
     const NewRole = await User.findByIdAndUpdate(MyRole.set(UserId,'Admin'));
     return res.status(200).json(NewRole);
 }
-module.exports={CreateTeam,GetTeamById,Memberofwhichteam,GetAllTeams};
+module.exports={CreateTeam,GetTeamById,Memberofwhichteam,GetAllTeams,ChangeMemberRole};

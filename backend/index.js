@@ -3,6 +3,9 @@ const express=require("express");
 const app=express();
 const fs=require("fs");
 const port=8000;
+const cors = require('cors');
+app.use(cors());
+
 const Userroutes=require("./routes/User");
 const Teamroutes=require("./routes/Team");
 const User= require("./model/User");

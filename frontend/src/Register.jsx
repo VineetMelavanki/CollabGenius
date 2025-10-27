@@ -1,0 +1,66 @@
+import React,{ useState } from "react";
+import axios from 'axios';
+export default function Register()
+{
+    const[formdata,setformdata]=useState({
+        Name : '',
+        email : '',
+        password: '',
+    });
+    const[message,setmessage]=useState(null);
+    const[error,seterror]=useState(null);
+    const handlechange=(e)=>{
+        setformdata(prev=>({... prev,[e.target.name] : e.target.value}));
+    };
+    const submitchange= async (e)=>{
+        e.preventDefault();
+        setmessage(null);
+        seterror(null);
+        try {
+            const response =await axios.post('http://localhost:8000/api/User/register',formdata);
+            setmessage(response.data.msg || "Registered Successfully");
+        }catch(error)
+        {
+            if(error.response)
+            {
+                seterror(error.response.data.msg || "Registeration failed ");
+            }
+            else
+            {
+                seterror("Network error");
+            }
+        }
+    }
+return(
+    <div>
+        {message && <p style={{ color: 'green' }}>{message}</p>}
+{error && <p style={{ color: 'red' }}>{error}</p>}
+
+        <h2>Register page </h2>
+        <form onSubmit={submitchange}>
+            <input
+            type="text"
+            name="Name"
+            placeholder="Enter your name"
+            value={formdata.Name}
+            onChange={handlechange}/>
+            <br/>
+            <input
+            type="email"
+            name="email"
+            placeholder="Enter your email"
+            value={formdata.email}
+            onChange={handlechange}/>
+            <br/>
+            <input
+            type="password"
+            name="password"
+            placeholder="Enter your password"
+            value={formdata.password}
+            onChange={handlechange}/>
+            <br/>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+);
+}
