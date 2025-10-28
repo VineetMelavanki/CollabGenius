@@ -1,8 +1,9 @@
 import React,{ useState } from "react";
-import './forms.css';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 export default function Login()
 {
+    const navigate=useNavigate();
     const[formdata,setformdata]=useState({
         email : '',
         password: '',
@@ -19,6 +20,8 @@ export default function Login()
         try {
             const response =await axios.post('http://localhost:8000/api/User/login',formdata);
             setmessage(response.data.msg || "Login Successfully");
+          localStorage.setItem('token',response.data.token);
+         navigate("/createTeam");
         }catch(error)
         {
             if(error.response)
@@ -33,7 +36,7 @@ export default function Login()
     }
 
 return(
-    <div className="fullscreen-background">
+    <div >
         <div className="form-container">
         {message && <p style={{ color: 'green' }}>{message}</p>}
 {error && <p style={{ color: 'red' }}>{error}</p>}

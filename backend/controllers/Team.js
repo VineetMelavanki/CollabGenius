@@ -34,11 +34,12 @@ async function CreateTeam(req,res)
             }
         });
     }
+    const{UserId}=req.params;
     const newTeam = await Team.create({
         name,
         owner,
         roles: rolemap,
-        members : membersIds,
+        members : memberIds,
     });
     return res.status(201).json({msg : "Team created successfully ", success : true,data :newTeam });
    }catch(error)
