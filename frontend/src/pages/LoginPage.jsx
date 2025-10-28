@@ -20,8 +20,8 @@ export default function Login()
         try {
             const response =await axios.post('http://localhost:8000/api/User/login',formdata);
             setmessage(response.data.msg || "Login Successfully");
-          localStorage.setItem('token',response.data.token);
-         navigate("/createTeam");
+            localStorage.setItem('token',response.data.token);
+            navigate("/dashboard");
         }catch(error)
         {
             if(error.response)

@@ -11,7 +11,7 @@ export default function CreateTeam()
     const[message,setmessage]=useState(null);
     const[error,seterror]=useState(null);
     const handlechange =(e)=>{
-        setteamdata(prev=>({... prev,[e.target.name] : e.target.value}));
+        setteamdata(prev=>({...prev,[e.target.name] : e.target.value}));
     }
     const handlesubmit= async (e)=>{
         e.preventDefault();
@@ -19,7 +19,7 @@ export default function CreateTeam()
         seterror(null);
         
         try {
-            const response= await axios.post("http://localhost:8000/api/Team/Createteam",teamdata);
+            const response= await axios.post("http://localhost:8000/api/dashboard/CreateTeam",teamdata);
             setmessage(response.data.msg || "Team created successfully");
         }catch(error)
         {

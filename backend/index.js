@@ -17,9 +17,11 @@ const Team=require("./model/Team");
 app.use(express.json());
 const connectmongodb= require("./connection/user");
 const Projectroutes= require("./routes/Project");
+const Dashboardroutes=require("./routes/Dashboard");
 app.use("/api/Team",Teamroutes);
 app.use("/api/User",Userroutes);
 app.use("/api/Project",Projectroutes);
+app.use("/api/dashboard",Dashboardroutes);
 connectmongodb("mongodb://127.0.0.1:27017/")
 .then(async ()=>
 {
