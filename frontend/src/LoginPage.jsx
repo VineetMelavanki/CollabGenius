@@ -1,9 +1,9 @@
 import React,{ useState } from "react";
+import './forms.css';
 import axios from 'axios';
 export default function Login()
 {
     const[formdata,setformdata]=useState({
-        Name : '',
         email : '',
         password: '',
     });
@@ -33,19 +33,13 @@ export default function Login()
     }
 
 return(
-    <div>
+    <div className="fullscreen-background">
+        <div className="form-container">
         {message && <p style={{ color: 'green' }}>{message}</p>}
 {error && <p style={{ color: 'red' }}>{error}</p>}
 
         <h2>Login page </h2>
         <form onSubmit={submitchange}>
-            <input
-            type="text"
-            name="Name"
-            placeholder="Enter your name"
-            value={formdata.Name}
-            onChange={handlechange}/>
-            <br/>
             <input
             type="email"
             name="email"
@@ -62,6 +56,7 @@ return(
             <br/>
             <button type="submit">Login</button>
         </form>
+    </div>
     </div>
 );
 }

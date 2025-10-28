@@ -1,0 +1,88 @@
+/* Fullscreen background for homepage, login, register */
+.fullscreen-background {
+  height: 100vh;
+  width: 100vw;
+  background-image: url('/frontend/src/assets/image11.jpg'); /* Replace with your image */
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Login and Register pages layout */
+.form-container {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 40px 60px;
+  border-radius: 12px;
+  max-width: 450px;
+  width: 100%;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Big font for headers */
+.form-container h2 {
+  font-size: 2.8rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+/* Input fields with bigger font */
+.form-container input {
+  width: 100%;
+  font-size: 1.3rem;
+  padding: 15px 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1.5px solid #ccc;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.form-container input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Submit button with bigger font */
+.form-container button {
+  width: 100%;
+  font-size: 1.5rem;
+  padding: 15px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.form-container button:hover {
+  background-color: #0056b3;
+}
+
+/* Homepage button container */
+.homepage-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  width: 300px;
+}
+
+.homepage-buttons button {
+  font-size: 2.5rem;
+  padding: 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.homepage-buttons button:hover {
+  background-color: #0056b3;
+}

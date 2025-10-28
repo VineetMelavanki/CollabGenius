@@ -6,8 +6,8 @@ const saltRounds= 10;
 async function UserRegisteration(req,res)
 {
     try{
-    const {Name,email,password}=req.body;
-    if(!Name || !email || !password)
+    const {name,email,password}=req.body;
+    if(!name || !email || !password)
     {
         return res.status(400).json({msg :"All fields are required"});
     }
@@ -19,7 +19,7 @@ async function UserRegisteration(req,res)
         return res.status(409).json({msg :"Email already exists"});
     }
     const result= await User.create({
-        Name,
+        name,
         email,
         password :hashpassword,
     });
@@ -34,7 +34,7 @@ async function UserRegisteration(req,res)
 async function UserLogin(req,res)
 {
     try{
-    const{email,password}=req.body;
+    const{name ,email,password}=req.body;
     if(!email ||!password)
     {
         return res.status(400).json({msg :"All fields are required"});

@@ -3,7 +3,7 @@ import axios from 'axios';
 export default function Register()
 {
     const[formdata,setformdata]=useState({
-        Name : '',
+        name : '',
         email : '',
         password: '',
     });
@@ -40,9 +40,9 @@ return(
         <form onSubmit={submitchange}>
             <input
             type="text"
-            name="Name"
+            name="name"
             placeholder="Enter your name"
-            value={formdata.Name}
+            value={formdata.name}
             onChange={handlechange}/>
             <br/>
             <input

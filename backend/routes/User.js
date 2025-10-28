@@ -5,8 +5,9 @@ Userrouter.route("/register")
 .post(UserRegisteration);
 Userrouter.route("/login")
 .post(UserLogin);
-Userrouter.route("/UserId")
-.get(getuserbyId);
 Userrouter.route("/allusers")
 .get(getallusers);
+Userrouter.route("/:UserId")
+.get(getuserbyId);
+
 module.exports=Userrouter;
