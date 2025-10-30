@@ -1,13 +1,17 @@
 import React from 'react';
-import {useNavigate} from 'react-router-dom';
-export default function Homepage()
-{
-    const navigate=useNavigate();
-    return(
-        <div>
-            <h1>Welcome to collab Genius</h1>
-            <button onClick={()=>navigate("/login")}>login</button>
-            <button onClick={()=>navigate("/register")}>Register</button>
-        </div>
-    )
-};
+import { useNavigate } from 'react-router-dom';
+import './Homepage.css';
+
+export default function Homepage() {
+  const navigate = useNavigate();
+  return (
+    <div className="homepage-container">
+      <h1>Welcome to Collab Genius</h1>
+      <p>Collaborate. Build. Innovate.</p>
+      <div className="button-group">
+        <button onClick={() => navigate("/login")}>Login</button>
+        <button onClick={() => navigate("/register")}>Register</button>
+      </div>
+    </div>
+  );
+}
