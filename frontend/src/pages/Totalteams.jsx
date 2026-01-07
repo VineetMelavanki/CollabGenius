@@ -12,7 +12,7 @@ export default function Totalteams()
         {
             try{
                 setloading(true);
-                const response = await axios.get('http://localhost:8000/api/Project/getallprojects');
+                const response = await axios.get('http://localhost:8000/api/Team/allteams');
                 setteams(response.data.data || []);
 
             }catch(error)
@@ -40,8 +40,8 @@ export default function Totalteams()
                   key={team._id}
                   className="border rounded-xl shadow-md p-4 hover:shadow-lg transition"
                 >
-                  <h3 className="text-xl font-bold">{team.title}</h3>
-                  <p className="text-gray-600">{team.ownerId}</p>
+                  <h3 className="text-xl font-bold">{team.name}</h3>
+                  <p className="text-gray-600">{team.owner}</p>
                   <p className="text-sm text-gray-500 mt-2">
                     Members: {team.members?.length || 0}
                   </p>

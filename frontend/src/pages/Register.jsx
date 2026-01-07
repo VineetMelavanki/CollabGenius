@@ -27,6 +27,7 @@ export default function Register() {
         formdata
       );
       setmessage(response.data.msg || "Registered Successfully");
+      localStorage.setItem('token',response.data.token);
       setTimeout(() => navigate("/login"), 1500); 
     } catch (error) {
       if (error.response) {

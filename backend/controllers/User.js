@@ -2,6 +2,7 @@ const mongoose= require("mongoose");
 const Team =require("../model/Team");
 const User=require("../model/User");
 const bcrypt =require("bcrypt");
+const jwt=require("jsonwebtoken");
 const saltRounds= 10;
 async function UserRegisteration(req,res)
 {
@@ -18,13 +19,14 @@ async function UserRegisteration(req,res)
     {
         return res.status(409).json({msg :"Email already exists"});
     }
-    const result= await User.create({
+    const newUser= await User.create({
         name,
         email,
         password :hashpassword,
     });
-    console.log("Result",result);
-    return res.status(201).json({msg :"Successfully Registered", result});
+    const token =await jwt.sign({userId : newUser._id},process.env.JWT_secret,{expiresIn :"7d"});
+    console.log("Result",newUser);
+    return res.status(201).json({msg :"Successfully Registered", newUser,success : true , token });
 }catch(error)
 {
     console.log(error);
@@ -50,7 +52,12 @@ async function UserLogin(req,res)
     {
         return res.status(400).json({msg:"Please enter a valid password"});
     }
-    return res.status(200).json({status:"Successfull login"});
+    const token=jwt.sign(
+        {userId :user1._id},
+        process.env.JWT_secret,
+        {expiresIn : "7d"}
+    );
+    return res.status(200).json({status:"Successfull login",token,user:user1});
 }catch(error)
 {
     console.log(error);

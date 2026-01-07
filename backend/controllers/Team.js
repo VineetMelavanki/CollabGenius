@@ -3,12 +3,14 @@ const User= require("../model/User");
 async function CreateTeam(req,res)
 {
    try {
-    const{name,owner,members,roles}= req.body;
+    const{name,members,roles}= req.body;
+    const owner=req.user._id;
     if(!owner || !name )
     {
         return res.status(400).json({msg : "owner and team name is required ",success : false});
     }
     const Teamname= await Team.findOne({name});
+    
     if(Teamname)
     {
         return res.status(409).json({msg : "Team already exists "});

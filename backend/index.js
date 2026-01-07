@@ -1,3 +1,5 @@
+require('dotenv').config({ path: './jwt.env' });
+
 const mongoose=require("mongoose");
 const express=require("express");
 const app=express();
@@ -22,6 +24,8 @@ app.use("/api/Team",Teamroutes);
 app.use("/api/User",Userroutes);
 app.use("/api/Project",Projectroutes);
 app.use("/api/dashboard",Dashboardroutes);
+console.log("JWT Secret:", process.env.JWT_secret);
+
 connectmongodb("mongodb://127.0.0.1:27017/")
 .then(async ()=>
 {
