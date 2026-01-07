@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./Auth.css"; // ✅ same CSS file used for Login
+import "./Auth.css"; 
 
 export default function Register() {
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ export default function Register() {
         formdata
       );
       setmessage(response.data.msg || "Registered Successfully");
-      setTimeout(() => navigate("/login"), 1500); // redirect after success
+      setTimeout(() => navigate("/login"), 1500); 
     } catch (error) {
       if (error.response) {
         seterror(error.response.data.msg || "Registration failed");
