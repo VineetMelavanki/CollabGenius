@@ -8,5 +8,3 @@ TeamRouter.get("/:Teamid",authmiddleware,GetTeamById);
 TeamRouter.get("/memberinfo",authmiddleware, Memberofwhichteam);
 TeamRouter.post("/CreateTeam",authmiddleware,validateteamcreation,CreateTeam);
 module.exports=TeamRouter;
-
-
