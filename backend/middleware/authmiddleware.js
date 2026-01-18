@@ -8,13 +8,7 @@ const authmiddleware=async(req,res,next)=>{
     }
     try{
         const decoded=jwt.verify(token,process.env.JWT_secret);
-        const user=await User.findById(decoded.userId);
-
-        if(!user)
-        {
-            return res.status(400).json({msg:"User not found"})
-        }
-       req.user=user;
+       req.user=decoded;
        next();
     }
     catch(err)

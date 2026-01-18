@@ -4,7 +4,7 @@ async function CreateTeam(req,res)
 {
    try {
     const{name,members,roles}= req.body;
-    const owner=req.user._id;
+    const owner=req.user.id;
     if(!owner || !name )
     {
         return res.status(400).json({msg : "owner and team name is required ",success : false});

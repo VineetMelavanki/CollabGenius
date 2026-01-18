@@ -24,7 +24,7 @@ async function UserRegisteration(req,res)
         email,
         password :hashpassword,
     });
-    const token =await jwt.sign({userId : newUser._id},process.env.JWT_secret,{expiresIn :"7d"});
+    const token =await jwt.sign({id: newUser._id},process.env.JWT_secret,{expiresIn :"7d"});
     console.log("Result",newUser);
     return res.status(201).json({msg :"Successfully Registered", newUser,success : true , token });
 }catch(error)
@@ -53,7 +53,7 @@ async function UserLogin(req,res)
         return res.status(400).json({msg:"Please enter a valid password"});
     }
     const token=jwt.sign(
-        {userId :user1._id},
+        {id :user1._id},
         process.env.JWT_secret,
         {expiresIn : "7d"}
     );
