@@ -1,5 +1,6 @@
 import React,{useState} from "react";
 import axios from 'axios';
+import "./Auth.css";
 export default function CreateTeam()
 {
     const[teamdata,setteamdata]=useState({
@@ -34,29 +35,20 @@ export default function CreateTeam()
         }
     }
     return (
-     <div>
-        {message && <p style ={{color : 'green'}}>{message}</p>}
-        {error && <p style={{color :'red'}}>{error}</p>}
-        <h2> Create Team </h2>
-        <form onSubmit={handlesubmit}>
-            <input 
-            type="text"
-            name="name"
-            placeholder="Enter team name here"
-            value={teamdata.name}
-            onChange={handlechange}
-            />
-            <br/>
-            <input
-            type="text"
-            name="owner"
-            placeholder="Enter the name of owner"
-            value={teamdata.owner}
-            onChange={handlechange}
-            />
-            <br/>
-            <button type="submit">Create a new Team </button>
-        </form>
-     </div>
+    <main className="auth-container">
+        <section className="auth-box">
+            <header>
+                <h1>Create Team</h1>
+            </header>
+            <form onSubmit={handlesubmit}>
+                {error && <p style={{color:"red"}}>{error}</p>}
+                {message && <p style={{color:"green"}}>{message}</p>}
+                <input type="text" name="name" value={teamdata.name} placeholder="Enter team name" onChange={handlechange}/>
+                <input type="text" name="owner" value={teamdata.owner} placeholder="Enter the name of the owner" onChange={handlechange}/>
+                <button type="submit">Create Team</button>
+            </form>
+            
+        </section>
+    </main>
     );
 }

@@ -38,39 +38,29 @@ export default function Login() {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-box">
-        <h1>Login</h1>
-        <p className="subtitle">Welcome back! Please login to continue.</p>
-
-        {message && <p className="success">{message}</p>}
-        {error && <p className="error">{error}</p>}
-
+    <main className="auth-container">
+      <section className="auth-box">
+        <header>
+          <h1>LOGIN</h1>
+          <p className="subtitle">Welcome back!! Please login</p>
+        </header>
+        {error && <p style={{color:"red"}}>{error}</p>}
+          {message && <p style={{color:"green"}}>{message}</p>}
         <form onSubmit={submitchange}>
-          <input
-            type="email"
-            name="email"
-            placeholder="Enter your email"
-            value={formdata.email}
-            onChange={handlechange}
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter your password"
-            value={formdata.password}
-            onChange={handlechange}
-            required
-          />
+          
+          <div>
+            <input type="text" name="email"placeholder="Enter your email" value={formdata.email} onChange={handlechange}/>
+          </div>
+          <div>
+            <input type="text" name="password" placeholder="Enter your password" value={formdata.password} onChange={handlechange}/>
+          </div>
           <button type="submit">Login</button>
         </form>
-
         <p className="switch">
-          Don’t have an account?{" "}
-          <span onClick={() => navigate("/register")}>Register</span>
+          Dont have an account?{" "}
+          <span onClick={()=>navigate("/register")}>Register</span>
         </p>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
