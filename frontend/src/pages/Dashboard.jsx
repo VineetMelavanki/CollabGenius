@@ -1,11 +1,12 @@
 import React from "react";
-
-import{AppBar,Toolbar,Box,Typography,IconButton}from "@mui/material"
+import Sidebar from "./SideBar";
+import{Box,AppBar,Toolbar,Typography,IconButton}from "@mui/material"
 import {Notifications,AccountCircle} from "@mui/icons-material"
 export default function Dashboard()
 {
     return(
-        <AppBar position="fixed" color="primary">
+        <Box sx={{display:"flex"}}>
+           <AppBar position="fixed" color="primary">
             <Toolbar>
                 <Box>
                     <Typography variant="h6">Collab-Genius</Typography>
@@ -25,5 +26,8 @@ export default function Dashboard()
                 </Box>
             </Toolbar>
         </AppBar>
+        <Sidebar/>
+       
+        </Box>
     );
 }

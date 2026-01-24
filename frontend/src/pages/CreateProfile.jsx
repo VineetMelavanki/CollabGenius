@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { TextField } from "@mui/material";
+import { TextField,Box,Paper,Typography,Button } from "@mui/material";
 export default function CreateProfile(){
     const[formdata,setformdata]=useState({
         Bio:"",
