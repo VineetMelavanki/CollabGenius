@@ -25,5 +25,5 @@ export default function Dashboard()
                 </Box>
             </Toolbar>
         </AppBar>
-    )
+    );
 }
