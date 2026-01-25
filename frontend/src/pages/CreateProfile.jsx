@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { TextField,Box,Paper,Typography,Button } from "@mui/material";
+import { TextField,Box,Paper,Typography,Button, MenuItem } from "@mui/material";
 export default function CreateProfile(){
     const[formdata,setformdata]=useState({
         Bio:"",
@@ -19,13 +19,19 @@ export default function CreateProfile(){
            e.preventDefault();
         seterror("");
         setmsg("");
-        const response=await axios.post("http://localhost:8000/api/Profile/Create-Profile",formdata);
         const token=localStorage.getItem("token");
         if(!token)
         {
             seterror("Invalid token");
         }
-        localStorage.setItem("token");
+        const response=await axios.post("http://localhost:8000/api/Profile/Create-Profile",formdata,
+          {
+            headers:{
+              Authorization:`Bearer ${token}`,
+            }
+          }
+        );
+        
         setmsg(response.data.msg||"Profile Created Successfully");
         }catch(error)
         {
@@ -117,31 +123,34 @@ export default function CreateProfile(){
               sx: { color: "rgba(255,255,255,0.6)" },
             }}
           />
-          <TextField
-          fullWidth
-            label="skillevel"
-            type="text"
-            name="skillevel"
-            value={formdata.skillevel}
-            onChange={handlechange}
-            variant="filled"
-            sx={{ mb: 2 }}
-            InputProps={{
-              sx: {
-                backgroundColor: "rgba(255,255,255,0.15)",
-                borderRadius: "10px",
-                color: "#fff",
-              },
-            }}
-            InputLabelProps={{
-              sx: { color: "rgba(255,255,255,0.6)" },
-            }}/>
+          <TextField  select
+  fullWidth
+  label="Skill Level"
+  name="skillevel"
+  value={formdata.skillevel}
+  onChange={handlechange}
+  variant="filled"
+  sx={{ mb: 2 }}
+  InputProps={{
+    sx: {
+      backgroundColor: "rgba(255,255,255,0.15)",
+      borderRadius: "10px",
+      color: "#fff",
+    },
+  }}
+  InputLabelProps={{
+    sx: { color: "rgba(255,255,255,0.6)" },
+  }}>
+          <MenuItem value="Beginner">Beginner</MenuItem>
+          <MenuItem value="Intermediate">Intermediate</MenuItem>
+          <MenuItem value="Advanced">Advanced</MenuItem>
+          </TextField>
             
           <TextField
           fullWidth
-            label="github-link"
+            label="github_link"
             type="text"
-            name="github-link"
+            name="github_link"
             value={formdata.github_link}
             onChange={handlechange}
             variant="filled"

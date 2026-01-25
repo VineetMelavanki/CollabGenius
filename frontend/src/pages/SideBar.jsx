@@ -3,6 +3,10 @@ import React from "react"
 import { useNavigate } from "react-router-dom"
 export default function Sidebar(){
     const navigate=useNavigate();
+    const handleLogout=()=>{
+      localStorage.removeItem("token");
+      navigate("/login")
+    }
     return(
         <Box
       sx={{
@@ -16,6 +20,9 @@ export default function Sidebar(){
       <List>
         <ListItemButton sx={{background:"red"}} onClick={() => navigate("/Create-Profile")}>
           <ListItemText primary="Create Profile" />
+        </ListItemButton>
+        <ListItemButton sx={{background:"red"}} onClick={handleLogout}>
+          <ListItemText primary="Logout"/>
         </ListItemButton>
       </List>
     </Box>
