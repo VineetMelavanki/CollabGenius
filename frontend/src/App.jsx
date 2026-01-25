@@ -4,6 +4,7 @@ import Login from './pages/LoginPage';
 import Register from "./pages/Register";
 import CreateTeam from './pages/CreateTeam';
 import Dashboard from './pages/Dashboard';
+import ViewProfile from './pages/ViewProfile';
 import Totalteams from './pages/Totalteams';
 import CreateProfile from './pages/CreateProfile';
 export default function App()
@@ -17,6 +18,7 @@ return (
     <Route path="/dashboard" element={<Dashboard/>}/>
     <Route path="/CreateTeam" element={<CreateTeam/>}/>
     <Route path="/allteams" element={<Totalteams/>}/>
+    <Route path="/View-Profile" element={<ViewProfile/>}/>
     <Route path='/Create-Profile' element={<CreateProfile/>}/>
   </Routes>
   </BrowserRouter>

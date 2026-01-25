@@ -24,6 +24,9 @@ export default function Sidebar(){
         <ListItemButton sx={{background:"red"}} onClick={handleLogout}>
           <ListItemText primary="Logout"/>
         </ListItemButton>
+        <ListItemButton sx={{background:"red"}} onClick={()=>navigate("/View-Profile")}>
+         <ListItemText primary="View Profile"/>
+        </ListItemButton>
       </List>
     </Box>
     )
