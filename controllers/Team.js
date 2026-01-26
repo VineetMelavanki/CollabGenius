@@ -3,12 +3,14 @@ const User= require("../model/User");
 async function CreateTeam(req,res)
 {
    try {
-    const{name,owner,members,roles}= req.body;
+    const{name,members,roles}= req.body;
+    const owner=req.user.id;
     if(!owner || !name )
     {
         return res.status(400).json({msg : "owner and team name is required ",success : false});
     }
     const Teamname= await Team.findOne({name});
+    
     if(Teamname)
     {
         return res.status(409).json({msg : "Team already exists "});
@@ -34,13 +36,14 @@ async function CreateTeam(req,res)
             }
         });
     }
+    const{UserId}=req.params;
     const newTeam = await Team.create({
         name,
         owner,
         roles: rolemap,
-        members : membersIds,
+        members : memberIds,
     });
-    return res.status(201).json({msg : "Team created successfully ", success : true });
+    return res.status(201).json({msg : "Team created successfully ", success : true,data :newTeam });
    }catch(error)
    {
      console.log("Error in team creation ",error );
@@ -84,8 +87,14 @@ async function Memberofwhichteam(req,res)
 }
 async function GetAllTeams(req,res)
 {
+    try{
     const AllTeams= await Team.find({});
-    return res.status(200).json(AllTeams);
+    return res.status(200).json({msg : AllTeams.length ? "Team exists" : "No Team exists",data : AllTeams,success : true});
+}catch(error)
+{
+    console.log(error);
+    return res.status(500).json({msg :"Internal server error ", success : false , error : error.message });
+}
 }
 async function ChangeMemberRole(req,res)
 {
@@ -96,4 +105,4 @@ async function ChangeMemberRole(req,res)
     const NewRole = await User.findByIdAndUpdate(MyRole.set(UserId,'Admin'));
     return res.status(200).json(NewRole);
 }
-module.exports={CreateTeam,GetTeamById,Memberofwhichteam,GetAllTeams};
+module.exports={CreateTeam,GetTeamById,Memberofwhichteam,GetAllTeams,ChangeMemberRole};

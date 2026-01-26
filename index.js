@@ -1,8 +1,17 @@
+require('dotenv').config();
+
 const mongoose=require("mongoose");
 const express=require("express");
 const app=express();
 const fs=require("fs");
 const port=8000;
+const cors=require("cors");
+app.use(cors({
+  origin: 'http://localhost:5173',  // React/Vite dev server URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
+
 const Userroutes=require("./routes/User");
 const Teamroutes=require("./routes/Team");
 const User= require("./model/User");
@@ -10,9 +19,13 @@ const Team=require("./model/Team");
 app.use(express.json());
 const connectmongodb= require("./connection/user");
 const Projectroutes= require("./routes/Project");
+const Dashboardroutes=require("./routes/Dashboard");
 app.use("/api/Team",Teamroutes);
 app.use("/api/User",Userroutes);
 app.use("/api/Project",Projectroutes);
+app.use("/api/dashboard",Dashboardroutes);
+console.log("JWT Secret:", process.env.JWT_secret);
+
 connectmongodb("mongodb://127.0.0.1:27017/")
 .then(async ()=>
 {
