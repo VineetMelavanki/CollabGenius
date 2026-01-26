@@ -1,0 +1,59 @@
+.homepage-container {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #00172D 0%, #003566 100%);
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
+}
+
+.homepage-container h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+}
+
+.homepage-container p {
+  font-size: 1rem;
+  opacity: 0.8;
+  margin-bottom: 2rem;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+}
+
+.button-group button {
+  padding: 0.7rem 1.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.button-group button:first-child {
+  background-color: #0096FF;
+  color: #fff;
+}
+
+.button-group button:first-child:hover {
+  background-color: #0077cc;
+}
+
+.button-group button:last-child {
+  background-color: transparent;
+  color: #0096FF;
+  border: 2px solid #0096FF;
+}
+
+.button-group button:last-child:hover {
+  background-color: #0096FF;
+  color: #fff;
+}
