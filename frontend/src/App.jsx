@@ -3,10 +3,10 @@ import Homepage from './pages/Homepage';
 import Login from './pages/LoginPage';
 import Register from "./pages/Register";
 import CreateTeam from './pages/CreateTeam';
-import Dashboard from './pages/Dashboard';
 import ViewProfile from './pages/ViewProfile';
-import Totalteams from './pages/Totalteams';
+import Dashboard from './pages/Dashboard';
 import CreateProfile from './pages/CreateProfile';
+import DashBoardLayout from './pages/DashBoardLayout';
 export default function App()
 {
 return (
@@ -15,11 +15,26 @@ return (
     <Route path="/" element={<Homepage/>} />
     <Route path="/login" element={<Login/>}/>
     <Route path="/register" element={<Register/>}/>
-    <Route path="/dashboard" element={<Dashboard/>}/>
-    <Route path="/CreateTeam" element={<CreateTeam/>}/>
-    <Route path="/allteams" element={<Totalteams/>}/>
-    <Route path="/View-Profile" element={<ViewProfile/>}/>
-    <Route path='/Create-Profile' element={<CreateProfile/>}/>
+    
+    <Route path="/CreateTeam" element={
+      <DashBoardLayout>
+        <CreateTeam/>
+      </DashBoardLayout>
+      }/>
+    <Route path="/View-Profile" element={
+      <DashBoardLayout>
+      <ViewProfile/>
+      </DashBoardLayout>
+      }/>
+    <Route path='/Create-Profile' element={
+      <DashBoardLayout>
+      <CreateProfile/>
+      </DashBoardLayout>
+      }/>
+      <Route path='/dashboard' element={
+        <DashBoardLayout>
+          <Dashboard/>
+        </DashBoardLayout>}/>
   </Routes>
   </BrowserRouter>
 )

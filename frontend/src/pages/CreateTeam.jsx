@@ -189,5 +189,4 @@ export default function CreateTeam()
     </Paper>
   </Box>
 );
-
 }
