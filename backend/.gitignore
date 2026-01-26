@@ -1,0 +1,5 @@
+node_modules/
+.tmp.driveupload/
+.env
+backend/
+frontend/

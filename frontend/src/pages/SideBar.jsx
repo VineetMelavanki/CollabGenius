@@ -27,6 +27,9 @@ export default function Sidebar(){
         <ListItemButton sx={{background:"red"}} onClick={()=>navigate("/View-Profile")}>
          <ListItemText primary="View Profile"/>
         </ListItemButton>
+        <ListItemButton sx={{background:"red"}} onClick={()=>navigate("/CreateTeam")}>
+          <ListItemText primary="Create Team"/>
+        </ListItemButton>
       </List>
     </Box>
     )
