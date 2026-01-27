@@ -26,12 +26,21 @@ export default function Dashboard() {
         <Typography sx={{mt:1}}>
          View your profile 
         </Typography>
-       
        <CardActions sx={{justifyContent:'center',alignItems:"center"}}>
         <Button sx={{color:"red"}} onClick={()=>navigate("/View-profile")}>
           View
           </Button>
        </CardActions>
+       <Card sx={{width:250}}>
+        <CardContent sx={{justifyContent:"center", textAlign:'center'}}>
+         <Typography sx={{mt:1}}>
+          Create Team
+         </Typography>
+         <CardActions>
+          <Button>Create TEAM</Button>
+         </CardActions>
+        </CardContent>
+       </Card>
        </CardContent>
       </Card>
     </Box>

@@ -6,6 +6,7 @@ import CreateTeam from './pages/CreateTeam';
 import ViewProfile from './pages/ViewProfile';
 import Dashboard from './pages/Dashboard';
 import CreateProfile from './pages/CreateProfile';
+import FindTeam from './pages/FindTeam';
 import DashBoardLayout from './pages/DashBoardLayout';
 export default function App()
 {
@@ -30,6 +31,11 @@ return (
       <DashBoardLayout>
       <CreateProfile/>
       </DashBoardLayout>
+      }/>
+      <Route path='/FindTeam' element={
+        <DashBoardLayout>
+          <FindTeam/>
+        </DashBoardLayout>
       }/>
       <Route path='/dashboard' element={
         <DashBoardLayout>
