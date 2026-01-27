@@ -61,7 +61,7 @@ async function GetTeamById(req,res)
         {
             return res.status(404).json({msg : "Team does not exists ",success : false});
         }
-        return res.status(200).json(Teamexists);
+        return res.status(200).json({msg:"Team exits",Team:Teamexists,success:false});
     }catch(error)
     {
         console.log("Error in finding team ",error);
