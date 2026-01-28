@@ -31,18 +31,21 @@ export default function Dashboard() {
           View
           </Button>
        </CardActions>
+       </CardContent>
+       </Card>
        <Card sx={{width:250}}>
-        <CardContent sx={{justifyContent:"center", textAlign:'center'}}>
+        <CardContent sx={{justifyContent:"center",textAlign:"center"}}>
+          <Add/>
          <Typography sx={{mt:1}}>
           Create Team
          </Typography>
-         <CardActions>
-          <Button>Create TEAM</Button>
+         <CardActions sx={{justifyContent:"center",alignItems:"center"}}>
+          <Button sx={{color:"red"}} onClick={()=>navigate("/CreateTeam")}>
+           Create
+          </Button>
          </CardActions>
         </CardContent>
        </Card>
-       </CardContent>
-      </Card>
     </Box>
   );
 }

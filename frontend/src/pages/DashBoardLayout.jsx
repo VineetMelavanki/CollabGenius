@@ -1,6 +1,6 @@
 import React from "react";
 import { useState } from "react";
-import {Drawer,Box,ListItem,ListItemButton,ListItemText,Typography,AppBar,Toolbar,IconButton,List} from "@mui/material"
+import {Button,Drawer,Box,ListItem,ListItemButton,ListItemText,Typography,AppBar,Toolbar,IconButton,List} from "@mui/material"
 import {useNavigate} from "react-router-dom"
 import {CircleNotifications} from "@mui/icons-material"
 export default function DashBoardLayout({children}){
@@ -46,6 +46,9 @@ export default function DashBoardLayout({children}){
                 <Typography variant="h4" sx={{flexGrow:1,textAlign:"center"}}>
                 DashBoard
                 </Typography>
+                <Button sx={{color:"red"}}onClick={handleLogout}>
+                    Logout
+                </Button>
               </Toolbar>
             </AppBar>
             <Box sx={{

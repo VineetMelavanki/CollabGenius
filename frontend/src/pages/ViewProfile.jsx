@@ -1,14 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {Box,Paper,Typography,Button,MenuItem} from "@mui/material"
 import { useState } from "react";
 import axios from "axios";
 export default function ViewProfile(){
     const[error,seterror]=useState("");
-     const[user,setuser]=useState("");
-   
-     const showuser=async(e)=>{
+     const[user,setuser]=useState(null);
+   useEffect(()=>{
+     const showuser=async()=>{
         try{
-          e.preventDefault();
           const token=localStorage.getItem("token");
      if(!token)
      {
@@ -35,40 +34,26 @@ export default function ViewProfile(){
             seterror("Internal server error");
            }
         }   
+        
     }
+    showuser();
+   },[])
+
     return(
-        <Box
-        sx={{minHeight:"100vh",
-            minWidth:"100vw",
-            display:"flex",
-            justifyContent:"center",
-            alignItems:"center",
-        }}
-        >
-        <Paper
-        elevation={0}
-        sx={{
-            width:400,
-            p:"2rem 3rem",
-            textAlign:"center",
-            borderRadius:"16px",
-            background:"#rgba(8, 8, 7, 0.08)"
-        }}>
-         <Typography variant="h5" mb={4} mt={1}>
-            User Profile
-         </Typography>
-         {error && <Typography sx={{color:"red",mb:2}}>{error}</Typography>}
-         {user ?(
-            <>
-            <Typography  variant="h6"sx={{mb:2, color:"black"}}>Bio :{user.Bio}</Typography>
-            <Typography>Skills : {user.skills}</Typography>
-            <Typography>skillevel :{user.skillevel}</Typography>
-            <Typography>github_link : {user.github_link}</Typography>
-            </>
-         ):(
-           <Button variant="contained" onClick={showuser}>View Profile</Button>
+      <Box sx={{minHeight:"100vh",p:3,minWidth:"100vw", justifyContent:"center", textAlign:"center"}}>
+         {error && <Typography variant="h4">{error}</Typography>}
+         {!error &&!user &&(
+            <Typography variant="h4" sx={{color:"red"}}>Loading....</Typography>
          )}
-        </Paper>
-        </Box>
+         {user &&(
+            <>
+            <Typography variant="h4" sx={{color:"black"}}> Bio: {user.Bio}</Typography>
+            <Typography variant="h4" sx={{color:"black"}}> SKILLS : {user.skills}</Typography>
+            <Typography variant="h4" sx={{color:"black"}}> skillevel : {user.skillevel}</Typography>
+            <Typography variant="h4" sx={{color:"black"}}>github_link : {user.github_link}</Typography>
+            </>
+         )}
+      </Box>
     );
+        
 }
