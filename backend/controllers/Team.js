@@ -87,4 +87,20 @@ async function ChangeMemberRole(req,res)
     const NewRole = await User.findByIdAndUpdate(MyRole.set(UserId,'Admin'));
     return res.status(200).json(NewRole);
 }
-module.exports={CreateTeam,GetTeamById,Memberofwhichteam,GetAllTeams,ChangeMemberRole};
+async function ViewTeam(req,res)
+{
+    try{
+        const ownerId=req.user.id;
+        const Teamexists=await Team.findById(ownerId);
+        if(!Teamexists)
+        {
+            return res.status(404).json({msg:"Team not found",success:false});
+        }
+        return res.status(200).json({msg:"Team found ",team:Teamexists,success:false});
+    }catch(error)
+    {
+        console.log(error);
+        return res.status(500).json({msg:"Internal server error ",success:false});
+    }
+}
+module.exports={CreateTeam,GetTeamById,Memberofwhichteam,GetAllTeams,ChangeMemberRole,ViewTeam};

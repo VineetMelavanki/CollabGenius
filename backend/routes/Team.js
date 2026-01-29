@@ -1,5 +1,5 @@
 const express= require("express");
-const {CreateTeam,GetTeamById,Memberofwhichteam,GetAllTeams} =require("../controllers/Team");
+const {CreateTeam,GetTeamById,Memberofwhichteam,GetAllTeams,ViewTeam} =require("../controllers/Team");
 const {authmiddleware} = require("../middleware/authmiddleware");
 const{validateteamcreation}=require("../middleware/validator");
 const TeamRouter= express.Router();
@@ -7,4 +7,5 @@ TeamRouter.get("/allteams",GetAllTeams);
 TeamRouter.get("/memberinfo",authmiddleware, Memberofwhichteam);
 TeamRouter.get("/:Teamid",authmiddleware,GetTeamById);
 TeamRouter.post("/CreateTeam",authmiddleware,validateteamcreation,CreateTeam);
+TeamRouter.get("/View-Team",authmiddleware,ViewTeam);
 module.exports=TeamRouter;
