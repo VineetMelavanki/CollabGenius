@@ -6,12 +6,10 @@ export default function CreateTeam()
 {
     const[teamdata,setteamdata]=useState({
         name :'',
-        owner :'',
-        members :'',
-        roles :'' 
     });
     const[message,setmessage]=useState(null);
     const[error,seterror]=useState(null);
+    const token=localStorage.getItem("token");
     const handlechange =(e)=>{
         setteamdata(prev=>({...prev,[e.target.name] : e.target.value}));
     }
@@ -21,7 +19,11 @@ export default function CreateTeam()
         seterror(null);
         
         try {
-            const response= await axios.post("http://localhost:8000/api/dashboard/CreateTeam",teamdata);
+            const response= await axios.post("http://localhost:8000/api/dashboard/CreateTeam",teamdata,{
+                headers:{
+                  Authorization:`Bearer ${token}`
+                }
+              });
             setmessage(response.data.msg || "Team created successfully");
         }catch(error)
         {
