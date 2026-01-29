@@ -6,5 +6,5 @@ const TeamRouter= express.Router();
 TeamRouter.get("/allteams",GetAllTeams);
 TeamRouter.get("/:Teamid",authmiddleware,GetTeamById);
 TeamRouter.get("/memberinfo",authmiddleware, Memberofwhichteam);
-TeamRouter.post("/CreateTeam",authmiddleware,validateteamcreation,CreateTeam);
+TeamRouter.post("/CreateTeam",authmiddleware,CreateTeam);
 module.exports=TeamRouter;

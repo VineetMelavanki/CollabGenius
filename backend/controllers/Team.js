@@ -4,7 +4,7 @@ async function CreateTeam(req,res)
 {
    try {
     const{name,members,roles}= req.body;
-    const owner=req.user.id;
+    const ownerId=req.user.id;
     if(!owner || !name )
     {
         return res.status(400).json({msg : "owner and team name is required ",success : false});
@@ -20,28 +20,10 @@ async function CreateTeam(req,res)
     {
         return res.status(404).json({msg : "Owner does not exists "});
     }
-    let memberIds=[];
-    if(Array.isArray(members) && members.length > 0)
-    {
-        memberIds=members;
-    }
-    const rolemap= new Map();
-    rolemap.set(owner,'admin');
-    if(memberIds.length > 0)
-    {
-        memberIds.forEach(id=>{
-            if(id!=owner)
-            {
-                rolemap.set(id,'editor');
-            }
-        });
-    }
-    const{UserId}=req.params;
+    
     const newTeam = await Team.create({
         name,
-        owner,
-        roles: rolemap,
-        members : memberIds,
+        owner:ownerId,
     });
     return res.status(201).json({msg : "Team created successfully ", success : true,data :newTeam });
    }catch(error)
