@@ -4,6 +4,7 @@ import Login from './pages/LoginPage';
 import Register from "./pages/Register";
 import CreateTeam from './pages/CreateTeam';
 import ViewProfile from './pages/ViewProfile';
+import ViewTeam from './pages/ViewTeam';
 import Dashboard from './pages/Dashboard';
 import CreateProfile from './pages/CreateProfile';
 
@@ -37,6 +38,11 @@ return (
         <DashBoardLayout>
           <Dashboard/>
         </DashBoardLayout>}/>
+        <Route path='/View-Team' element={
+          <DashBoardLayout>
+            <ViewTeam/>
+          </DashBoardLayout>
+        }/>
   </Routes>
   </BrowserRouter>
 )

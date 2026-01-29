@@ -30,6 +30,9 @@ export default function DashBoardLayout({children}){
                     <ListItemButton onClick={()=>{navigate("/CreateTeam");setopen(false)}}>
                         <ListItemText primary="Create your team"/>
                     </ListItemButton>
+                    <ListItemButton onClick={()=>{navigate("/View-Team");setopen(false)}}>
+                        <ListItemText primary="View Team"/>
+                    </ListItemButton>
                   </List>
                 </Box>
             </Drawer>
