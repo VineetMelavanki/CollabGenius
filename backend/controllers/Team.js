@@ -5,7 +5,7 @@ async function CreateTeam(req,res)
    try {
     const{name,members,roles}= req.body;
     const ownerId=req.user.id;
-    if(!owner || !name )
+    if(!ownerId || !name )
     {
         return res.status(400).json({msg : "owner and team name is required ",success : false});
     }
@@ -15,7 +15,7 @@ async function CreateTeam(req,res)
     {
         return res.status(409).json({msg : "Team already exists "});
     }
-    const ownerexists =await User.findById(owner);
+    const ownerexists =await User.findById(ownerId);
     if(!ownerexists)
     {
         return res.status(404).json({msg : "Owner does not exists "});

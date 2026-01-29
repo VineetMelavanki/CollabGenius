@@ -21,7 +21,7 @@ const validatelogin=(req,res,next)=>{
 const validateteamcreation=async (req,res,next)=>{
     try{
         const{name,member,roles}=req.body;
-    const owner=req.user._id;
+    const owner=req.user.id;
     if(!owner || !name)
     {
         return res.status(400).json({msg : "owner and name required"});
@@ -32,9 +32,9 @@ const validateteamcreation=async (req,res,next)=>{
         return res.status(409).json({msg : "Team already exists"});
     }
     const ownerexists= await User.findById(owner);
-    if(ownerexists)
+    if(!ownerexists)
     {
-        return res.status(409).json({msg : "Owner already exists"});
+        return res.status(404).json({msg : "Owner does not exist"});
     }
     next();
     }
