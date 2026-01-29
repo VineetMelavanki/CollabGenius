@@ -51,15 +51,9 @@ export default function DashBoardLayout({children}){
                 </Button>
               </Toolbar>
             </AppBar>
-            <Box sx={{
-  mt: '64px',           // below AppBar
-  p: 2,
-  bgcolor: '#f0f0f0',
-  minHeight: 'calc(100vh - 64px)',  // full height minus AppBar
-}}>
-  {children}
-</Box>
-
+            <Box sx={{ mt: '64px',p: 2,bgcolor: '#f0f0f0',minHeight: 'calc(100vh - 64px)'}}>
+            {children}
+            </Box>
     </Box>
     </Box>
     );

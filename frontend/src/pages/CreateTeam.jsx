@@ -105,66 +105,6 @@ export default function CreateTeam()
           }}
         />
 
-        <TextField
-          fullWidth
-          label="Owner Name"
-          name="owner"
-          value={teamdata.owner}
-          onChange={handlechange}
-          required
-          variant="filled"
-          sx={{ mb: 2 }}
-          InputProps={{
-            sx: {
-              backgroundColor: "rgba(255,255,255,0.15)",
-              borderRadius: "10px",
-              color: "#fff",
-            },
-          }}
-          InputLabelProps={{
-            sx: { color: "rgba(255,255,255,0.6)" },
-          }}
-        />
-
-        <TextField
-          fullWidth
-          label="Members"
-          name="members"
-          value={teamdata.members}
-          onChange={handlechange}
-          variant="filled"
-          sx={{ mb: 2 }}
-          InputProps={{
-            sx: {
-              backgroundColor: "rgba(255,255,255,0.15)",
-              borderRadius: "10px",
-              color: "#fff",
-            },
-          }}
-          InputLabelProps={{
-            sx: { color: "rgba(255,255,255,0.6)" },
-          }}
-        />
-
-        <TextField
-          fullWidth
-          label="Roles"
-          name="roles"
-          value={teamdata.roles}
-          onChange={handlechange}
-          variant="filled"
-          sx={{ mb: 2 }}
-          InputProps={{
-            sx: {
-              backgroundColor: "rgba(255,255,255,0.15)",
-              borderRadius: "10px",
-              color: "#fff",
-            },
-          }}
-          InputLabelProps={{
-            sx: { color: "rgba(255,255,255,0.6)" },
-          }}
-        />
 
         <Button
           type="submit"
