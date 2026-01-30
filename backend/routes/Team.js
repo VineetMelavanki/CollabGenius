@@ -3,6 +3,7 @@ const {CreateTeam,GetTeamById,Memberofwhichteam,GetAllTeams,ViewTeam} =require("
 const {authmiddleware} = require("../middleware/authmiddleware");
 const{validateteamcreation}=require("../middleware/validator");
 const TeamRouter= express.Router();
+
 TeamRouter.get("/allteams",GetAllTeams);
 TeamRouter.get("/memberinfo",authmiddleware, Memberofwhichteam);
 TeamRouter.get("/:Teamid",authmiddleware,GetTeamById);

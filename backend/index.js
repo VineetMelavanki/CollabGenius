@@ -11,7 +11,7 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
-
+const { swaggerUi, swaggerSpec } = require('./config/swagger');
 const Userroutes=require("./routes/User");
 const Teamroutes=require("./routes/Team");
 app.use(express.json());
@@ -24,6 +24,7 @@ app.use("/api/User",Userroutes);
 app.use("/api/Project",Projectroutes);
 app.use("/api/dashboard",Dashboardroutes);
 app.use("/api/Profile",Profileroutes);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 console.log("JWT Secret :", process.env.JWT_secret);
 
 connectmongodb("mongodb://127.0.0.1:27017/")

@@ -24,6 +24,7 @@ async function CreateTeam(req,res)
     const newTeam = await Team.create({
         name,
         owner:ownerId,
+        members:[ownerId],
     });
     return res.status(201).json({msg : "Team created successfully ", success : true,data :newTeam });
    }catch(error)
@@ -90,13 +91,18 @@ async function ChangeMemberRole(req,res)
 async function ViewTeam(req,res)
 {
     try{
-        const ownerId=req.user.id;
-        const Teamexists=await Team.findById(ownerId);
+        const userId=req.user.id;
+        const Teamexists=await Team.findOne({
+            $or:[
+                {owner:userId},
+                {members:userId}
+            ]
+        });
         if(!Teamexists)
         {
             return res.status(404).json({msg:"Team not found",success:false});
         }
-        return res.status(200).json({msg:"Team found ",team:Teamexists,success:false});
+        return res.status(200).json({msg:"Team found ",team:Teamexists,success:true});
     }catch(error)
     {
         console.log(error);
