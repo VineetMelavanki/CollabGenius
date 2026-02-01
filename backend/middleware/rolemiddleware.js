@@ -1,3 +1,0 @@
-const rolemiddleware=(...allowedfields)=>{
-
-}

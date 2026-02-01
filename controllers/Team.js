@@ -1,11 +1,12 @@
+const { default: mongoose } = require("mongoose");
 const Team= require("../model/Team");
 const User= require("../model/User");
 async function CreateTeam(req,res)
 {
    try {
     const{name,members,roles}= req.body;
-    const owner=req.user.id;
-    if(!owner || !name )
+    const userId=req.user.id;
+    if(!userId || !name )
     {
         return res.status(400).json({msg : "owner and team name is required ",success : false});
     }
@@ -15,33 +16,17 @@ async function CreateTeam(req,res)
     {
         return res.status(409).json({msg : "Team already exists "});
     }
-    const ownerexists =await User.findById(owner);
+    const ownerexists =await User.findById(userId);
     if(!ownerexists)
     {
         return res.status(404).json({msg : "Owner does not exists "});
     }
-    let memberIds=[];
-    if(Array.isArray(members) && members.length > 0)
-    {
-        memberIds=members;
-    }
-    const rolemap= new Map();
-    rolemap.set(owner,'admin');
-    if(memberIds.length > 0)
-    {
-        memberIds.forEach(id=>{
-            if(id!=owner)
-            {
-                rolemap.set(id,'editor');
-            }
-        });
-    }
-    const{UserId}=req.params;
+    
     const newTeam = await Team.create({
         name,
-        owner,
-        roles: rolemap,
-        members : memberIds,
+        owner:userId,
+        members:[userId],
+        roles:{[req.user.id]:"owner"}
     });
     return res.status(201).json({msg : "Team created successfully ", success : true,data :newTeam });
    }catch(error)
@@ -61,7 +46,7 @@ async function GetTeamById(req,res)
         {
             return res.status(404).json({msg : "Team does not exists ",success : false});
         }
-        return res.status(200).json(Teamexists);
+        return res.status(200).json({msg:"Team exits",Team:Teamexists,success:false});
     }catch(error)
     {
         console.log("Error in finding team ",error);
@@ -105,4 +90,28 @@ async function ChangeMemberRole(req,res)
     const NewRole = await User.findByIdAndUpdate(MyRole.set(UserId,'Admin'));
     return res.status(200).json(NewRole);
 }
-module.exports={CreateTeam,GetTeamById,Memberofwhichteam,GetAllTeams,ChangeMemberRole};
+const mongoose = require("mongoose");
+
+async function ViewTeam(req, res) {
+  try {
+    const userId = mongoose.Types.ObjectId(req.user.id); // Convert string to ObjectId
+
+    const team = await Team.findOne({
+      $or: [
+        { owner: userId },
+        { members: userId }
+      ]
+    });
+
+    if (!team) {
+      return res.status(404).json({ msg: "Team does not exist", success: false });
+    }
+
+    return res.status(200).json({ msg: "Team found successfully", success: true, team });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ msg: "Internal server error", success: false, error: error.message });
+  }
+}
+
+module.exports={CreateTeam,GetTeamById,Memberofwhichteam,GetAllTeams,ChangeMemberRole,ViewTeam};

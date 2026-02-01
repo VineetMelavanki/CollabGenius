@@ -1,0 +1,352 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CollabGenius API",
+    "version": "1.0.0",
+    "description": "API documentation for CollabGenius - Team collaboration platform",
+    "contact": {
+      "name": "API Support",
+      "email": "support@collabgenius.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "Development server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Enter JWT token obtained from login endpoint"
+      }
+    }
+  },
+  "paths": {
+    "/api/User/register": {
+      "post": {
+        "summary": "Register a new user",
+        "tags": ["User"],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "password"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                  },
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "john@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "example": "password123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully"
+          },
+          "409": {
+            "description": "Email already exists"
+          },
+          "400": {
+            "description": "All fields are required"
+          }
+        }
+      }
+    },
+    "/api/User/login": {
+      "post": {
+        "summary": "User login",
+        "tags": ["User"],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "john@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password",
+                    "example": "password123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Successfull login"
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    },
+                    "user": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Email not found"
+          },
+          "400": {
+            "description": "Invalid password"
+          }
+        }
+      }
+    },
+    "/api/User/allusers": {
+      "get": {
+        "summary": "Get all users",
+        "tags": ["User"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of all users"
+          }
+        }
+      }
+    },
+    "/api/User/{UserId}": {
+      "get": {
+        "summary": "Get user by ID",
+        "tags": ["User"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "UserId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User found"
+          },
+          "404": {
+            "description": "User does not exist"
+          }
+        }
+      }
+    },
+    "/api/Team/allteams": {
+      "get": {
+        "summary": "Get all teams",
+        "tags": ["Team"],
+        "responses": {
+          "200": {
+            "description": "List of all teams"
+          }
+        }
+      }
+    },
+    "/api/Team/memberinfo": {
+      "get": {
+        "summary": "Get teams for a user",
+        "tags": ["Team"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Teams found"
+          }
+        }
+      }
+    },
+    "/api/Team/{Teamid}": {
+      "get": {
+        "summary": "Get team by ID",
+        "tags": ["Team"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "Teamid",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Team ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Team found"
+          },
+          "404": {
+            "description": "Team does not exist"
+          }
+        }
+      }
+    },
+    "/api/Team/CreateTeam": {
+      "post": {
+        "summary": "Create a new team",
+        "tags": ["Team"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Development Team"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Team created successfully"
+          },
+          "409": {
+            "description": "Team already exists"
+          },
+          "400": {
+            "description": "Team name is required"
+          }
+        }
+      }
+    },
+    "/api/Team/View-Team": {
+      "get": {
+        "summary": "View user's team",
+        "tags": ["Team"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Team found"
+          },
+          "404": {
+            "description": "Team not found"
+          }
+        }
+      }
+    },
+    "/api/Profile/Create-Profile": {
+      "post": {
+        "summary": "Create user profile",
+        "tags": ["Profile"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                  },
+                  "bio": {
+                    "type": "string",
+                    "example": "Software Developer"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Profile created successfully"
+          }
+        }
+      }
+    },
+    "/api/Profile/View-Profile": {
+      "get": {
+        "summary": "View user profile",
+        "tags": ["Profile"],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile found"
+          },
+          "404": {
+            "description": "Profile not found"
+          }
+        }
+      }
+    }
+  }
+}
