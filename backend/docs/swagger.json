@@ -293,42 +293,6 @@
         }
       }
     },
-    "/api/dashboard/CreateTeam": {
-      "post": {
-        "summary": "Create a new team (Dashboard)",
-        "tags": ["Dashboard"],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["name"],
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "Development Team"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Team created successfully"
-          },
-          "400": {
-            "description": "Team name is required"
-          }
-        }
-      }
-    },
     "/api/Profile/Create-Profile": {
       "post": {
         "summary": "Create user profile",
@@ -386,4 +350,3 @@
     }
   }
 }
-

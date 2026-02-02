@@ -17,12 +17,10 @@ const Teamroutes=require("./routes/Team");
 app.use(express.json());
 const connectmongodb= require("./connection/user");
 const Projectroutes= require("./routes/Project");
-const Dashboardroutes=require("./routes/Dashboard");
 const Profileroutes=require("./routes/Profile")
 app.use("/api/Team",Teamroutes);
 app.use("/api/User",Userroutes);
 app.use("/api/Project",Projectroutes);
-app.use("/api/dashboard",Dashboardroutes);
 app.use("/api/Profile",Profileroutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 console.log("JWT Secret :", process.env.JWT_secret);
