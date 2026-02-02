@@ -1,52 +1,73 @@
-import React from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useEffect } from "react";
-import {Box,Typography} from "@mui/material"
-export default function ViewTeam(){
-    const[error,seterror]=useState("");
-    const[team,setteam]=useState(null);
-    
-    useEffect(()=>{
-        
-        const viewteam=async()=>{
-            try{
-                const token=localStorage.getItem("token");
-                if(!token)
-                {
-                    seterror("Please log in again");
-                    return ;
-                }
-                const response=await axios.get("http://localhost:8000/api/Team/View-Team",
-                    {
-                        headers:{
-                            Authorization:`Bearer ${token}`,
-                        }
-                    }
-                );
-                setteam(response.data.team);
-            }catch(error)
-            {
-                if(error.response)
-                {
-                    seterror(error.response.data.msg || "Cannot fetch team");
-                }else
-                {
-                    seterror("Internal server error");
-                }
-            }
-        }
-        viewteam();
-    },[])
+import {
+  Box,
+  Typography,
+  Paper,
+  CircularProgress,
+} from "@mui/material";
 
-    return(
-        <Box sx={{display:"flex" , justifyContent:'center', alignItems:"center"}}>
-            {error && <Typography variant="h4" sx={{color:"red"}}>{error}</Typography>}
-            {team &&
-            <>
-            <Typography variant="h4" sx={{color:"black"}}> Team Name :{team.name}</Typography>
-            <Typography variant="h4" sx={{color:"black"}}>Owner id : {team.owner}</Typography>
-            </>}
-        </Box>
-    )
+export default function ViewTeam() {
+  const [error, seterror] = useState("");
+  const [team, setteam] = useState([]); // ✅ array
+  const [loading, setloading] = useState(true);
+
+  useEffect(() => {
+    const viewteam = async () => {
+      try {
+        setloading(true);
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          seterror("Please log in again");
+          return;
+        }
+
+        const response = await axios.get(
+          "http://localhost:8000/api/Team/View-Team",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setteam(response.data.team); // must be array
+        seterror("");
+      } catch (error) {
+        seterror(
+          error.response?.data?.msg || "Internal server error"
+        );
+        setteam([]);
+      } finally {
+        setloading(false);
+      }
+    };
+
+    viewteam();
+  }, []);
+
+  return (
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      {loading && <CircularProgress />}
+
+      {error && !loading && (
+        <Typography color="error">{error}</Typography>
+      )}
+
+      {!loading &&
+        !error &&
+        team.map((t) => (
+          <Paper
+            elevation={0}
+            key={t._id}
+            sx={{ p: "1rem" }}
+          >
+            <Typography variant="h6">
+              Team name : {t.name}
+            </Typography>
+          </Paper>
+        ))}
+    </Box>
+  );
 }

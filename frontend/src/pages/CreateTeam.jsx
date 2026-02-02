@@ -19,12 +19,14 @@ export default function CreateTeam()
         seterror(null);
         
         try {
-            const response= await axios.post("http://localhost:8000/api/dashboard/CreateTeam",teamdata,{
+            const response= await axios.post("http://localhost:8000/api/Team/CreateTeam",teamdata,{
                 headers:{
-                  Authorization:`Bearer ${token}`
+                  Authorization:`Bearer ${token}`,
+                  "Content-Type": "application/json"
                 }
               });
             setmessage(response.data.msg || "Team created successfully");
+            setteamdata({name : ""});
         }catch(error)
         {
             if(error.response)
@@ -103,7 +105,7 @@ export default function CreateTeam()
             },
           }}
           InputLabelProps={{
-            sx: { color: "rgba(255,255,255,0.6)" },
+            sx: { color: "rgba(255,255,255,0.6)"},
           }}
         />
 
