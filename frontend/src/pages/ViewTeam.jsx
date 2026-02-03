@@ -48,26 +48,21 @@ export default function ViewTeam() {
   }, []);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-      {loading && <CircularProgress />}
-
-      {error && !loading && (
-        <Typography color="error">{error}</Typography>
-      )}
-
-      {!loading &&
-        !error &&
-        team.map((t) => (
-          <Paper
-            elevation={0}
-            key={t._id}
-            sx={{ p: "1rem" }}
-          >
-            <Typography variant="h6">
-              Team name : {t.name}
-            </Typography>
-          </Paper>
-        ))}
+    <Box sx={{display:'flex', justifyContent:"flex-start",alignItems:"flex-start",minHeight:"100vh",minWidth:"100vw"}}>
+        <Paper  elevation={0} sx={{
+          width:400,
+          p:"3.5rem 3rem",
+          alignItems:"flex-start",      
+        }}>
+         {error && <Typography variant="h6" sx={{color:"red"}}>{error}</Typography>}
+         {loading && <Typography variant="h6" sx={{color:"red"}}>Please wait Data is fetching</Typography>}
+         {!error && !loading && team &&
+         <>
+         <Typography variant="h6">Team name : {team.name}</Typography>
+         <Typography variant="h6">Team Onwer Id :{team.owner}</Typography>
+         </>}
+  
+        </Paper>
     </Box>
   );
 }
