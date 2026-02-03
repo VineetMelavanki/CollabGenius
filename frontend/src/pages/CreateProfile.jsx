@@ -10,7 +10,6 @@ export default function CreateProfile(){
     });
     const[error,seterror]=useState("");
     const[msg,setmsg]=useState("");
-
     const handlechange=(e)=>{
         setformdata((prev)=>({...prev,[e.target.name]:e.target.value}));
     };
@@ -165,7 +164,8 @@ export default function CreateProfile(){
             InputLabelProps={{
               sx: { color: "rgba(255,255,255,0.6)" },
             }}/>
-            
+            <Box sx={{ mb: 2 }}>
+</Box>
           <Button
             type="submit"
             fullWidth
