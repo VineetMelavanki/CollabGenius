@@ -13,12 +13,10 @@ app.use(cors({
 }));
 const { swaggerUi, swaggerSpec } = require('./config/swagger');
 const Userroutes=require("./routes/User");
-const Teamroutes=require("./routes/Team");
 app.use(express.json());
 const connectmongodb= require("./connection/user");
 const Projectroutes= require("./routes/Project");
 const Profileroutes=require("./routes/Profile")
-app.use("/api/Team",Teamroutes);
 app.use("/api/User",Userroutes);
 app.use("/api/Project",Projectroutes);
 app.use("/api/Profile",Profileroutes);

@@ -26,6 +26,10 @@ const ProfileSchema = new mongoose.Schema({
         unique:true,
         required:true,
     },
+    photo:{
+        url:String,
+        public_id:String,
+    }
 });
 const Project=mongoose.model("Profile : ",ProfileSchema);
 module.exports=Project;

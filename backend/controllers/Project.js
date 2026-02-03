@@ -1,4 +1,4 @@
-const Team=require("../model/Team");
+
 const User=require("../model/User");
 const Project=require("../model/project");
 async function CreateProject(req,res)
@@ -16,7 +16,6 @@ async function CreateProject(req,res)
     }
     const Newproject= await Project.create({
         title,
-        teamid,
         ownerId,
         status,
         createdAt,

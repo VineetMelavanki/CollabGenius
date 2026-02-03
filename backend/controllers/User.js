@@ -1,5 +1,4 @@
-const mongoose= require("mongoose");
-const Team =require("../model/Team");
+
 const User=require("../model/User");
 const bcrypt =require("bcrypt");
 const jwt=require("jsonwebtoken");

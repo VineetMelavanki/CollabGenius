@@ -1,4 +1,5 @@
 const Profile=require("../model/Profile");
+const cloudinary=require("cloudinary");
 const User=require("../model/User");
 async function CreateProfile(req,res){
     try{
@@ -12,13 +13,26 @@ async function CreateProfile(req,res){
       {
         return res.status(409).json({msg:"Name already exists",success:false});
       }
+      if(req.file)
+      {
+        const uploadresults= await cloudinary.uploader.upload(
+          `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`,
+        {
+          folder:"profile_photos",
+        });
+         photodata={
+          url:uploadresults.secure_url,
+          public_id:uploadresults.public_id,
+         }
+      }
       const profile=await Profile.create({
-        name:req.user.id,
+        name,
         Bio,
         skills,
         skillevel,
         github_link,
-      });
+        photo:photodata,
+      })
       return res.status(200).json({msg:"Profile created successfully",data:profile,success:true});
     }catch(error)
     {
