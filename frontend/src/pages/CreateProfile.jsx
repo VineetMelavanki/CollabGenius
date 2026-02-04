@@ -52,8 +52,6 @@ export default function CreateProfile(){
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "linear-gradient(135deg, #00172D 0%, #003566 100%)",
-        fontFamily: "Poppins, sans-serif",
       }}>
     <Paper
     elevation={0}
@@ -64,7 +62,6 @@ export default function CreateProfile(){
           backgroundColor: "rgba(255, 255, 255, 0.08)",
           boxShadow: "0 4px 25px rgba(0, 0, 0, 0.3)",
           textAlign: "center",
-          color: "#fff",
           backdropFilter: "blur(8px)",
         }}>
      <Typography variant="h4" fontWeight={700} mb={1}>
@@ -89,16 +86,9 @@ export default function CreateProfile(){
             value={formdata.Bio}
             onChange={handlechange}
             variant="filled"
-            sx={{ mb: 2 }}
-            InputProps={{
-              sx: {
-                backgroundColor: "rgba(255,255,255,0.15)",
-                borderRadius: "10px",
-                color: "#fff",
-              },
-            }}
-            InputLabelProps={{
-              sx: { color: "rgba(255,255,255,0.6)" },
+            sx={{
+              backgroundColor:"white",
+              mb:2,
             }}
           />
 
@@ -110,16 +100,9 @@ export default function CreateProfile(){
             value={formdata.skills}
             onChange={handlechange}
             variant="filled"
-            sx={{ mb: 2 }}
-            InputProps={{
-              sx: {
-                backgroundColor: "rgba(255,255,255,0.15)",
-                borderRadius: "10px",
-                color: "#fff",
-              },
-            }}
-            InputLabelProps={{
-              sx: { color: "rgba(255,255,255,0.6)" },
+            sx={{
+              backgroundColor:"white",
+              mb:2
             }}
           />
           <TextField  select
@@ -129,17 +112,7 @@ export default function CreateProfile(){
   value={formdata.skillevel}
   onChange={handlechange}
   variant="filled"
-  sx={{ mb: 2 }}
-  InputProps={{
-    sx: {
-      backgroundColor: "rgba(255,255,255,0.15)",
-      borderRadius: "10px",
-      color: "#fff",
-    },
-  }}
-  InputLabelProps={{
-    sx: { color: "rgba(255,255,255,0.6)" },
-  }}>
+  sx={{backgroundColor:"white",mb:2}}>
           <MenuItem value="Beginner">Beginner</MenuItem>
           <MenuItem value="Intermediate">Intermediate</MenuItem>
           <MenuItem value="Advanced">Advanced</MenuItem>
@@ -153,17 +126,10 @@ export default function CreateProfile(){
             value={formdata.github_link}
             onChange={handlechange}
             variant="filled"
-            sx={{ mb: 2 }}
-            InputProps={{
-              sx: {
-                backgroundColor: "rgba(255,255,255,0.15)",
-                borderRadius: "10px",
-                color: "#fff",
-              },
+            sx={{backgroundColor:"white",
+              mb:2
             }}
-            InputLabelProps={{
-              sx: { color: "rgba(255,255,255,0.6)" },
-            }}/>
+            />
             <Box sx={{ mb: 2 }}>
 </Box>
           <Button
