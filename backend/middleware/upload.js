@@ -1,16 +1,18 @@
 const multer=require("multer");
-const storage=multer.memoryStorage();
+const Storage=multer.memoryStorage();
 
-const upload=multer({
-    storage,
+const uploads=multer({
+    Storage,
     limits:{fileSize:5*1024*1024},
     fileFilter:(req,file,cb)=>{
-        if(file.mimetype.startsWith("/image")){
-            cb(null,true);
-        }else
+        if(file.mimetype.startsWith("/image"))
         {
-            cb(new Error("Only image files can be selected"),false);
+            cb(null,true);
+        }
+        else
+        {
+            cb(new Error("please upload image file"),false);
         }
     }
-});
-module.exports={upload}
+})
+module.exports={uploads};
