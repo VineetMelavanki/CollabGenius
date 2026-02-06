@@ -3,12 +3,19 @@ import axios from "axios";
 import { TextField,Box,Paper,Typography,Button, MenuItem } from "@mui/material";
 export default function CreateProfile(){
     const[formdata,setformdata]=useState({
+        name:"",
         Bio:"",
         skills:"",
         skillevel:"",
         github_link:"",
     });
+    const[file,setfile]=useState([]);
     const[error,seterror]=useState("");
+    const handlefilechange=(e)=>{
+      const requiredfile=e.target.files[0];
+      setfile(requiredfile);
+    }
+    
     const[msg,setmsg]=useState("");
     const handlechange=(e)=>{
         setformdata((prev)=>({...prev,[e.target.name]:e.target.value}));
@@ -18,15 +25,35 @@ export default function CreateProfile(){
            e.preventDefault();
         seterror("");
         setmsg("");
+
         const token=localStorage.getItem("token");
         if(!token)
         {
             seterror("Invalid token");
+            return;
         }
-        const response=await axios.post("http://localhost:8000/api/Profile/Create-Profile",formdata,
+        if(!file)
+        {
+          seterror("Please upload a profile picture");
+          return;
+        }
+        if(!formdata.name || !formdata.Bio || !formdata.skills || !formdata.github_link)
+        {
+          seterror("All fields are required");
+          return;
+        }
+        const data=new FormData();
+        data.append("name",formdata.name);
+        data.append("Bio",formdata.Bio);
+        data.append("skills",formdata.skills);
+        data.append("skillevel",formdata.skillevel);
+        data.append("github_link",formdata.github_link);
+        data.append("photo",file);
+        const response=await axios.post("http://localhost:8000/api/Profile/Create-Profile",data,
           {
             headers:{
               Authorization:`Bearer ${token}`,
+              
             }
           }
         );
@@ -70,6 +97,9 @@ export default function CreateProfile(){
       {error && (
           <Typography sx={{ color: "#ff6961", mb: 1 }}>
             {error}
+      {msg &&(
+       <Typography sx={{color:"green"}}>{msg}</Typography>
+      )}
           </Typography>
         )}
      {msg&& (
@@ -78,6 +108,19 @@ export default function CreateProfile(){
           </Typography>
         )}
          <Box component="form" onSubmit={handleSubmit}>
+          <TextField
+            fullWidth
+            label="Name"
+            type="text"
+            name="name"
+            value={formdata.name}
+            onChange={handlechange}
+            variant="filled"
+            sx={{
+              backgroundColor:"white",
+              mb:2,
+            }}
+          />
           <TextField
             fullWidth
             label="Bio"
@@ -131,7 +174,14 @@ export default function CreateProfile(){
             }}
             />
             <Box sx={{ mb: 2 }}>
-</Box>
+             
+            <Box sx={{display:"flex",flexDirection:"column"}}>
+              <Typography variant="h7" sx={{mb:2}}>Upload your profile picture</Typography>
+               <input type="file" accept="image/*" onChange={handlefilechange} style={{marginBottom:"1rem"}}/>
+            </Box>
+             
+           
+         
           <Button
             type="submit"
             fullWidth
@@ -151,6 +201,7 @@ export default function CreateProfile(){
           >
             Create Profile
           </Button>
+        </Box>
         </Box>
     </Paper>
        </Box>
