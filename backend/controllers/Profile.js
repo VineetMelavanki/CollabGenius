@@ -1,18 +1,14 @@
 const Profile=require("../model/Profile");
-const cloudinary=require("cloudinary");
+const cloudinary=require("../config/cloudinary");
 const User=require("../model/User");
 async function CreateProfile(req,res){
     try{
       const{name,Bio,skills,skillevel,github_link}=req.body;
-      if(!Bio || !skills || !skillevel || !github_link)
+      if(!name || !Bio || !skills || !skillevel || !github_link)
       {
-        return res.status(401).json({msg:"All fields are required",success:false});
+        return res.status(400).json({msg:"All fields are required",success:false});
       }
-      const nameexists=await User.findOne({user:req.user.id});
-      if(nameexists)
-      {
-        return res.status(409).json({msg:"Name already exists",success:false});
-      }
+      let photodata=null;
       if(req.file)
       {
         const uploadresults= await cloudinary.uploader.upload(
@@ -26,6 +22,7 @@ async function CreateProfile(req,res){
          }
       }
       const profile=await Profile.create({
+        userId:req.user.id,
         name,
         Bio,
         skills,
@@ -43,7 +40,7 @@ async function CreateProfile(req,res){
 async function ViewProfile(req,res)
 {
   try{
-    const Profileexists=await Profile.findOne({name:req.user.id})
+    const Profileexists=await Profile.findOne({userId:req.user.id})
     if(!Profileexists)
     {
       return res.status(404).json({msg:"Profile not found",success:false});

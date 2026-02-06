@@ -1,29 +1,29 @@
 const mongoose=require("mongoose");
 const ProfileSchema = new mongoose.Schema({
-    name:{
+    userId:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"user",
+        ref:"User",
         required:true,
-        unique:true,
+    },
+    name:{
+        type:String,
+        required:true,
     },
     Bio:{
-        type:"String",
+        type:String,
         required:true,
-        unique:true,
     },
     skills:{
-        type:"String",
+        type:String,
         required:true,
-        unique:true,
     },
     skillevel:{
-        type:"String",
+        type:String,
         enum:["Beginner","Intermediate","Advanced"],
         default:"Beginner",
     },
     github_link:{
-        type:"String",
-        unique:true,
+        type:String,
         required:true,
     },
     photo:{
@@ -31,5 +31,5 @@ const ProfileSchema = new mongoose.Schema({
         public_id:String,
     }
 });
-const Project=mongoose.model("Profile : ",ProfileSchema);
-module.exports=Project;
+const Profile=mongoose.model("Profile",ProfileSchema);
+module.exports=Profile;
