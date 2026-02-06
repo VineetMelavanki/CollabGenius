@@ -32,7 +32,6 @@ export default function About()
              </Typography>
             </Paper>
             </HoverEfffect>
-            
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
             <HoverEfffect>

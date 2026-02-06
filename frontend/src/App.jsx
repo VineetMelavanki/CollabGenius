@@ -6,7 +6,7 @@ import ViewProfile from './pages/ViewProfile';
 import Dashboard from './pages/Dashboard';
 import CreateProfile from './pages/CreateProfile';
 import About from './pages/About';
-import AuroraBackground from './effects/Background';
+
 import DashBoardLayout from './pages/DashBoardLayout';
 export default function App()
 {
