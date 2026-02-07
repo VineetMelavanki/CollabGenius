@@ -7,15 +7,11 @@ const projectSchema = new mongoose.Schema({
         required : true,
     },
     description : String,
-    teamid : {
-        type : mongoose.Schema.Types.ObjectId,
-        ref : 'Team',
-        required : true,
-    },
     ownerId : {
         type : mongoose.Schema.Types.ObjectId,
         ref : 'User',
         required : true,
+        unique:true,
     },
     status : {
         type : String,

@@ -2,6 +2,7 @@ const Profile=require("../model/Profile");
 const cloudinary=require("../config/cloudinary");
 const User=require("../model/User");
 async function CreateProfile(req,res){
+   console.log("CREATE PROFILE REQ.USER:", req.user)
     try{
       const{name,Bio,skills,skillevel,github_link}=req.body;
       if(!name || !Bio || !skills || !skillevel || !github_link)
