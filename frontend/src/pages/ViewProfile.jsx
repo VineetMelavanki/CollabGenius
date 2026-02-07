@@ -83,7 +83,6 @@ export default function ViewProfile(){
            <Typography variant="h6">skillevel :{user?.skillevel}</Typography>
            <Link href={user?.github_link} target="_blank" underline="hover">{user?.github_link}</Link>
             </Box>
-           
           </Box>
             </Paper>
          </Box>

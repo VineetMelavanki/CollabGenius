@@ -3,6 +3,7 @@ import{Add, Celebration} from "@mui/icons-material"
 import VisibilityIcon from "@mui/icons-material/Visibility"
 import { useNavigate } from "react-router-dom";
 import HoverEfffect from "../effects/HoverCard";
+
 export default function Dashboard() {
   const navigate=useNavigate();
   return (
@@ -50,7 +51,7 @@ export default function Dashboard() {
             p:"2rem 2rem",
             }}>
              <Typography variant="h6" sx={{color:"black",mb:2}}>
-              Create Porfile
+              Create Profile
              </Typography>
              <Box sx={{textAlign:"center",gap:2}}>
               <Typography variant="h7" sx={{color:"black"}}>
@@ -62,6 +63,28 @@ export default function Dashboard() {
              </Box>
             </Paper>
             </HoverEfffect>
+        </Grid>
+        <Grid item xs={12} sm={6} md={4}>
+          <HoverEfffect>
+            <Paper sx={{
+              width:400,
+              justifyContent:"center",
+              textAlign:"center",
+              p:"2rem 2rem",
+            }}>
+            <Typography variant="h6" sx={{color:"black",mb:2}}>
+             Create Project
+            </Typography>
+            <Box sx={{textAlign:"center",gap:2}}>
+            <Typography variant="h7" sx={{color:"black"}}>
+              Click here :
+            </Typography>
+           <Button onClick={()=>navigate("/Create-Project")}>
+            Create Project
+           </Button>
+            </Box>
+            </Paper>
+          </HoverEfffect>
         </Grid>
       </Grid>
       </Box>

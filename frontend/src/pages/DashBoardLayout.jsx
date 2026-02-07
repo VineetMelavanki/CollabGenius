@@ -28,6 +28,9 @@ export default function DashBoardLayout({children}){
                     <ListItemButton onClick={()=>{navigate("/View-Profile");setopen(false)}}>
                         <ListItemText primary="View Profile"/>
                     </ListItemButton>
+                    <ListItemButton onClick={()=>{navigate("/View-Project");setopen(false)}}>
+                        <ListItemText primary="View-Project"/>
+                    </ListItemButton>
                   </List>
                 </Box>
             </Drawer>

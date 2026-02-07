@@ -6,8 +6,9 @@ import ViewProfile from './pages/ViewProfile';
 import Dashboard from './pages/Dashboard';
 import CreateProfile from './pages/CreateProfile';
 import About from './pages/About';
-
+import CreateProject from './pages/CreateProject';
 import DashBoardLayout from './pages/DashBoardLayout';
+import ViewProject from './pages/ViewProject';
 export default function App()
 {
 return (
@@ -31,11 +32,20 @@ return (
       <CreateProfile/>
       </DashBoardLayout>
       }/>
-    
+     <Route path='/Create-Project' element={
+      <DashBoardLayout>
+        <CreateProject/>
+      </DashBoardLayout>
+     }/>
       <Route path='/dashboard' element={
         <DashBoardLayout>
           <Dashboard/>
         </DashBoardLayout>}/>
+        <Route path='/View-Project' element={
+          <DashBoardLayout>
+            <ViewProject/>
+          </DashBoardLayout>
+        }/>
   </Routes>
   </BrowserRouter>
 )
