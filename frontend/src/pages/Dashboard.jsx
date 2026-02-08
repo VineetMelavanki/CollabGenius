@@ -34,7 +34,7 @@ export default function Dashboard() {
             sx={{color:"black"}}>
               Click here :
             </Typography>
-            <Button onClick={()=>navigate("/About")}>
+            <Button  onClick={()=>navigate("/About")}>
               About Section
             </Button>
           </Box>

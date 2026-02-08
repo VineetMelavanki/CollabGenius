@@ -3,23 +3,18 @@ import { Box } from "@mui/material";
 export default function BackgroundLayout({ children }) {
   return (
     <Box
-      sx={{
-        minHeight: "100vh",
-        width: "100%",
-        background: `
-          radial-gradient(circle at 20% 20%, rgba(0,150,255,0.25), transparent 40%),
-          radial-gradient(circle at 80% 30%, rgba(0,255,200,0.18), transparent 45%),
-          radial-gradient(circle at 50% 80%, rgba(140,0,255,0.25), transparent 50%),
-          linear-gradient(135deg, #0f172a, #020617)
-        `,
-        backgroundAttachment: "fixed",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        px: { xs: 2, md: 6 },
-      }}
-    >
-      {children}
-    </Box>
+  sx={{
+    minHeight: "100vh",
+    background: `
+      radial-gradient(1200px circle at 10% 10%, #e0e7ff 0%, transparent 40%),
+      radial-gradient(1200px circle at 90% 20%, #fef3c7 0%, transparent 40%),
+      linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%)
+    `,
+    p: 3,
+  }}
+>
+  {children}
+</Box>
+
   );
 }
