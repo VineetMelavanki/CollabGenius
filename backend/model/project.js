@@ -3,7 +3,6 @@ const projectSchema = new mongoose.Schema({
     title :
     {
         type : String,
-        unique : true,
         required : true,
     },
     description : String,
@@ -11,19 +10,22 @@ const projectSchema = new mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref : 'User',
         required : true,
-        unique:true,
     },
+    members : [
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            ref:'User',
+        }
+    ],
     status : {
         type : String,
         enum:['active','archived','deleted'],
         default: 'active',
     },
-    createdAt : {
-        type : Date,
-        default : Date.now,
-    },
-    updatedata: Date,
-    deadline : Date,
-});
+},
+{
+    timestamps:true,
+}
+);
 const Project = mongoose.model("Project",projectSchema);
 module.exports=Project;

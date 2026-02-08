@@ -1,5 +1,6 @@
 const User=require("../model/User");
 const Project=require("../model/project");
+const Profile=require("../model/Profile");
 async function CreateProject(req,res)
 {
     console.log("The id of owner is : ",req.user.id)
@@ -42,15 +43,27 @@ async function Getallprojects(req,res)
 }
 async function ViewProject(req,res){
     try{
-        const projectexists=await Project.findById({ownerId:req.user.id});
+        console.log("The owner id is :",req.user.id);
+        const projectexists=await Project.findOne({ownerId:req.user.id});
         if(!projectexists)
         {
             return res.status(404).json({msg:"Project does not exists",success:false});
         }
-        return res.status(200).json({msg:"Project Found",project:projectexists,success:true});
+        
+        const ownerProfile=await Profile.findOne({userId:req.user.id});
+        console.log("Populated project : ",projectexists);
+        console.log("Owner profile : ",ownerProfile);
+        
+        const projectWithProfile={
+            ...projectexists.toObject(),
+            ownerProfile:ownerProfile
+        }
+        
+        return res.status(200).json({msg:"Project Found",project:projectWithProfile,success:true});
     }catch(error)
     {
-        return res.status(500).json({msg:"Internal server error",success:false});
+        console.log("ViewProject Error:", error);
+        return res.status(500).json({msg:"Internal server error",error:error.message,success:false});
     }
 }
 module.exports={CreateProject,Getallprojects,ViewProject};
