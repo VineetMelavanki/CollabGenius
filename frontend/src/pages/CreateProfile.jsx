@@ -9,6 +9,7 @@ export default function CreateProfile(){
         skillevel:"",
         github_link:"",
     });
+    
     const[file,setfile]=useState([]);
     const[error,seterror]=useState("");
     const handlefilechange=(e)=>{

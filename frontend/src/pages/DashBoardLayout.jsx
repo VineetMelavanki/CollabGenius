@@ -1,12 +1,34 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import {Button,Drawer,Box,ListItem,ListItemButton,ListItemText,Typography,AppBar,Toolbar,IconButton,List} from "@mui/material"
 import {useNavigate} from "react-router-dom"
+import axios from "axios";
 import MenuIcon from "@mui/icons-material/Menu"
 export default function DashBoardLayout({children}){
     const[open,setopen]=useState(false);
     const navigate=useNavigate();
-  
+    const[hasprofile,sethasprofile]=useState(false);
+
+    useEffect(()=>{
+      const profileverify=async()=>{
+        sethasprofile(null);
+        const token=localStorage.getItem("token");
+        try{
+        
+        const response=await axios.get("http://localhost:8000/api/Profile-Get-me",{
+            headers:{
+                Authorization:`Bearer ${token}`,
+            }
+        });
+        sethasprofile(response.data.hasprofile);
+        }catch(error)
+        {
+            console.log(error);
+            sethasprofile(false);
+        }
+      }
+      profileverify();
+    },[])
     const handleLogout=()=>{
         localStorage.removeItem("token");
         navigate("/login");
@@ -19,9 +41,12 @@ export default function DashBoardLayout({children}){
                     <ListItemButton onClick={()=>{navigate("/dashboard");setopen(false)}}>
                         <ListItemText primary="Home-page"/>
                     </ListItemButton>
-                    <ListItemButton onClick={()=>{navigate("/Create-Profile");setopen(false)}}>
+                    {!hasprofile &&(
+                       <ListItemButton onClick={()=>{navigate("/Create-Profile");setopen(false)}}>
                         <ListItemText primary="Create your profile"/>
                     </ListItemButton>
+                    )}
+                   
                     <ListItemButton onClick={handleLogout}>
                         <ListItemText primary="Logout"/>
                     </ListItemButton>
