@@ -1,5 +1,4 @@
-const mongoose= require("mongoose");
-const Team =require("../model/Team");
+
 const User=require("../model/User");
 const bcrypt =require("bcrypt");
 const jwt=require("jsonwebtoken");
@@ -57,6 +56,7 @@ async function UserLogin(req,res)
         process.env.JWT_secret,
         {expiresIn : "7d"}
     );
+    console.log("User logged in : ",user1);
     return res.status(200).json({status:"Successfull login",token,user:user1});
 }catch(error)
 {

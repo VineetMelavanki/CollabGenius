@@ -1,24 +1,36 @@
 const Profile=require("../model/Profile");
+const cloudinary=require("../config/cloudinary");
 const User=require("../model/User");
 async function CreateProfile(req,res){
+   console.log("CREATE PROFILE REQ.USER:", req.user)
     try{
       const{name,Bio,skills,skillevel,github_link}=req.body;
-      if(!Bio || !skills || !skillevel || !github_link)
+      if(!name || !Bio || !skills || !skillevel || !github_link)
       {
-        return res.status(401).json({msg:"All fields are required",success:false});
+        return res.status(400).json({msg:"All fields are required",success:false});
       }
-      const nameexists=await User.findOne({user:req.user.id});
-      if(nameexists)
+      let photodata=null;
+      if(req.file)
       {
-        return res.status(409).json({msg:"Name already exists",success:false});
+        const uploadresults= await cloudinary.uploader.upload(
+          `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`,
+        {
+          folder:"profile_photos",
+        });
+         photodata={
+          url:uploadresults.secure_url,
+          public_id:uploadresults.public_id,
+         }
       }
       const profile=await Profile.create({
-        name:req.user.id,
+        userId:req.user.id,
+        name,
         Bio,
         skills,
         skillevel,
         github_link,
-      });
+        photo:photodata,
+      })
       return res.status(200).json({msg:"Profile created successfully",data:profile,success:true});
     }catch(error)
     {
@@ -29,7 +41,7 @@ async function CreateProfile(req,res){
 async function ViewProfile(req,res)
 {
   try{
-    const Profileexists=await Profile.findOne({name:req.user.id})
+    const Profileexists=await Profile.findOne({userId:req.user.id})
     if(!Profileexists)
     {
       return res.status(404).json({msg:"Profile not found",success:false});
