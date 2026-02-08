@@ -42,6 +42,7 @@ async function ViewProfile(req,res)
 {
   try{
     const Profileexists=await Profile.findOne({userId:req.user.id})
+    
     if(!Profileexists)
     {
       return res.status(404).json({msg:"Profile not found",success:false});
@@ -54,4 +55,19 @@ async function ViewProfile(req,res)
      return res.status(500).json({msg:"Internal server error",success:false});
   }
 }
-module.exports={CreateProfile,ViewProfile};
+async function getmyprofile(req,res)
+{
+  try{
+     const profile=await Profile.findOne({userId:req.user.id});
+  if(!profile)
+  {
+    return res.status(404).json({hasprofile:false});
+  }
+  return res.status(200).json({hasprofile:true});
+  }catch(error)
+  {
+    console.log(error);
+    return res.status(500).json({msg:"Internal server error",success:false});
+  }
+}
+module.exports={CreateProfile,ViewProfile,getmyprofile};
