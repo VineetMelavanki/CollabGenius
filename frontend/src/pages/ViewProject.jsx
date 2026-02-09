@@ -1,7 +1,7 @@
 import React from "react";
 import { useState,useEffect } from "react";
 import axios from "axios";
-import {Box,Typography,Paper, PopoverPaper} from "@mui/material"
+import {Box,Typography,Paper, PopoverPaper, List, ListItem, ListItemText} from "@mui/material"
 export default function ViewProject(){
    const[error,seterror]=useState("");
    const[project,setproject]=useState(null)
@@ -64,6 +64,26 @@ export default function ViewProject(){
                 <Typography variant="h7">Project status : {project.status}</Typography>
             </Box>
             </Paper>
+<Paper elevation={0} sx={{ width: 400, p: "1rem 1rem" }}>
+  <Box sx={{ display: "flex", flexDirection: "column" }}>
+    <Typography variant="h6">Project Members</Typography>
+
+    {project.members && project.members.length > 0 ? (
+      <List>
+        {project.members.map((member) => (
+          <ListItem key={member._id}>
+            <ListItemText
+              primary={member.name}
+              secondary={member._id}
+            />
+          </ListItem>
+        ))}
+      </List>
+    ) : (
+      <Typography variant="body2">No members found</Typography>
+    )}
+  </Box>
+</Paper>
         </Box>
       </Box>
      )} 

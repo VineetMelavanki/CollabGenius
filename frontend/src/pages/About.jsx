@@ -4,7 +4,6 @@ import {Box,Paper,Typography,Card,Grid,CardContent,CardActions} from "@mui/mater
 export default function About()
 {
     return(
-        
          <Box sx={{display:"flex",minWidth:"100vw",minHeight:"100vh",flexDirection:"column",color:"black"}}>
            <Box sx={{textAlign:"center",mb:3}}>
            <Typography variant="h3"sx={{mb:2}}>
@@ -53,7 +52,5 @@ export default function About()
           </Grid>
         </Grid>
         </Box>
-         
-        
     )
 }

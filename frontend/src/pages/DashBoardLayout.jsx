@@ -11,7 +11,7 @@ export default function DashBoardLayout({children}){
 
     useEffect(()=>{
       const profileverify=async()=>{
-        sethasprofile(null);
+        sethasprofile(false);
         const token=localStorage.getItem("token");
         try{
         
@@ -41,7 +41,7 @@ export default function DashBoardLayout({children}){
                     <ListItemButton onClick={()=>{navigate("/dashboard");setopen(false)}}>
                         <ListItemText primary="Home-page"/>
                     </ListItemButton>
-                    {!hasprofile &&(
+                    {hasprofile &&(
                        <ListItemButton onClick={()=>{navigate("/Create-Profile");setopen(false)}}>
                         <ListItemText primary="Create your profile"/>
                     </ListItemButton>
