@@ -44,7 +44,7 @@ async function Getallprojects(req,res)
 async function ViewProject(req,res){
     try{
         console.log("The owner id is :",req.user.id);
-        const projectexists=await Project.findOne({ownerId:req.user.id});
+        const projectexists=await Project.findOne({ownerId:req.user.id}).populate('members');
         if(!projectexists)
         {
             return res.status(404).json({msg:"Project does not exists",success:false});
@@ -58,6 +58,7 @@ async function ViewProject(req,res){
             ...projectexists.toObject(),
             ownerProfile:ownerProfile
         }
+        console.log("Full fledged project : ",projectWithProfile);
         
         return res.status(200).json({msg:"Project Found",project:projectWithProfile,success:true});
     }catch(error)
