@@ -109,6 +109,10 @@ export default function DashBoardLayout({ children }) {
             <h2 className="text-2xl font-bold text-primary-600 hidden md:block">Dashboard</h2>
             
             <div className="flex gap-3">
+              <button className="text-blue-500  border-2 border-gray-300 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition"
+              onClick={()=>navigate("/getallprojects")}>
+                Your Projects
+              </button>
             {about && <button className="text-blue-600 border-2 border-gray-300 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition"
              onClick={()=>{navigate('/About');setabout(!about)}}>
               About

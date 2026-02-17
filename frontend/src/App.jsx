@@ -9,6 +9,7 @@ import About from './pages/About';
 import CreateProject from './pages/CreateProject';
 import DashBoardLayout from './pages/DashBoardLayout';
 import ViewProject from './pages/ViewProject';
+import Allprojects from './pages/allprojects';
 export default function App()
 {
 return (
@@ -46,6 +47,11 @@ return (
         <Route path='/View-Project' element={
           <DashBoardLayout>
             <ViewProject/>
+          </DashBoardLayout>
+        }/>
+        <Route path='/getallprojects' element={
+          <DashBoardLayout>
+            <Allprojects/>
           </DashBoardLayout>
         }/>
   </Routes>
