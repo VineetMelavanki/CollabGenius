@@ -6,7 +6,7 @@ export default function DashBoardLayout({ children }) {
   const [open, setopen] = useState(false);
   const navigate = useNavigate();
   const [hasprofile, sethasprofile] = useState(false);
-  
+  const[about,setabout]=useState(true);
   useEffect(() => {
     const profileverify = async () => {
       sethasprofile(false);
@@ -91,7 +91,7 @@ export default function DashBoardLayout({ children }) {
         <header className="bg-white shadow-sm sticky top-0 z-30">
           <div className="flex items-center justify-between px-6 py-4">
             <div className="flex items-center gap-4">
-              <button onClick={()=>navigate(-1)}
+              <button onClick={()=>{navigate(-1);setabout(!about)}}
                 className="flex items-center gap-2 text-blue-600 hover:text-blue-400 font-medium border-">
                 <IoArrowBack size={20}/>
               </button>
@@ -109,7 +109,10 @@ export default function DashBoardLayout({ children }) {
             <h2 className="text-2xl font-bold text-primary-600 hidden md:block">Dashboard</h2>
             
             <div className="flex gap-3">
-             
+            {about && <button className="text-blue-600 border-2 border-gray-300 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition"
+             onClick={()=>{navigate('/About');setabout(!about)}}>
+              About
+              </button>} 
               <button
                 onClick={handleLogout}
                 className="px-4 py-2 border-2 border-red-500 text-red-500 font-medium rounded-lg hover:bg-red-50 transition"

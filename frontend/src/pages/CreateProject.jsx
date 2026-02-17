@@ -42,44 +42,31 @@ export default function CreateProject() {
   };
 
   return (
-    <div className="min-h-screen flex items-start justify-center px-4 p-8">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-10 px-9 py-1-">
-        <h2 className="text-4xl font-bold text-gray-800 text-center mb-6">Create Project</h2>
-
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-4">
-            {error}
-          </div>
-        )}
-
-        {msg && (
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-4">
-            {msg}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-          
-            <input
-              type="text"
-              name="title"
-              value={formdata.title}
-              onChange={handlechange}
-              required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition mt-4 mb-6"
-              placeholder="Enter project name"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full py-3 bg-primary-500 text-black font-semibold rounded-lg hover:bg-primary-600 transform hover:scale-[1.02] transition-all duration-200 shadow-lg mt-6"
-          >
+     <div className=" flex min-h-full items-center justify-center bg-slate-100">
+      <div className="bg-white p-10  rounded-3xl shadow-xl w-full max-w-md">
+        <div className="flex flex-col gap-3">
+          <h1 className="text-gray-800 text-center font-bold text-2xl">
             Create Project
-          </button>
-        </form>
+            </h1>
+            <h2 className="font-light text-lg text-gray-500 text-center">
+              Creating project helps you recruit team-mates
+              </h2>
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                <input
+                type="text"
+                name="project-title"
+                placeholder="Project name"
+                value={formdata.title}
+                onChange={handlechange}
+               className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+               <button type="submit" className="bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 transition mb-4">
+                Create Project
+                </button>
+                </form>
+                {error &&<p className="text-red-500 text-2xl font-thin text-center">{error}</p>}
+       {msg && <p className="text-green-500  text-2xl font-thin text-center">{msg}</p>}
+          </div>
+        </div>
       </div>
-    </div>
   );
 }

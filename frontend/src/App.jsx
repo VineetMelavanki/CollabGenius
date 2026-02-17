@@ -9,15 +9,16 @@ import About from './pages/About';
 import CreateProject from './pages/CreateProject';
 import DashBoardLayout from './pages/DashBoardLayout';
 import ViewProject from './pages/ViewProject';
-
 export default function App()
 {
 return (
   <BrowserRouter>
   <Routes>
     <Route path="/" element={<Homepage/>} />
-    <Route path="/login" element={<Login/>}/>
-    <Route path="/register" element={<Register/>}/>
+    <Route path="/login" element={
+  <Login/>}/>
+    <Route path="/register" element={
+      <Register/>}/>
     <Route path="/View-Profile" element={
       <DashBoardLayout>
       <ViewProfile/>

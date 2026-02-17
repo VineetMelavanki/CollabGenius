@@ -10,7 +10,7 @@ function Navbar() {
         Collab-Genius
       </h1>
 
-      <div className="space-x-4">
+      <div className="flex flex-row gap-5">
         <button
                 onClick={() => navigate("/About")}
                 className="px-4 py-2 border-2 border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition"
@@ -19,15 +19,15 @@ function Navbar() {
               </button>
         <button
           onClick={() => navigate("/login")}
-          className="text-blue-600 font-semibold"
+          className="text-blue-600 border-2 border-gray-300 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition"
         >
-          Login
+          Sign-in
         </button>
         <button
           onClick={() => navigate("/register")}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          className="text-blue-600 border-2 border-gray-300 px-4 py-2 rounded-lg font-medium hover:bg-gray-50 transition"
         >
-          Register
+          Sign-up
         </button>
         
       </div>

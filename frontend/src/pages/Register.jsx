@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import {LogIn} from "lucide-react"
 export default function Register() {
   const navigate = useNavigate();
   const [formdata, setformdata] = useState({
@@ -38,40 +38,50 @@ export default function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-slate-100">
-       <div className="bg-white w-80 p-6 rounded-xl drop-shadow-lg">
-        <h1 className="font-bold text-2xl mb-4 text-center">
-          Register
-        </h1>
-        {error && <p className="bg-red-500 text-white text-sm p-2 rounded mb-2 text-center">{error}</p>}
-        {message &&<p className="bg-green-500 text-white text-sm p-2 rounded mb-2 text-center">{message}</p>}
-
-        <form onSubmit={submitchange} className="flex flex-col gap-4">
-         <input
-         className="border p-2 rounded"
-         placeholder="Enter your name"
-         value={formdata.name}
-         type="text"
-         name="name"
-         onChange={handlechange}/>
-         <input
-         className="border p-2 rounded"
-         placeholder="Enter your email"
-         type="email"
-         value={formdata.email}
-         name="email"
-         onChange={handlechange}/>
-         <input
-         className="border p-2 rounded"
-         placeholder="Enter your password"
-         type="text"
-         name="password"
-         value={formdata.password}
-         onChange={handlechange}/>
-         <button type="submit" className="bg-blue-600 hover:bg-blue-700 transition text-white text-center text-sm">Register</button>
-        </form>
-        
+    <div className=" flex min-h-screen items-center justify-center bg-slate-100 ">
+      <div className="bg-white p-10 rounded-3xl shadow-xl w-full max-w-md">
+        <div className="flex justify-center items-center mb-4">
+          <LogIn className="w-6 h-6"/>
+          </div>
+          <div className="flex flex-col gap-4">
+            <h1 className="font-bold text-2xl text-gray-800 text-center">
+             Sign up with email
+            </h1>
+            <h2 className="font-light text-lg text-gray-500 text-center">
+              Sign up to view listed project and collaborate 
+            </h2>
+            <form onSubmit={submitchange} className="flex flex-col gap-3">
+              <input
+              type="text"
+              name="name"
+              placeholder="Name"
+              value={formdata.name}
+              onChange={handlechange}
+               className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+               <input
+               type="text"
+               placeholder="Email"
+               name="email"
+               value={formdata.email}
+               onChange={handlechange}
+               className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+               <input
+               type="password"
+               placeholder="password"
+               name="password"
+               value={formdata.password}
+               onChange={handlechange}
+               className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+               <button type="submit" className="bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 transition mb-4">
+                Create Account
+               </button>
+              </form>
+                {error &&<p className="text-red-500 text-2xl font-thin text-center">{error}</p>}
+       {message && <p className="text-green-500  text-2xl font-thin text-center">{message}</p>}
+            </div>
         </div>
+
     </div>
+    
   );
 }
