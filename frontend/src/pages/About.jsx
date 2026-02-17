@@ -1,56 +1,37 @@
-import React from "react";
-import HoverEfffect from "../effects/HoverCard";
-import {Box,Paper,Typography,Card,Grid,CardContent,CardActions} from "@mui/material"
-export default function About()
-{
-    return(
-         <Box sx={{display:"flex",minWidth:"100vw",minHeight:"100vh",flexDirection:"column",color:"black"}}>
-           <Box sx={{textAlign:"center",mb:3}}>
-           <Typography variant="h3"sx={{mb:2}}>
-            About our platform
-           </Typography>
-            <Typography variant="h6" sx={{color:"black"}}>
-            Our platform provides an easy way to collaborate and maintain transparency , this platform is user friendly and can be used in wide range of professions
-            </Typography>
-           </Box>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={4}>
-            <HoverEfffect>
-             <Paper sx={{
-                width:400,
-                p:"2rem 2rem",
-                justifyContent:"center",
-                textAlign:'center'
-            }}>
-                
-                 <Typography variant="h6" sx={{color:"red",mb:2}}>
-                Revenue generate 
-             </Typography>
-             <Typography variant="h7" sx={{color:"red"}}>
-               $300K+
-             </Typography>
-            </Paper>
-            </HoverEfffect>
-          </Grid>
-          <Grid item xs={12} sm={6} md={4}>
-            <HoverEfffect>
-              <Paper sx={{
-                width:400,
-                p:"2rem 2rem",
-                justifyContent:"center",
-                textAlign:'center'
-            }}>
-            <Typography variant="h6" sx={{color:"red",mb:2}}>
-                Users Attracted
-            </Typography>
-            <Typography>
-                Total Usera :100k
-            </Typography>
-            </Paper>  
-            </HoverEfffect>
-            
-          </Grid>
-        </Grid>
-        </Box>
-    )
+ export default function About() {
+  return (
+    <>
+      <section className="py-20 px-8 bg-slate-100 text-center mb-4">
+        <h2 className="text-3xl font-bold mb-12">
+          Why Collab-Genius?
+        </h2>
+        <div className="grid md:grid-cols-3 gap-8">
+          <div className="p-6 bg-white rounded-xl shadow">
+            🤝
+            <h3 className="font-bold mt-3">Find Teammates</h3>
+            <p className="text-sm text-slate-500 mt-2">
+              Connect with like-minded builders.
+            </p>
+          </div>
+          <div className="p-6 bg-white rounded-xl shadow">
+            🚀
+            <h3 className="font-bold mt-3">Launch Faster</h3>
+            <p className="text-sm text-slate-500 mt-2">
+              Turn ideas into real products.
+            </p>
+          </div>
+          <div className="p-6 bg-white rounded-xl shadow">
+            🌍
+            <h3 className="font-bold mt-3">Global Network</h3>
+            <p className="text-sm text-slate-500 mt-2">
+              Collaborate worldwide.
+            </p>
+          </div>
+      
+        </div>
+      
+      </section>
+      
+    </>
+  );
 }
