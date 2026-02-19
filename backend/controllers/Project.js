@@ -41,30 +41,39 @@ async function Getallprojects(req,res)
         return res.status(500).json({msg : "Internal server error ",success : false, error : error.message});
     }
 }
-async function ViewProject(req,res){
+
+async function getprojectbyId(req,res){
     try{
-        console.log("The owner id is :",req.user.id);
-        const projectexists=await Project.findOne({ownerId:req.user.id}).populate('members');
-        if(!projectexists)
-        {
-            return res.status(404).json({msg:"Project does not exists",success:false});
-        }
-        
-        const ownerProfile=await Profile.findOne({userId:req.user.id});
-        console.log("Populated project : ",projectexists);
-        console.log("Owner profile : ",ownerProfile);
-        
-        const projectWithProfile={
-            ...projectexists.toObject(),
-            ownerProfile:ownerProfile
-        }
-        console.log("Full fledged project : ",projectWithProfile);
-        
-        return res.status(200).json({msg:"Project Found",project:projectWithProfile,success:true});
+       const {id}=req.params;
+       const projectinfo=await Project.findById(id);
+       if(!projectinfo)
+       {
+        return res.status(404).json({msg:"Project Not found",success:false});
+       }
+       return res.status(200).json({msg:"Project found",projectdata:projectinfo,success:true});
     }catch(error)
     {
-        console.log("ViewProject Error:", error);
-        return res.status(500).json({msg:"Internal server error",error:error.message,success:false});
+        console.log(error);
+        return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
-module.exports={CreateProject,Getallprojects,ViewProject};
+async function deleteproject(req,res)
+{
+    try{
+         const{id}=req.params;
+         const deletedproject=await Project.findByIdAndDelete({
+            _id:id,
+            ownerId:req.user.id
+         });
+         if(!deletedproject)
+         {
+            return res.status(404).json({msg:"Project does not exists",success:false});
+         }
+         return res.status(200).json({msg:"Project deleted successfully",deletedproject,success:false,})
+    }catch(error)
+    {
+        console.log(error);
+        return res.status(500).json({msg:"Internal server error",success:false});
+    }
+}
+module.exports={CreateProject,Getallprojects,getprojectbyId,deleteproject};
