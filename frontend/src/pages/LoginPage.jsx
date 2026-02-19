@@ -52,7 +52,7 @@ return (
          Sign in to access the dashboard
         </h2>
         
-        <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-3 " onSubmit={handleSubmit}>
           <input
             type="text"
             name="email"
@@ -68,10 +68,16 @@ return (
           onChange={handlechange}
           placeholder="Enter your password"
           className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500" />
-          <button type="submit" className="bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 transition mb-4">
+          <button type="submit" className="bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 transition mb-2">
             Sign in to account
           </button>
+          <div className=" flex flex-row gap-2 items-center justify-center">
+          <h1 className="text-center ">Dont have an account ? </h1>
+          <button className="text-blue-400 hover:underline" onClick={navigate("/register")}>Sign-up</button>
+          </div>
+          
         </form>
+       
        {error &&<p className="text-red-500 text-2xl font-thin text-center">{error}</p>}
        {message && <p className="text-green-500  text-2xl font-thin text-center">{message}</p>}
       </div>
