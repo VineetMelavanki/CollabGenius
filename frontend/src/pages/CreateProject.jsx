@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-
+import { useNavigate } from "react-router-dom";
 export default function CreateProject() {
+  const navigate=useNavigate();
   const [msg, setmsg] = useState("");
   const [error, seterror] = useState("");
   const [formdata, setformdata] = useState({
@@ -32,6 +33,10 @@ export default function CreateProject() {
         }
       );
       setmsg(response.data.msg || "Project Created Successfully");
+      setTimeout(()=>{
+          navigate("/getallprojects");
+      },2000)
+      
     } catch (error) {
       if (error.response) {
         seterror(error.response.data.msg || "Cannot create Project");
@@ -54,7 +59,7 @@ export default function CreateProject() {
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <input
                 type="text"
-                name="project-title"
+                name="title"
                 placeholder="Project name"
                 value={formdata.title}
                 onChange={handlechange}
