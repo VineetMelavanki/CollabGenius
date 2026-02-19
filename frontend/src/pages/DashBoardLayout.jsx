@@ -70,12 +70,6 @@ export default function DashBoardLayout({ children }) {
               View Profile
             </button>
             <button
-              onClick={() => { navigate("/View-Project"); setopen(false); }}
-              className="w-full text-left px-4 py-3 rounded-lg hover:bg-primary-50 hover:text-primary-600 transition text-gray-700 font-medium"
-            >
-              View Project
-            </button>
-            <button
               onClick={handleLogout}
               className="w-full text-left px-4 py-3 rounded-lg hover:bg-red-50 hover:text-red-600 transition text-gray-700 font-medium"
             >
