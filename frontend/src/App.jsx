@@ -8,8 +8,8 @@ import CreateProfile from './pages/CreateProfile';
 import About from './pages/About';
 import CreateProject from './pages/CreateProject';
 import DashBoardLayout from './pages/DashBoardLayout';
-import ViewProject from './pages/ViewProject';
 import Allprojects from './pages/allprojects';
+import Projectdetails from './pages/Projectdetails';
 export default function App()
 {
 return (
@@ -44,14 +44,14 @@ return (
         <DashBoardLayout>
           <Dashboard/>
         </DashBoardLayout>}/>
-        <Route path='/View-Project' element={
-          <DashBoardLayout>
-            <ViewProject/>
-          </DashBoardLayout>
-        }/>
         <Route path='/getallprojects' element={
           <DashBoardLayout>
             <Allprojects/>
+          </DashBoardLayout>
+        }/>
+        <Route path='/get-project/:id' element={
+          <DashBoardLayout>
+            <Projectdetails/>
           </DashBoardLayout>
         }/>
   </Routes>
