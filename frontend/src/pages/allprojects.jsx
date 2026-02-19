@@ -1,9 +1,11 @@
 import React from "react";
 import { useState } from "react";
 import axios from "axios"
+import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 export default function Allprojects()
 {
+  const navigate=useNavigate();
     const[message,setmessage]=useState("");
     const[error,seterror]=useState("");
     const[projects,setprojects]=useState([]);
@@ -26,6 +28,7 @@ export default function Allprojects()
                         }
                     }
                 );
+                console.log(message);
                  setprojects(response.data.projects);
                  setmessage(response.data.msg || "All projects fetched successfully");
             }catch(error)
@@ -51,13 +54,12 @@ export default function Allprojects()
     </h1>
 
     {error && <p className="text-red-500 ">{error}</p>}
-    {message && <p className="text-green-500 mb-5">{message}</p>}
-
+    
     {projects.length === 0 ? (
       <p className="text-gray-500">No projects found</p>
     ) : (
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 grid-cols-1 md:grid-cols-2  lg:grid-cols-3">
 
         {projects.map((project) => (
 
@@ -73,10 +75,10 @@ export default function Allprojects()
               {project.description || "No description"}
             </p>
 
-            <button className="mt-4 text-purple-600 font-medium hover:underline">
+            <button className="mt-4 text-purple-600 font-medium hover:underline"
+            onClick={()=>navigate(`/get-project/${project._id}`)}>
               View Project →
             </button>
-
           </div>
 
         ))}
