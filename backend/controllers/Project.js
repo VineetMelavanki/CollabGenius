@@ -69,7 +69,7 @@ async function deleteproject(req,res)
          {
             return res.status(404).json({msg:"Project does not exists",success:false});
          }
-         return res.status(200).json({msg:"Project deleted successfully",deletedproject,success:false,})
+         return res.status(200).json({msg:"Project deleted successfully",deletedproject,success:true,})
     }catch(error)
     {
         console.log(error);
