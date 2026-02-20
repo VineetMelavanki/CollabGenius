@@ -75,11 +75,9 @@ export default function Register() {
                <button type="submit" className="bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 transition mb-4">
                 Create Account
                </button>
-               <div className=" flex items-center gap-2 justify-center">
-                <h1 className="text-center">Already have an account ? </h1>
-                <button onClick={navigate("/login")} className="text-blue-400 hover:underline">Sign in </button>
-               </div>
+               
               </form>
+              
                 {error &&<p className="text-red-500 text-2xl font-thin text-center">{error}</p>}
        {message && <p className="text-green-500  text-2xl font-thin text-center">{message}</p>}
             </div>

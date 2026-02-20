@@ -160,7 +160,7 @@ export default function CreateProfile() {
 
           <button
             type="submit"
-            className="w-full py-3 bg-primary-500 text-white font-semibold rounded-lg hover:bg-primary-600 transform hover:scale-[1.02] transition-all duration-200 shadow-lg mt-6"
+            className="w-full py-3 bg-primary-500 text-black font-semibold rounded-lg hover:bg-primary-600 transform hover:scale-[1.02] transition-all duration-200 shadow-lg mt-6"
           >
             Create Profile
           </button>

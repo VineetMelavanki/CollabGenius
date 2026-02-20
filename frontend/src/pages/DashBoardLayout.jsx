@@ -104,7 +104,7 @@ export default function DashBoardLayout({ children }) {
             
             <div className="flex gap-3">
               <button className="text-blue-500  border-2 border-gray-300 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition"
-              onClick={()=>navigate("/getallprojects")}>
+              onClick={()=>navigate("/your-projects")}>
                 Your Projects
               </button>
             
@@ -119,9 +119,9 @@ export default function DashBoardLayout({ children }) {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 p-6">
+        <div className="min-h-screen w-full">
           {children}
-        </main>
+        </div>
       </div>
     </div>
   );

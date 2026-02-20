@@ -43,9 +43,6 @@ export default function Dashboard() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* About Section Card */}
-       
-
         {/* Create Profile Card */}
         {!hasprofile && (
           <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
@@ -69,24 +66,40 @@ export default function Dashboard() {
 
         {/* Create Project Card */}
         <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
+          <div className="text-center ">
+            <div className=" rounded-full flex flex-col items-center justify-center mx-auto mb-4 gap-4">
+              
+               <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                Create Your project
+               </h3>
+               <h3 className="text-lg font-thin text-gray-400 mb-2">
+                Build a team worth collaborating
+               </h3>
+               <button onClick={()=>navigate("/Create-Project")} className="text-lg font-bold border-4  border-blue-300 text-blue-300 p-4 rounded-xl hover:border-red-300">
+                 Create Project
+               </button>
             </div>
-            <h3 className="text-xl font-semibold text-gray-800 mb-2">Create Project</h3>
-            <p className="text-gray-600 mb-4">Start a new collaborative project</p>
-            <button
-              onClick={() => navigate("/Create-Project")}
-              className="px-6 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition font-medium"
-            >
-              Create Project
-            </button>
+          
+
           </div>
-        </div>
+          </div>
+          <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
+            <div className="text-center ">
+                <div className=" rounded-full flex flex-col items-center justify-center mx-auto mb-4 gap-4">
+                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                   View All projects
+                 </h3>
+                 <h3 className="text-lg font-thin text-gray-400 mb-2">
+                    You can easily choose the project you want to join
+                 </h3>
+                 <button onClick={()=>navigate("/getallprojects")} className=" text-lg font-bold border-4  border-blue-300 text-blue-300 p-4 rounded-xl hover:border-red-300">
+                     View
+                 </button>
+                </div>
+            </div>
+          </div>
+          </div>
       </div>
-    </div>
       
   );
 }

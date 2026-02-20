@@ -34,7 +34,7 @@ export default function CreateProject() {
       );
       setmsg(response.data.msg || "Project Created Successfully");
       setTimeout(()=>{
-          navigate("/getallprojects");
+          navigate("/your-projects");
       },2000)
       
     } catch (error) {

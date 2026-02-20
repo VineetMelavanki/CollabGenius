@@ -10,6 +10,7 @@ import CreateProject from './pages/CreateProject';
 import DashBoardLayout from './pages/DashBoardLayout';
 import Allprojects from './pages/allprojects';
 import Projectdetails from './pages/Projectdetails';
+import Getyourprojects from './pages/getyourprojects';
 export default function App()
 {
 return (
@@ -52,6 +53,11 @@ return (
         <Route path='/get-project/:id' element={
           <DashBoardLayout>
             <Projectdetails/>
+          </DashBoardLayout>
+        }/>
+        <Route path='/your-projects' element={
+          <DashBoardLayout>
+            <Getyourprojects/>
           </DashBoardLayout>
         }/>
   </Routes>
