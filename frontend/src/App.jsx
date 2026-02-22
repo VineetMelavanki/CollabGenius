@@ -11,6 +11,7 @@ import DashBoardLayout from './pages/DashBoardLayout';
 import Allprojects from './pages/allprojects';
 import Projectdetails from './pages/Projectdetails';
 import Getyourprojects from './pages/getyourprojects';
+import ViewIndiProfile from './pages/ViewIndiProfile';
 export default function App()
 {
 return (
@@ -60,6 +61,12 @@ return (
             <Getyourprojects/>
           </DashBoardLayout>
         }/>
+        <Route path='/view-profile/:id' element={
+          <DashBoardLayout>
+            <ViewIndiProfile/>
+            </DashBoardLayout>
+        }
+        />
   </Routes>
   </BrowserRouter>
 )

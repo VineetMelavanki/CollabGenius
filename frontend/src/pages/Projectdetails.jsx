@@ -30,6 +30,7 @@ export default function Projectdetails()
                 }
             }
            );
+           console.log(message);
           setmessage(response?.data?.msg || "Added member successfully");
           const updatedProject=response?.data?.Project;
           setmembers(updatedProject.members || []);
@@ -159,7 +160,8 @@ export default function Projectdetails()
                     <div className="bg-white">
                        <h1 className="text-lg font-serif text-green-500">ADD MEMBERS</h1>
                     </div>
-                   <form className="flex flex-col gap-3 justify-start items-start" onSubmit={addmembers}>
+                 {owner &&
+                 <form className="flex flex-col gap-3 justify-start items-start" onSubmit={addmembers}>
                      <input type="text"
                      name="email"
                      placeholder="Enter user email"
@@ -169,6 +171,7 @@ export default function Projectdetails()
                      className="border border-4 border-red-500 w-80"/>
                      <button className="border border-2 w-80 " type="submit">ADD</button>
                    </form>
+                 }  
                  </div>
                  <div className="bg-white flex rounded-xl w-full flex-col gap-3">
                   <h1 className="bg-blue-400 text-lg mb-4">
@@ -177,9 +180,9 @@ export default function Projectdetails()
                   {members.length===0 ? (
                     <h1 className="text-gray-500 text-md">No member found</h1>
                   ):(
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
                      {members.map((member,index)=>(
-                        <div key={member._id || member || index} className="bg-slate-200 flex flex-col gap-2 items-start justify-start p-4 rounded">
+                        <div key={member._id || member || index} className="bg-slate-200 flex flex-col gap-2 items-start justify-start p-4 rounded w-80">
                             <h1 className="text-black text-lg mb-3">
                                 Member Name : {member.name || 'Unknown'}
                             </h1>
@@ -189,6 +192,7 @@ export default function Projectdetails()
                             <h1 className="text-black text-sm mb-3">
                                Member Id : {member._id || member}
                             </h1>
+                            <button onClick={()=>navigate(`/view-profile/${member._id}`)}>View Profile</button>
                         </div>
                      ))
                      }

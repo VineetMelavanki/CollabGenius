@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import {FolderIcon} from "@heroicons/react/24/solid"
 export default function Dashboard() {
   const navigate=useNavigate();
   const[hasprofile,sethasprofile]=useState(false);
@@ -68,7 +69,7 @@ export default function Dashboard() {
         <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
           <div className="text-center ">
             <div className=" rounded-full flex flex-col items-center justify-center mx-auto mb-4 gap-4">
-              
+              <FolderIcon className="w-10 h-10 text-yellow-500 mb-5"/>
                <h3 className="text-xl font-semibold text-gray-800 mb-2">
                 Create Your project
                </h3>
