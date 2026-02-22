@@ -82,6 +82,36 @@ async function addmembers(req,res)
         return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
+async function removemember(req,res)
+{
+    try{ 
+      const {projectId,memberId}=req.params;
+      
+      const project=await Project.findById(projectId)
+      .populate("members","name email _id");
+      if(!project)
+      {
+        return res.status(404).json({msg:"Project not found ",success:false});
+      }
+      const user=req.user.id;
+      if(project.ownerId.toString()!==user)
+      {
+        return res.status(409).json({msg:"Only Team leader can remove a member",success:false});
+      }
+      if(memberId===project.ownerId.toString())
+      {
+        return res.status(409).json({msg:"owner cannot be removed",success:false});
+      }
+      project.members=project.members.filter(
+        member=>member._id.toString()!==memberId
+      );
+      await project.save();
+      return res.status(200).json({msg:"Member removed successfully",newproject:project,success:true})
+    }catch(error)
+    {
+      return res.status(500).json({msg:"Internal server error",success:false});
+    }
+}
 async function yourprojects(req,res)
 {
     try{
@@ -139,4 +169,4 @@ async function deleteproject(req,res)
         return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
-module.exports={CreateProject,Getallprojects,getprojectbyId,deleteproject,yourprojects,addmembers};
+module.exports={CreateProject,Getallprojects,getprojectbyId,deleteproject,yourprojects,addmembers,removemember};
