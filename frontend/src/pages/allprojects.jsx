@@ -10,7 +10,7 @@ export default function Allprojects()
     const[error,seterror]=useState("");
     const[projects,setprojects]=useState([]);
     const token=localStorage.getItem("token");
-    
+
     useEffect(()=>{
         const getallprojects= async ()=>{
             
