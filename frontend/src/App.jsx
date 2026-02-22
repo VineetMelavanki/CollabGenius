@@ -51,7 +51,7 @@ return (
             <Allprojects/>
           </DashBoardLayout>
         }/>
-        <Route path='/get-project/:id' element={
+        <Route path='/get-project/:projectId' element={
           <DashBoardLayout>
             <Projectdetails/>
           </DashBoardLayout>
