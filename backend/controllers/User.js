@@ -64,6 +64,28 @@ async function UserLogin(req,res)
     return res.status(500).json({msg : "Internal server error ", success : false, error : error.message});
 }
 }
+async function getuserByname(req,res)
+{
+    try{
+        const{name}=req.query;
+        if(!name)
+        {
+            return res.status(409).json({msg:"Please enter a name",success:false});
+        }
+        const Users=await User.find({
+            name:{$regex:name,$options:"i"}
+        }).select("_id name email");
+        if(Users.length===0)
+        {
+            return res.status(404).json({msg:"User does not exists",success:false});
+        }
+        return res.status(200).json({msg:"User exists",userdata:Users,success:true});
+    }catch(error)
+    {
+        console.log(error);
+        return res.status(500).json({msg:"Internal server error",success:false});
+    }
+}
 async function getuserbyId(req,res)
 {
     try{
@@ -85,11 +107,11 @@ async function getallusers(req,res)
 {
     try{
         const getall=await User.find({});
-        return res.status(200).json({msg :getall.length ? "Users exists" : "No user exists",data : getall, success : true});
+        return res.status(200).json({msg :getall.length ? "Users exists" : "No user exists",user : getall, success : true});
     }catch(error)
     {
         console.log(error);
         return res.status(500).json({msg : "Internal server error ",success : false , error : error.message});
     }
 }
-module.exports={UserLogin,UserRegisteration,getuserbyId,getallusers};
+module.exports={UserLogin,UserRegisteration,getuserbyId,getallusers,getuserByname};
