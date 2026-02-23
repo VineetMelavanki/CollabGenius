@@ -1,303 +1,362 @@
 import React from "react";
 import axios from "axios";
-import { useState ,useEffect} from "react";
-import { useParams,useNavigate } from "react-router-dom";
-import {FaTrash} from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { FaTrash, FaUserPlus, FaPencilAlt, FaArrowLeft, FaUsers, FaEnvelope, FaCrown } from "react-icons/fa";
 
-export default function Projectdetails()
-{
-    const {projectId}=useParams();
-    const navigate=useNavigate();
-     const[error,seterror]=useState("");
-     const[message,setmessage]=useState("");
-     const[owner,setowner]=useState(null);
-     const[ownerId,setownerId]=useState(null);
-     const[project,setproject]=useState(null);
-     const[members,setmembers]=useState([]);
-     const[showaddmodel,setshowaddmodel]=useState(false);
-     const[formdata,setformdata]=useState({
-        email:"",
-     });
-    
-     const[edit,setedit]=useState(false);
-    const token=localStorage.getItem("token");
-    const removemember=async(memberId)=>{
-        seterror("");
-        setmessage("");
+export default function Projectdetails() {
+  const { projectId } = useParams();
+  const navigate = useNavigate();
+  const [error, seterror] = useState("");
+  const [message, setmessage] = useState("");
+  const [loading, setloading] = useState(true);
+  const [owner, setowner] = useState(null);
+  const [ownerId, setownerId] = useState(null);
+  const [project, setproject] = useState(null);
+  const [members, setmembers] = useState([]);
+  const [showaddmodel, setshowaddmodel] = useState(false);
+  const [formdata, setformdata] = useState({ email: "" });
+  const [edit, setedit] = useState(false);
+  const token = localStorage.getItem("token");
 
-        try{
-          const response=await axios.delete(`http://localhost:8000/api/Project/remove-member/${projectId}/${memberId}`,
-            {
-                headers:
-                {
-                    Authorization:`Bearer ${token}`,
-                }
-            }
-          );
-          setmembers(prev =>prev.filter(m=>m._id!==memberId));
-          setmessage(response.data.msg || "Member removed successfully");
-        }catch(error)
-        {
-             if(error.response)
-             {
-                seterror(error.response.data.msg || "cannot remove member");
-             }
-             else
-             {
-                seterror("Internal server error");
-             }
-        }
+  const removemember = async (memberId) => {
+    seterror("");
+    setmessage("");
+    try {
+      const response = await axios.delete(
+        `http://localhost:8000/api/Project/remove-member/${projectId}/${memberId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setmembers((prev) => prev.filter((m) => (m._id || m).toString() !== memberId.toString()));
+      setmessage(response.data.msg || "Member removed successfully");
+      setedit(false);
+    } catch (err) {
+      seterror(err.response?.data?.msg || "Cannot remove member");
     }
-    const addmembers=async(e)=>{
-        e.preventDefault();
-        seterror("");
-        setmessage("");
+  };
 
-        try{
-           const response=await axios.post(`http://localhost:8000/api/Project/Add-members/${projectId}`,
-            formdata,
-            {
-                headers:
-                {
-                    Authorization:`Bearer ${token}`,
-                }
-            }
-           );
-           console.log(message);
-          setmessage(response?.data?.msg || "Added member successfully");
-          if(response.data.success)
-          {
-            const refreshed=await axios.get(`http://localhost:8000/api/Project/get-project/${projectId}`,
-                {
-                    headers:{
-                        Authorization:`Bearer ${token}`,
-                    }
-                }
-            );
-            setmembers(refreshed.data.projectdata.members || []);
-          }
-         
-          setformdata({email:""});
-        }catch(error)
-        {
-              if(error.response)
-              {
-                seterror(error.response.data.msg || "Cannot add member");
-              }
-              else
-              {
-                seterror("Internal server error");
-              }
-        }
+  const addmembers = async (e) => {
+    e.preventDefault();
+    seterror("");
+    setmessage("");
+    try {
+      const response = await axios.post(
+        `http://localhost:8000/api/Project/Add-members/${projectId}`,
+        formdata,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setmessage(response?.data?.msg || "Added member successfully");
+      if (response.data.success) {
+        const refreshed = await axios.get(
+          `http://localhost:8000/api/Project/get-project/${projectId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setmembers(refreshed.data.projectdata.members || []);
+      }
+      setformdata({ email: "" });
+      setshowaddmodel(false);
+    } catch (err) {
+      seterror(err.response?.data?.msg || "Cannot add member");
     }
-    const handlechange=(e)=>{
-     setformdata((prev)=>({...prev,[e.target.name]:e.target.value}));
-    }
-    const deleteproject=async()=>{
-            seterror("");
-            setmessage("");
+  };
 
-            try{
-                const response=await axios.delete(`http://localhost:8000/api/Project/delete/${projectId}`,
-                    {
-                        headers:{
-                            Authorization:`Bearer ${token}`,
-                        }
-                    }
-                );
-                setmessage(response.data?.msg || "Project deleted successfully");
-                navigate("/getallprojects")
-            }catch(error)
-            {
-                if(error.response)
-                {
-                    seterror(error.response?.data?.msg || "Cannot delete project");
-                }else
-                {
-                    seterror("Internal server error");
-                }
-            }
-        }  
-     useEffect(()=>{
-        const displayproject=async()=>{
-            seterror("");
-        setmessage("");
-            try{
-                const response=await axios.get(`http://localhost:8000/api/Project/get-project/${projectId}`,
-                    {
-                        headers:{
-                            Authorization:`Bearer ${token}`,
-                        }
-                    }
-                );
-                const response1=await axios.get("http://localhost:8000/api/Profile/View-Profile",
-                    {
-                        headers:{
-                            Authorization:`Bearer ${token}`
-                        }
-                    }
-                );
-                const ProfileData=response1.data.Profile;
-                const user=ProfileData.userId;
-                const projectData=response.data.projectdata;
-                setproject(projectData);
-                setmessage(response.data.msg || "Project fetched succcessfully");
-                
-                // Handle members - they are now populated objects with name and email
-                const membersList = projectData.members || [];
-                setmembers(membersList);
-                setownerId(typeof projectData.ownerId === "object"
-    ? projectData.ownerId._id
-    : projectData.ownerId);
-                // Handle owner comparison - ownerId might be populated object or string
-                const ownerId = typeof projectData.ownerId === 'object' 
-                    ? (projectData.ownerId._id || projectData.ownerId)
-                    : projectData.ownerId;
-                
-                if(ownerId && (ownerId.toString() === user.toString() || ownerId === user))
-                {
-                    setowner(true);
-                }
-                else
-                {
-                    setowner(false);
-                }
-            }
-         catch(error)
-        { 
-           if(error.response)
-           {
-            seterror(error.response?.data?.msg || "Cannot fetch project");
-           }
-           else
-           {
-            seterror("Internal server error");
-           }
-        }
-        
+  const handlechange = (e) => {
+    setformdata((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const deleteproject = async () => {
+    if (!window.confirm("Are you sure you want to delete this project? This cannot be undone.")) return;
+    seterror("");
+    setmessage("");
+    try {
+      const response = await axios.delete(
+        `http://localhost:8000/api/Project/delete/${projectId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setmessage(response.data?.msg || "Project deleted successfully");
+      setTimeout(() => navigate("/getallprojects"), 1500);
+    } catch (err) {
+      seterror(err.response?.data?.msg || "Cannot delete project");
     }
-    
-        displayproject();
-     },[projectId,token]);
-    return(
-        <div className="min-h-full">
-           
-            {error &&<p className="text-red-100 font-mono text-lg">{error}</p>}
-            
-            {project && <div key={project._id} className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition px-4">
-                 <div className="flex justify-between flex-1 items-center gap-4">
-                     <h1 className="font-bold  text-black text-2xl mb-3">
-                                     Project Details
-                                 </h1>
-        {owner &&  <button  onClick={deleteproject} className="text-red-500 font-bold border border-red-500 rounded-lg py-2 p-4">Delete</button>}  
-                 </div>
-                <div className="flex flex-col gap-3">
-                    <h2 className="text-xl font-medium text-gray-800">
-                                   <span className="text-gray-400">Name :</span> {project.title}
-                    </h2>
-                    <h2 className="text-xl font-medium text-gray-800 mb-2">
-                     <span className="text-gray-400">ownerId:</span> {typeof project.ownerId === 'object' ? project.ownerId.name || project.ownerId._id : project.ownerId}
-                        </h2>    
-                    <h1 className="text-xl font-medium text-gray-800 mb-2">
-                      <span className="text-gray-400"> Project Status : </span><span className="text-green-500">{project.status}</span>
-                        </h1>
-                 
-                 <div className="bg-white flex rounded-xl w-full flex-col ">
-                  <div className="flex flex-row justify-between gap-3">
-                      <h1 className=" text-lg mb-4 mt-5 font-serif text-red-500">
-                        TEAM MEMBERS :
-                      </h1>
-                   <div>
-                    <div className="flex-1 items-center justify-center">
-                       
-                    </div>
-                 {owner  && <button className="bg-white text-blue-400 border-blue-500 hover:bg-blue-100 transition border border-blue-300 p-4 py-2 rounded-lg" onClick={()=>setshowaddmodel(true)}>
-                        Add
-                       </button> }
-                      {owner && showaddmodel && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-   <div className="bg-white p-6 rounded-xl shadow-lg w-96">
-      <h2 className="text-xl font-bold mb-4">Add Team Member</h2>
-     <form onSubmit={addmembers} className="flex flex-col gap-3">
-       <input
-          type="text"
-          name="email"
-          placeholder="Enter user email"
-          value={formdata.email}
-          onChange={handlechange}
-          className="border border-blue-500 rounded-xl w-full p-2"
-        />
-        <button className="border border-blue-500 rounded w-full p-2 bg-blue-100" type="submit">
-          Add
-        </button>
-       <button
-          type="button"
-          className="mt-2 text-red-400"
-          onClick={() => setshowaddmodel(false)}
-        >
-         Cancel
-        </button>
-      </form>
-   </div>
-  </div>
-)}
-                       {owner  && <button onClick={()=>setedit(!edit)} className="p-4 mx-4 my-4 rounded-full hover:bg-blue-100 transition">
-                         <svg
-                           className="w-5 h-5 text-blue-600"
-                           fill="none"
-                           stroke="currentColor"
-                           viewBox="0 0 24 24"
-                         >
-                           <path
-                             strokeLinecap="round"
-                             strokeLinejoin="round"
-                             strokeWidth={2}
-                             d="M15.232 5.232l3.536 3.536M9 11l6.364-6.364a2 2 0 112.828 2.828L11.828 13.828a4 4 0 01-1.414.943L7 16l1.229-3.414A4 4 0 019 11z"
-                           />
-                         </svg>
-                       </button>}
-                      
-                   </div>
-                  </div>
-                  
-                  {!edit && members.length===0 ? (
-                    <h1 className="text-gray-500 text-md">No member found</h1>
-                  ):(
-                    !edit && (
-                        <div className="grid grid-cols-1">
-                     {members.map((member,index)=>(
-                        <div key={member._id || member || index} className=" bg-gray-50 flex flex-row justify-between gap-2 items-start mb-2 p-4 rounded w-full border border-black">
-                            <h1 className="text-black text-lg mb-3">
-                                Member Name : {member.name || 'Unknown'}
-                            </h1>
-                            <button className="text-blue font-serif border border-blue-400 border-2 p-3" onClick={()=>navigate(`/view-profile/${member._id}`)}>View Profile</button>
-                        </div>
-                     ))
-                     }
-                    </div>
-                    ) 
-                  )}
-                 </div>
-                 {edit && members.length===0 ? (
-                    <h1 className="text-gray-500 text-md">No member found</h1>
-                  ):(
-                    edit && (
-                     <div className="grid grid-cols-1">
-                     {members.map((member,index)=>(
-                        <div key={member._id || member || index} className=" bg-gray-50 flex flex-row justify-between gap-2 items-start  p-4  mb-2 rounded w-full border border-black">
-                            <h1 className="text-black text-lg mb-3">
-                                Member Name : {member.name || 'Unknown'}
-                            </h1>
-                        {owner && ownerId!==member._id  &&<button  className="p-2 text-red-500 hover:bg-red-100 rounded-lg" onClick={()=>{removemember(member._id);setedit(!edit)}}><FaTrash/></button> }    
-                        </div>
-                     ))
-                     }
-                    </div>
-                    )
-                    
-                  )}
-                </div> 
-            </div>} 
-            </div>
+  };
+
+  useEffect(() => {
+    const displayproject = async () => {
+      setloading(true);
+      seterror("");
+      setmessage("");
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/api/Project/get-project/${projectId}`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const response1 = await axios.get("http://localhost:8000/api/Profile/View-Profile", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const ProfileData = response1.data.Profile;
+        const user = ProfileData.userId;
+        const projectData = response.data.projectdata;
+        setproject(projectData);
+        setmessage(response.data.msg || "Project fetched successfully");
+        setmembers(projectData.members || []);
+        const oid =
+          typeof projectData.ownerId === "object"
+            ? projectData.ownerId._id
+            : projectData.ownerId;
+        setownerId(oid);
+        const ownerIdVal =
+          typeof projectData.ownerId === "object"
+            ? projectData.ownerId._id || projectData.ownerId
+            : projectData.ownerId;
+        setowner(
+          ownerIdVal &&
+            (ownerIdVal.toString() === user.toString() || ownerIdVal === user)
+        );
+      } catch (err) {
+        seterror(err.response?.data?.msg || "Cannot fetch project");
+      } finally {
+        setloading(false);
+      }
+    };
+    displayproject();
+  }, [projectId, token]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading project...</p>
+        </div>
+      </div>
     );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Back button */}
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition"
+        >
+          <FaArrowLeft className="w-4 h-4" />
+          <span>Back</span>
+        </button>
+
+        {/* Messages */}
+        {error && (
+          <div className="mb-6 bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded-lg">
+            {error}
+          </div>
+        )}
+        {message && (
+          <div className="mb-6 bg-green-50 border-l-4 border-green-500 text-green-700 px-4 py-3 rounded-lg">
+            {message}
+          </div>
+        )}
+
+        {project && (
+          <div className="space-y-6">
+            {/* Project header card */}
+            <div className="bg-white rounded-2xl shadow-md p-6 md:p-8">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 pb-6 border-b border-gray-200">
+                <div>
+                  <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+                    {project.title}
+                  </h1>
+                  <div className="flex items-center gap-3 mt-2">
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        project.status === "active"
+                          ? "bg-green-100 text-green-800"
+                          : project.status === "archived"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : "bg-gray-100 text-gray-800"
+                      }`}
+                    >
+                      {project.status?.toUpperCase()}
+                    </span>
+                    <span className="flex items-center gap-1 text-gray-500 text-sm">
+                      <FaUsers className="w-4 h-4" />
+                      {members.length} {members.length === 1 ? "member" : "members"}
+                    </span>
+                  </div>
+                </div>
+                {owner && (
+                  <button
+                    onClick={deleteproject}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition text-sm font-medium"
+                  >
+                    <FaTrash className="w-4 h-4" />
+                    Delete Project
+                  </button>
+                )}
+              </div>
+
+              {/* Project info */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-500 text-sm font-medium w-24">Owner</span>
+                  <span className="flex items-center gap-1 text-gray-900">
+                    <FaCrown className="w-4 h-4 text-amber-500" />
+                    {typeof project.ownerId === "object"
+                      ? project.ownerId.name || project.ownerId.email || "Owner"
+                      : "Owner"}
+                  </span>
+                </div>
+                {project.description && (
+                  <div>
+                    <span className="text-gray-500 text-sm font-medium block mb-1">Description</span>
+                    <p className="text-gray-700">{project.description}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Team members section */}
+            <div className="bg-white rounded-2xl shadow-md p-6 md:p-8">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                  <FaUsers className="w-5 h-5 text-blue-600" />
+                  Team Members
+                </h2>
+                <div className="flex items-center gap-2">
+                  {owner && (
+                    <>
+                      <button
+                        onClick={() => setshowaddmodel(true)}
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm font-medium"
+                      >
+                        <FaUserPlus className="w-4 h-4" />
+                        Add Member
+                      </button>
+                      <button
+                        onClick={() => setedit(!edit)}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg transition text-sm font-medium ${
+                          edit
+                            ? "bg-amber-100 text-amber-800 hover:bg-amber-200"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        }`}
+                      >
+                        <FaPencilAlt className="w-4 h-4" />
+                        {edit ? "Done" : "Manage"}
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {edit && owner && (
+                <div className="mb-4 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-2 rounded-lg text-sm">
+                  Edit mode: Click the trash icon to remove a member.
+                </div>
+              )}
+
+              {members.length === 0 ? (
+                <div className="text-center py-12 bg-gray-50 rounded-xl">
+                  <FaUsers className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500">No members yet</p>
+                  {owner && (
+                    <button
+                      onClick={() => setshowaddmodel(true)}
+                      className="mt-3 text-blue-600 hover:text-blue-700 font-medium text-sm"
+                    >
+                      Add your first member
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {members.map((member, index) => (
+                    <div
+                      key={member._id || member || index}
+                      className="flex items-center justify-between gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition border border-gray-100"
+                    >
+                      <div className="flex items-center gap-4 flex-1 min-w-0">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-lg shrink-0">
+                          {(member.name || "U").charAt(0).toUpperCase()}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-semibold text-gray-900 truncate">
+                            {member.name || "Unknown"}
+                            {ownerId && (member._id || member).toString() === ownerId.toString() && (
+                              <span className="ml-2 text-amber-600 text-xs font-normal">(Owner)</span>
+                            )}
+                          </p>
+                          {member.email && (
+                            <p className="text-sm text-gray-500 flex items-center gap-1 truncate">
+                              <FaEnvelope className="w-3 h-3 shrink-0" />
+                              {member.email}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          onClick={() => navigate(`/view-profile/${member._id}`)}
+                          className="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition text-sm font-medium"
+                        >
+                          View Profile
+                        </button>
+                        {owner && edit && ownerId && (member._id || member).toString() !== ownerId.toString() && (
+                          <button
+                            onClick={() => removemember(member._id)}
+                            className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                            title="Remove member"
+                          >
+                            <FaTrash className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Add member modal */}
+        {showaddmodel && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Add Team Member</h2>
+              <form onSubmit={addmembers} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email address
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter member's email"
+                    value={formdata.email}
+                    onChange={handlechange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    type="submit"
+                    className="flex-1 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-medium"
+                  >
+                    Add
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setshowaddmodel(false)}
+                    className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
