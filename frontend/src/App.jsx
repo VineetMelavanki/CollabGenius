@@ -11,6 +11,7 @@ import DashBoardLayout from './pages/DashBoardLayout';
 import Allprojects from './pages/allprojects';
 import Projectdetails from './pages/Projectdetails';
 import Getyourprojects from './pages/getyourprojects';
+import Allusers from './pages/Getallusers';
 import ViewIndiProfile from './pages/ViewIndiProfile';
 export default function App()
 {
@@ -67,6 +68,11 @@ return (
             </DashBoardLayout>
         }
         />
+        <Route path='/allusers' element={
+          <DashBoardLayout>
+            <Allusers/>
+            </DashBoardLayout>
+        }/>
   </Routes>
   </BrowserRouter>
 )
