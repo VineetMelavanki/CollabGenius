@@ -9,13 +9,17 @@ export default function Allprojects()
     const[message,setmessage]=useState("");
     const[error,seterror]=useState("");
     const[projects,setprojects]=useState([]);
-    const[exclproject,setexclproject]=useState(false);
     const token=localStorage.getItem("token");
     const[formdata,setformdata]=useState({
       title:"",
     });
     const handlechange=async(e)=>{
+      e.preventDefault();
       setformdata((prev)=>({...prev, [e.target.name]:e.target.value}));
+    }
+    const clearformdata=async(e)=>{
+      e.preventDefault();
+      setformdata({title:""});
     }
     const handleSubmit=async(e)=>{
       e.preventDefault();
@@ -25,15 +29,15 @@ export default function Allprojects()
       try{
          const response=await axios.get("http://localhost:8000/api/Project/get-project-by-title",
           {
-            params:formdata,
+            params:{title:formdata.title},
             headers:
             {
               Authorization:`Bearer ${token}`,
             }
           }
          );
-         setprojects(response.data.ProjectData);
-         setexclproject(true);
+         console.log("The title is :", console.log(formdata.title));
+         setprojects(response.data.projectdata);
          setmessage(response.data.msg || "Project fetched successfully");
       }catch(error)
       {
@@ -47,14 +51,13 @@ export default function Allprojects()
            }
       }
     }
-    useEffect(()=>{
-        const getallprojects= async ()=>{
-            
+     const getallprojects= async ()=>{
             setmessage("");
             seterror("");
             if(!token)
     {
         seterror("Please log in again");
+        return;
     }
             try{
                 const response=await axios.get("http://localhost:8000/api/Project/getallprojects",
@@ -79,9 +82,15 @@ export default function Allprojects()
             }
            }
         };
+    useEffect(()=>{
         getallprojects();
     },[token]);
-
+    useEffect(()=>{
+      if(formdata.title==="")
+      {
+        getallprojects();
+      }
+    },[formdata.title]);
   return (
   <div className="min-h-full bg-slate-100 p-6">
 
@@ -89,50 +98,24 @@ export default function Allprojects()
       <h1 className="text-2xl font-bold mb-6 text-gray-800">
         All Projects
       </h1>
-      <form className="flex flex-row p-2 gap-4" onSubmit={handleSubmit} >
+      <form className="flex flex-row p-2 gap-4 mb-6" onSubmit={handleSubmit} >
         <input
         type="text"
+        value={formdata.title}
         name="title"
         placeholder="Enter project title"
-        value={formdata.title}
         onChange={handlechange}
+        className="flex text-lg p-2 rounded-xl border border-blue-400"
         />
-        <button type="submit">Search</button>
+        <button className="text-red p-3 border rounded-xl border-red-300 hover:border-red-500" type="submit">Search</button>
+         <button onClick={clearformdata} className="text-lg border text-black border-red-300 hover:border-red-500 rounded-lg px-5 py-2">
+        Clear
+      </button>
       </form>
+     
     </div>
-
-    {error && <p className="text-red-500 ">{error}</p>}
-     {exclproject && projects.length === 0 ? (
-      <p className="text-gray-500">No projects found</p>
-    ) : (
-
-      exclproject &&(<div className="grid gap-6 grid-cols-1 md:grid-cols-2  lg:grid-cols-3">
-
-        {projects.map((project) => (
-
-          <div
-            key={project._id}
-            className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition"
-          >
-            <h2 className="text-xl font-semibold text-gray-800">
-              {project.title}
-            </h2>
-
-            <p className="text-gray-500 mt-2 text-sm">
-              {project.description || "No description"}
-            </p>
-
-            <button className="mt-4 text-purple-600 font-medium hover:underline"
-            onClick={()=>navigate(`/get-project/${project._id}`)}>
-              View Project →
-            </button>
-          </div>
-
-        ))}
-
-      </div>
-      )
-    )}
+    
+    {error && <p className="text-red-500 mb-4 ">{error}</p>}
     {projects.length === 0 ? (
       <p className="text-gray-500">No projects found</p>
     ) : (
@@ -140,7 +123,7 @@ export default function Allprojects()
       <div className="grid gap-6 grid-cols-1 md:grid-cols-2  lg:grid-cols-3">
 
         {projects.map((project) => (
-
+ 
           <div
             key={project._id}
             className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition"
