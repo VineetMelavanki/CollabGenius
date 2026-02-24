@@ -43,25 +43,27 @@ async function Getallprojects(req,res)
         return res.status(500).json({msg : "Internal server error ",success : false, error : error.message});
     }
 }
-async function getprojectByname(req,res)
+async function getprojectBytitle(req,res)
 {
-    try
-    {
+    try{
         const {title}=req.query;
         if(!title)
         {
-            return res.status(409).json({msg:"Please enter project name",success:false});
+            return res.status(409).json({msg:"Please enter a title",success:false});
         }
-        const project=await Project.findOne({title});
-        if(!project)
+        const projects=await Project.find({
+            title:{$regex:title,$options:"i"}
+        }).select("_id title description ");
+        if(projects.length===0)
         {
-            return res.status(404).json({msg:"Project does not exists",success:false});
+            return res.status(404).json({msg:"No project by this title exists",success:false});
         }
-        return res.status(200).json({msg:"Project found successfully",Projectdata:project,success:true});
+        return res.status(200).json({msg:"Projects/Project found successfully",projectdata:projects,success:true})
     }catch(error)
     {
-        console.log(error);
-        return res.status(500).json({msg:"Internal server error",success:false});
+         console.log(error);
+
+         return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
 async function addmembers(req,res)
@@ -190,4 +192,4 @@ async function deleteproject(req,res)
         return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
-module.exports={CreateProject,Getallprojects,getprojectbyId,deleteproject,yourprojects,addmembers,removemember,getprojectByname};
+module.exports={CreateProject,Getallprojects,getprojectbyId,deleteproject,yourprojects,addmembers,removemember,getprojectBytitle};
