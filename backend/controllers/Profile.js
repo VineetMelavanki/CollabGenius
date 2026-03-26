@@ -57,7 +57,8 @@ async function ViewProfile(req,res)
 }
 async function ViewprofileById(req,res) {
     try{
-      const Profilexists=await Profile.findOne({userId:req.params.id});
+      const Profilexists=await Profile.findOne({userId:req.params.id})
+      .populate("photo","url");
       if(!Profilexists)
       {
         return res.status(404).json({msg:"Profile not found",success:false});
@@ -84,4 +85,28 @@ async function getmyprofile(req,res)
     return res.status(500).json({msg:"Internal server error",success:false});
   }
 }
-module.exports={CreateProfile,ViewProfile,getmyprofile,ViewprofileById};
+async function EditProfile(req,res)
+{
+  try{
+    const{name,Bio,skills,skillevel,github_link}=req.body;
+  const profile=await Profile.findOne({userId:req.user.id});
+  if(!profile)
+  {
+    return res.status(404).json({msg:"Profile not found",success:false});
+  }
+  if(!name || !Bio  || !skillevel ||!skills ||  !github_link)
+  {
+    return res.status(409).json({msg:"Field cannot be blank",success:false});
+  }
+  profile.name=name,
+  profile.Bio=Bio,
+  profile.skills=skills,
+  profile.github_link=github_link,
+  await profile.save();
+  return res.status(200).json({msg:"Profile saved successfully",newprofile:profile,success:true});
+  }catch(error)
+  {
+    return res.status(500).json({msg:"Internal server error",success:false});
+  }
+}
+module.exports={CreateProfile,ViewProfile,getmyprofile,ViewprofileById,EditProfile};

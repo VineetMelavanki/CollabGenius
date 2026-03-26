@@ -22,8 +22,12 @@ const NotificationSchema=new mongoose.Schema({
     },
     project:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"project",
+        ref:"Project",
         required:true,
+    },
+    createdAt:{
+        type:Date,
+        default:Date.now
     }
 });
 const Notifications=mongoose.model("Notification",NotificationSchema);

@@ -1,5 +1,6 @@
 const User=require("../model/User");
 const Project=require("../model/project");
+const {Notifications}=require("../model/Notifications")
 const Profile=require("../model/Profile");
 async function CreateProject(req,res)
 {
@@ -89,17 +90,29 @@ async function addmembers(req,res)
       {
         return res.status(404).json({msg:"User not found",success:false});
       }
-      if(Projectexists.members.some(
-        member=>member._id.toString()===user._id.toString()
-      ))
+      const isMember=await Projectexists.members.some((member)=>member._id.toString()===user._id.toString());
+      if(isMember)
       {
-        return res.status(409).json({msg:"user already a member",success:false});
+        return res.status(400).json({msg:"User already an member",success:false});
       }
-      Projectexists.members.push(user._id);
-      await Projectexists.save();
-      console.log("Updated Project is : ",Projectexists);
-      console.log("Project members : ",Projectexists.members);
-      return res.status(201).json({msg:"User added successfully to the team",Project:Projectexists,success:true})
+      const Notificationexists=await Notifications.findOne({
+        receiver:user._id,
+        sender:userId,
+        project:Projectexists._id,
+        status:"pending",
+      });
+      if(Notificationexists)
+      {
+        return res.status(401).json({msg:"Invitation already sent ",success:false});
+      }
+      const Notify=await Notifications.create({
+        receiver:user._id,
+        sender:userId,
+        message:`You have been invited to join ${Projectexists.title}`,
+        project:Projectexists._id,
+      });
+
+      return res.status(201).json({msg:"Invitation Sent successfully",notify:Notify,success:true})
     }catch(error)
     {
         return res.status(500).json({msg:"Internal server error",success:false});

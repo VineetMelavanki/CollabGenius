@@ -1,6 +1,5 @@
 const multer=require("multer");
 const Storage=multer.memoryStorage();
-
 const uploads=multer({
     Storage,
     limits:{fileSize:5*1024*1024},
