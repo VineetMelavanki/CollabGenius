@@ -4,11 +4,62 @@ import axios from "axios";
 export default function ViewProfile() {
   const [error, seterror] = useState("");
   const [user, setuser] = useState(null);
-
+  const[msg,setmsg]=useState("");
+  const[error1,seterror1]=useState("");
+  const[formdata,setformdata]=useState({
+    name:"",
+    Bio:"",
+    skills:"",
+    skillevel:"",
+    github_link:"",
+  });
+  const[edit,setedit]=useState(false);
+  const token=localStorage.getItem("token");
+  const handlechange=async(e)=>{
+    setformdata((prev)=>({...prev,[e.target.name]:e.target.value}));
+  }
+  const handleedit=async(e)=>{
+    e.preventDefault();
+    seterror1("");
+    setmsg("");
+    console.log("Sending data : ",formdata);
+    try{
+     const response=await axios.post("http://localhost:8000/api/Profile/edit-profile",formdata,
+      {
+        headers:{
+          Authorization:`Bearer ${token}`,
+        }
+      }
+     );
+     setuser(response.data.newprofile);
+     setedit(false);
+    }catch(error)
+    {
+        if(error.response)
+        {
+          seterror1(error.response?.data?.msg || "Cannot edit user profile");
+        }else
+        {
+          seterror1("Internal server error");
+        }
+    }
+  }
+  useEffect(()=>{
+     if(user)
+        {
+          setformdata({
+            name:user.name,
+            Bio:user.Bio,
+            skillevel:user.skillevel,
+            skills:user.skills,
+            github_link:user.github_link,
+          })
+        }
+  },[user])
   useEffect(() => {
     const showuser = async () => {
       try {
-        const token = localStorage.getItem("token");
+       
         if (!token) {
           seterror("Please log in");
           return;
@@ -30,7 +81,7 @@ export default function ViewProfile() {
     };
     showuser();
   }, []);
-
+  
   return (
     <div className="min-h-screen px-4 py-8">
       {error && (
@@ -64,14 +115,21 @@ export default function ViewProfile() {
 
             {/* Details Card */}
             <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg p-8">
-              <h3 className="text-3xl font-bold text-gray-800 mb-6">Profile Details</h3>
-              
-              <div className="space-y-6">
+              <div className="flex flex-row justify-between gap-3">
+               <h3 className="text-3xl font-bold text-gray-800 mb-6">Profile Details</h3>
+            {!edit &&    <button onClick={()=>setedit(!edit)} className="text-red-500 border border-red-500 p-4 px-6 rounded-2xl font-bold hover:bg-red-100">
+                Edit
+               </button>}
+             {edit && <button onClick={()=>setedit(!edit)} className="text-red-500 border border-red-500p-4 px-6 rounded-2xl font-bold hover:bg-red-100">
+              Cancel
+              </button>}  
+              </div>
+
+            {!edit && <div className="space-y-6">
                 <div>
                   <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Name</label>
                   <p className="text-lg text-gray-800 mt-1">{user?.name}</p>
                 </div>
-
                 <div>
                   <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Bio</label>
                   <p className="text-lg text-gray-800 mt-1">{user?.Bio}</p>
@@ -90,7 +148,6 @@ export default function ViewProfile() {
                     ))}
                   </div>
                 </div>
-
                 <div>
                   <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Skill Level</label>
                   <p className="text-lg text-gray-800 mt-1">{user?.skillevel}</p>
@@ -110,7 +167,55 @@ export default function ViewProfile() {
                     </svg>
                   </a>
                 </div>
-              </div>
+              </div>}
+              {edit && <div className="space y-6">
+                <form onSubmit={handleedit} className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-2">
+                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Name</label>
+                  <input type="text"
+                  value={formdata.name}
+                  name="name"
+                  onChange={handlechange}
+                  className="text-lg text-gray-800 mt-1 border border-blue-300 rounded-xl "/>
+                  
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Bio</label>
+                    <input type="text"
+                    value={formdata.Bio}
+                    name="Bio"
+                    onChange={handlechange}
+                    className="text-lg text-gray-800 mt-1 border border-blue-300 rounded-xl " />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                   <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Skills</label>
+                   <input type="text" name="skills"
+                   value={formdata.skills}
+                   onChange={handlechange}
+                   className="text-lg text-gray-800 mt-1 border border-blue-300 rounded-xl " />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                   <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Skill Level</label>
+                   <input type="text"
+                   name="skillevel"
+                   value={formdata.skillevel}
+                   onChange={handlechange}
+                   className="text-lg text-gray-800 mt-1 border border-blue-300 rounded-xl "/>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                   <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">GitHub </label>
+                   <input type="url"
+                     name="github_link"
+                     value={formdata.github_link}
+                     onChange={handlechange}
+                     className="text-lg text-gray-800 mt-1 border border-blue-300 rounded-xl "
+                    />
+                  </div>
+                  <button type="submit" className="text-red-400 border border-red-400 rounded-3xl hover:bg-red-100 mt-10">
+                  Apply changes
+                  </button>
+                </form>
+                </div>}
             </div>
           </div>
         </div>

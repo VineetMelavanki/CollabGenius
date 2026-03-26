@@ -138,7 +138,7 @@ export default function Allprojects()
 
             <button className="mt-4 text-purple-600 font-medium hover:underline"
             onClick={()=>navigate(`/get-project/${project._id}`)}>
-              View Project →
+              View Team →
             </button>
           </div>
 

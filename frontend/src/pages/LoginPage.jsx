@@ -7,7 +7,7 @@ export default function Login() {
   const [formdata, setformdata] = useState({ email: "", password: "" });
   const [message, setmessage] = useState(null);
   const [error, seterror] = useState(null);
-
+  
   const handlechange = (e) => {
     setformdata((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -23,9 +23,11 @@ export default function Login() {
         body: JSON.stringify(formdata),
       });
       const data = await response.json();
+
       if (response.ok) {
         setmessage(data.msg || "Login Successfully");
         localStorage.setItem("token", data.token);
+        localStorage.setItem("user",JSON.stringify(data.user));
         setTimeout(() => navigate("/dashboard"), 1000);
       } else {
         seterror(data.msg || "Login failed");

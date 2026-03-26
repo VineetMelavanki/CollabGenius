@@ -2,15 +2,21 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {IoArrowBack} from "react-icons/io5"
+import { BellIcon } from "@heroicons/react/24/outline";
 export default function DashBoardLayout({ children }) {
   const [open, setopen] = useState(false);
   const navigate = useNavigate();
   const [hasprofile, sethasprofile] = useState(false);
+  const[Notifications,setnotifications]=useState([]);
+  const[error,seterror]=useState("");
+  const[message,setmessage]=useState("");
+  const token=localStorage.getItem("token");
   const[about,setabout]=useState(true);
   useEffect(() => {
     const profileverify = async () => {
       sethasprofile(false);
       const token = localStorage.getItem("token");
+      if(!token) return;
       try {
         const response = await axios.get("http://localhost:8000/api/Profile/Get-me", {
           headers: {
@@ -24,7 +30,40 @@ export default function DashBoardLayout({ children }) {
       }
     };
     profileverify();
-  }, []);
+  }, [token]);
+
+  useEffect(()=>{
+    seterror("");
+       setmessage("");
+       
+       const getallnotifications=async()=>{
+           const token = localStorage.getItem("token");
+           if(!token) return;
+           try{
+               const response=await axios.get("http://localhost:8000/api/My/Notifications",
+           {
+               headers:{
+                   Authorization:`Bearer ${token}`,
+               }
+           }
+       )
+       setnotifications(response.data.Notify || []);
+       setmessage(response.data.msg || "All Notifications fetched");
+           }catch(error)
+           {
+               if(error.response)
+               {
+                 console.log(error);
+                   seterror(error.response?.data?.msg || "Cannot fetch notifications");
+               }else
+               {
+                   seterror("Internal server error");
+               }
+           }
+           
+       }
+       getallnotifications();
+ },[token]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -103,13 +142,21 @@ export default function DashBoardLayout({ children }) {
             <h2 className="text-2xl font-bold text-primary-600 hidden md:block">Dashboard</h2>
             
             <div className="flex gap-3">
+              <button className="relative p-2 rounded-full hover:bg-gray-200 transition" onClick={()=>navigate("/Notifications")}>
+                <BellIcon className="h-6 w-6 text-gray-700" />
+                {Notifications.length > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center font-bold">
+                    {Notifications.length}
+                  </span>
+                )}
+              </button>
               <button className="text-blue-500 border-2 border-gray-300 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition"
               onClick={()=>navigate("/allusers")}>
                 All USERS
               </button>
               <button className="text-blue-500  border-2 border-gray-300 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition"
               onClick={()=>navigate("/your-projects")}>
-                Your Projects
+                Your Team
               </button>
             
               <button

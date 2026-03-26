@@ -6,12 +6,14 @@ import ViewProfile from './pages/ViewProfile';
 import Dashboard from './pages/Dashboard';
 import CreateProfile from './pages/CreateProfile';
 import About from './pages/About';
+import Navbar from './pages/navbar';
 import CreateProject from './pages/CreateProject';
 import DashBoardLayout from './pages/DashBoardLayout';
 import Allprojects from './pages/allprojects';
 import Projectdetails from './pages/Projectdetails';
 import Getyourprojects from './pages/getyourprojects';
 import Allusers from './pages/Getallusers';
+import Notifications from './pages/Notifications';
 import ViewIndiProfile from './pages/ViewIndiProfile';
 export default function App()
 {
@@ -29,9 +31,9 @@ return (
       </DashBoardLayout>
       }/>
       <Route path='/About' element={
-         <DashBoardLayout>
+         <Navbar>
           <About/>
-        </DashBoardLayout>
+          </Navbar>
       }/>
     <Route path='/Create-Profile' element={
       <DashBoardLayout>
@@ -71,6 +73,11 @@ return (
         <Route path='/allusers' element={
           <DashBoardLayout>
             <Allusers/>
+            </DashBoardLayout>
+        }/>
+        <Route path='/Notifications' element={
+          <DashBoardLayout>
+            <Notifications/>
             </DashBoardLayout>
         }/>
   </Routes>

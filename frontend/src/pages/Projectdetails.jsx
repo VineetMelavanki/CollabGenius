@@ -1,9 +1,9 @@
 import React from "react";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect,useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaTrash, FaUserPlus, FaPencilAlt, FaArrowLeft, FaUsers, FaEnvelope, FaCrown } from "react-icons/fa";
-
+import{io} from "socket.io-client";
 export default function Projectdetails() {
   const { projectId } = useParams();
   const navigate = useNavigate();
@@ -11,14 +11,69 @@ export default function Projectdetails() {
   const [message, setmessage] = useState("");
   const [loading, setloading] = useState(true);
   const [owner, setowner] = useState(null);
+  const[Messages,setMessages]=useState([]);
   const [ownerId, setownerId] = useState(null);
   const [project, setproject] = useState(null);
+  const[usechat,setusechat]=useState(false);
+  const[assignform,setassignform]=useState(false);
+  const[selectedReceiver,setselectedReceiver]=useState(null);
+  const[taskformdata,settaskformdata]=useState({
+    task:"",
+  });
   const [members, setmembers] = useState([]);
+  const[chatinput,setchatinput]=useState("");
   const [showaddmodel, setshowaddmodel] = useState(false);
   const [formdata, setformdata] = useState({ email: "" });
   const [edit, setedit] = useState(false);
+  const socketRef=useRef(null);
   const token = localStorage.getItem("token");
-
+  const user=JSON.parse(localStorage.getItem("user"));
+  useEffect(()=>{
+    const token=localStorage.getItem("token");
+    
+    const socket=io("http://localhost:8000",
+      {
+        auth:{token},
+        withCredentials:true,
+      }
+    );
+    socketRef.current=socket;
+    socket.on("connect",()=>{
+      console.log("User connected : ",socket.id)
+      socket.emit("join-room",{projectId})
+    });
+    
+    socket.on("receive-message",(msg)=>{
+       setMessages((prev)=>[...prev,msg]);
+    });
+    socket.on("chat-history",(msgs)=>{
+      setMessages(msgs);
+    });
+    return()=>{
+      socket.disconnect();
+    }
+  },[projectId]);
+  const handlechangetask=(e)=>{
+    settaskformdata((prev)=>({...prev,[e.target.name]:e.target.value}));
+  }
+  const handleassigntask=(e)=>{
+      e.preventDefault();
+      if(!taskformdata.task.trim())
+      {
+        return;
+      }
+      socketRef.current.emit("assign-task",{task:taskformdata.task,receiver:selectedReceiver});
+      settaskformdata({task:""});
+  }
+  const handleSetmessage=(e)=>{
+    e.preventDefault();
+    if(!chatinput.trim())
+    {
+      return;
+    }
+    socketRef.current.emit("send-message",{content:chatinput});
+    setchatinput("");
+  }
   const removemember = async (memberId) => {
     seterror("");
     setmessage("");
@@ -136,13 +191,7 @@ export default function Projectdetails() {
     <div className="min-h-screen bg-gray-50 py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Back button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition"
-        >
-          <FaArrowLeft className="w-4 h-4" />
-          <span>Back</span>
-        </button>
+       
 
         {/* Messages */}
         {error && (
@@ -189,7 +238,7 @@ export default function Projectdetails() {
                     className="flex  items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition text-sm font-medium"
                   >
                     <FaTrash className="w-4 h-4" />
-                    Delete Project
+                    Delete Team
                   </button>
                 )}
               </div>
@@ -201,8 +250,8 @@ export default function Projectdetails() {
                   <span className="flex items-center gap-1 text-gray-900">
                     <FaCrown className="w-4 h-4 text-amber-500" />
                     {typeof project.ownerId === "object"
-                      ? project.ownerId.name || project.ownerId.email || "Owner"
-                      : "Owner"}
+                      ? project.ownerId.name || project.ownerId.email || "Leader"
+                      : "Leader"}
                   </span>
                 </div>
                 {project.description && (
@@ -222,6 +271,9 @@ export default function Projectdetails() {
                   Team Members
                 </h2>
                 <div className="flex items-center gap-2">
+                  <button className="text-lg border-2 text-white bg-blue-500 font-bold hover:bg-blue-600 rounded-xl p-2 px-4 py-1" onClick={()=>setusechat(!usechat)}>
+                    Team chat
+                  </button>
                   {owner && (
                     <>
                       <button
@@ -252,7 +304,7 @@ export default function Projectdetails() {
                   Edit mode: Click the trash icon to remove a member.
                 </div>
               )}
-
+              
               {members.length === 0 ? (
                 <div className="text-center py-12 bg-gray-50 rounded-xl">
                   <FaUsers className="w-12 h-12 text-gray-300 mx-auto mb-3" />
@@ -271,17 +323,20 @@ export default function Projectdetails() {
                   {members.map((member, index) => (
                     <div
                       key={member._id || member || index}
-                      className="flex items-center justify-between gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition border border-gray-100"
+                      
+                      className="flex items-center justify-between gap-4 p-4 bg-gray-50 rounded-xl shadow-lg  hover:shadow-md transition border border-gray-100"
                     >
                       <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-lg shrink-0">
+                        <img src={member._id?.url}
+                        className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-lg shrink-0"/>
+                        <div onClick={() => navigate(`/view-profile/${member._id}`)} className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-lg shrink-0">
                           {(member.name || "U").charAt(0).toUpperCase()}
                         </div>
-                        <div className="min-w-0">
-                          <p className="font-semibold text-gray-900 truncate">
+                        <div  className="min-w-0">
+                          <p onClick={() => navigate(`/view-profile/${member._id}`)} className="font-semibold text-gray-900 truncate">
                             {member.name || "Unknown"}
                             {ownerId && (member._id || member).toString() === ownerId.toString() && (
-                              <span className="ml-2 text-amber-600 text-xs font-normal">(Owner)</span>
+                              <span className="ml-2 text-amber-600 text-xs font-normal">(Leader)</span>
                             )}
                           </p>
                           {member.email && (
@@ -293,12 +348,13 @@ export default function Projectdetails() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <button
-                          onClick={() => navigate(`/view-profile/${member._id}`)}
-                          className="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition text-sm font-medium"
-                        >
-                          View Profile
+                      {member._id!==user._id && (
+                      <button className="px-4 py-2 border border-red-300 text-white bg-red-500 hover:bg-red-600 rounded-lg transition text-sm font-medium"
+                        onClick={()=>{setassignform(!assignform);setselectedReceiver(member._id)}}>
+                           Assign task
                         </button>
+                      )}  
+                        
                         {owner && edit && ownerId && (member._id || member).toString() !== ownerId.toString() && (
                           <button
                             onClick={() => removemember(member._id)}
@@ -316,7 +372,131 @@ export default function Projectdetails() {
             </div>
           </div>
         )}
+        {assignform && (
+          <div className="fixed inset-0 bg-black/50 flex  items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+               <h2 className="text-xl font-bold text-gray-900 mb-4">Assign task</h2>
+               <form onSubmit={handleassigntask} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Task
+                  </label>
+                  <input type="text"
+                  name="task"
+                  placeholder="Enter task"
+                  value={taskformdata.task}
+                  onChange={handlechangetask}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2" required/>
+                </div>
+                <div className="flex gap-3">
+                  <button type="submit" className="flex-1 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-medium">
+                   Assign
+                  </button>
+                  <button type="button" onClick={()=>setassignform(!assignform)}
+                    className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium">
+                      Cancel
+                  </button>
+                </div>
+               </form>
+            </div>
+          </div>
+        )}
+        {usechat && (
+  <div className="fixed inset-0 z-50 flex justify-end">
 
+    {/* dark overlay — clicking it closes chat */}
+    <div
+      className="absolute inset-0 bg-black/40"
+      onClick={() => setusechat(false)}
+    />
+
+    {/* chat panel — fixed to right side */}
+    <div className="relative bg-white w-full max-w-md h-full flex flex-col shadow-2xl">
+
+      {/* header */}
+      <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        <h2 className="text-lg font-bold text-gray-900">Team Chat</h2>
+        <button
+          onClick={() => setusechat(false)}
+          className="text-gray-400 hover:text-gray-600 text-xl font-bold"
+        >
+          x
+        </button>
+      </div>
+
+      {/* messages list */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        {Messages.length === 0 ? (
+          <p className="text-gray-400 text-sm text-center mt-8">
+            No messages yet. Start the conversation.
+          </p>
+        ) : (
+          Messages.map((msg) => {
+            const isMe=msg.userId?.toString()===user?._id?.toString();
+            return(
+               <div key={msg._id} className={`flex gap-3 ${isMe ? "flex-row-reverse ": " flex justify-start"}`}>
+                {!isMe && (
+                    <div className="w-4 h-4 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-bold shrink-0">
+                {msg.username?.[0]?.toUpperCase()}
+              </div>
+                )}
+              <div className={`flex flex-col gap-1 p-3 rounded-2xl max-w-xs ${isMe ? "bg-blue-200":"bg-gray-200"}`}>
+                
+                  {!isMe && (
+                     <div className="flex  gap-2 ">
+                       <span className="text-xs font-medium text-gray-800">
+                           {msg.username}
+                       </span>
+                       <span className="text-xs text-gray-400">
+                        {new Date(msg.createdAt).toLocaleTimeString()}
+                      </span>
+                     </div>
+                  )}
+                  
+              {!isMe && (
+               <p className="text-md font-medium text-gray-700">{msg.content}</p>
+              )}  
+                {isMe && (
+                  <div className="flex items-end gap-3  bg-blue-200 p-1 rounded-3xl">
+                  <p className="text-sm font-medium text-gray-700">
+                   {msg.content}
+                  </p>
+                   <span className="text-xs text-gray-400">
+                        {new Date(msg.createdAt).toLocaleTimeString()}
+                      </span>
+                </div>
+                )}
+                 
+              </div>
+              
+            </div>
+            )
+
+})
+        )}
+      </div>
+
+      {/* input */}
+      <div className="p-4 border-t border-gray-200">
+        <form onSubmit={handleSetmessage} className="flex gap-2">
+          <input
+            value={chatinput}
+            onChange={(e) => setchatinput(e.target.value)}
+            placeholder="Message your team..."
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm hover:bg-blue-600"
+          >
+            Send
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+)}
         {/* Add member modal */}
         {showaddmodel && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
