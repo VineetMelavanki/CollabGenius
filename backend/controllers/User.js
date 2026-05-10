@@ -13,7 +13,7 @@ async function UserRegisteration(req,res)
     }
     const hashpassword= await bcrypt.hash(password,saltRounds); 
 
-    const existingemail=await User.findOne({email})
+    const existingemail=await User.findOne({email});
     if(existingemail)
     {
         return res.status(409).json({msg :"Email already exists"});
