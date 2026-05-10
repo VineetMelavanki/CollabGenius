@@ -42,7 +42,7 @@ export default function Getyourprojects()
    },[token]);
 
    return(
-      <div className="flex min-h-screen bg-white">
+      <div className="flex min-h-screen w-full">
         <div className="flex flex-col gap-2 w-full">
          <div className="flex justify-start p-8 items-center">
           <h1 className="text-black font-bold text-2xl p-1">
