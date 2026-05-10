@@ -36,6 +36,7 @@ export default function Dashboard() {
         <h1 className="text-4xl font-bold text-gray-800 mb-2">Welcome to the Dashboard</h1>
         <p className="text-xl text-primary-600">Access all the features below</p>
       </div>
+o 
 
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
@@ -71,13 +72,13 @@ export default function Dashboard() {
             <div className=" rounded-full flex flex-col items-center justify-center mx-auto mb-4 gap-4">
               <FolderIcon className="w-10 h-10 text-yellow-500 mb-5"/>
                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                Create Your project
+                Create Your Team
                </h3>
                <h3 className="text-lg font-thin text-gray-400 mb-2">
                 Build a team worth collaborating
                </h3>
-               <button onClick={()=>navigate("/Create-Project")} className="text-lg font-bold border-4  border-blue-300 text-blue-300 p-4 rounded-xl hover:border-red-300">
-                 Create Project
+               <button onClick={()=>navigate("/Create-Project")} className="text-xl font-bold bg-green-400 hover:bg-green-500 text-white p-4 rounded-2xl">
+                 Create Team
                </button>
             </div>
           
@@ -89,12 +90,12 @@ export default function Dashboard() {
                 <div className=" rounded-full flex flex-col items-center justify-center mx-auto mb-4 gap-4">
                    <FolderIcon className="w-10 h-10 text-yellow-500 mb-5"/>
                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                   View All projects
+                   View All Team
                  </h3>
                  <h3 className="text-lg font-thin text-gray-400 mb-2">
                     You can easily choose the project you want to join
                  </h3>
-                 <button onClick={()=>navigate("/getallprojects")} className=" text-lg font-bold border-4 px-14 py-4 border-blue-300 text-blue-300 p-4 rounded-xl hover:border-red-300">
+                 <button onClick={()=>navigate("/getallprojects")} className="text-xl font-bold bg-green-400 hover:bg-green-500 text-white px-11 py-5   rounded-2xl">
                      View
                  </button>
                 </div>

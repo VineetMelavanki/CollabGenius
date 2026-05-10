@@ -23,8 +23,7 @@ export default function Login() {
         body: JSON.stringify(formdata),
       });
       const data = await response.json();
-
-      if (response.ok) {
+            if (response.ok) {
         setmessage(data.msg || "Login Successfully");
         localStorage.setItem("token", data.token);
         localStorage.setItem("user",JSON.stringify(data.user));
@@ -76,8 +75,8 @@ return (
          
         </form>
       
-       {error &&<p className="text-red-500 text-2xl font-thin text-center">{error}</p>}
-       {message && <p className="text-green-500  text-2xl font-thin text-center">{message}</p>}
+       {error &&<p className="text-red-500 text-2xl font-bold text-center">{error}</p>}
+       {message && <p className="text-green-500  text-2xl font-bold text-center">{message}</p>}
       </div>
 
     </div>

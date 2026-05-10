@@ -12,7 +12,6 @@ export default function CreateProject() {
   const handlechange = (e) => {
     setformdata((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     seterror("");
@@ -45,13 +44,13 @@ export default function CreateProject() {
       }
     }
   };
-
+  
   return (
-     <div className=" flex min-h-full items-center justify-center bg-slate-100">
+     <div className=" flex min-h-full w-full items-center justify-center ">
       <div className="bg-white p-10  rounded-3xl shadow-xl w-full max-w-md">
         <div className="flex flex-col gap-3">
           <h1 className="text-gray-800 text-center font-bold text-2xl">
-            Create Project
+            Create Team
             </h1>
             <h2 className="font-light text-lg text-gray-500 text-center">
               Creating project helps you recruit team-mates
@@ -60,12 +59,12 @@ export default function CreateProject() {
                 <input
                 type="text"
                 name="title"
-                placeholder="Project name"
+                placeholder="Team name"
                 value={formdata.title}
                 onChange={handlechange}
                className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500"/>
                <button type="submit" className="bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 transition mb-4">
-                Create Project
+                Create Team
                 </button>
                 </form>
                 {error &&<p className="text-red-500 text-2xl font-thin text-center">{error}</p>}

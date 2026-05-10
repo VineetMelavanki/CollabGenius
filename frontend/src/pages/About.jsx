@@ -11,7 +11,6 @@
             Founded by a driven-second year computer science student from <span className="text-black font-bold text-lg">INDIA </span>,we are reimagining code collaboration beyond Github's constraints, seamless, AI powered and truly borderless
           </p>
       </div>
-     
       </div>
      <div className="bg-blue-50 p-6 items-start justify-start">
       <div className="flex flex-col gap-3">

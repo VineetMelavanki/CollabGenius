@@ -36,7 +36,6 @@ export default function Register() {
       }
     }
   };
-
   return (
     <div className=" flex min-h-screen items-center justify-center bg-slate-100 ">
       <div className="bg-white p-10 rounded-3xl shadow-xl w-full max-w-md">
@@ -75,11 +74,10 @@ export default function Register() {
                <button type="submit" className="bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 transition mb-4">
                 Create Account
                </button>
-               
               </form>
               
-                {error &&<p className="text-red-500 text-2xl font-thin text-center">{error}</p>}
-       {message && <p className="text-green-500  text-2xl font-thin text-center">{message}</p>}
+                {error &&<p className="text-red-500 text-2xl font-bold text-center">{error}</p>}
+       {message && <p className="text-green-500  text-2xl font-bold text-center">{message}</p>}
             </div>
         </div>
 

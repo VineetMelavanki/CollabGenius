@@ -92,7 +92,7 @@ export default function Allprojects()
       }
     },[formdata.title]);
   return (
-  <div className="min-h-full bg-slate-100 p-6">
+  <div className="min-h-full w-full p-6">
 
     <div className="flex flex-row gap-3">
       <h1 className="text-2xl font-bold mb-6 text-gray-800">
@@ -150,5 +150,4 @@ export default function Allprojects()
 
   </div>
 );
-
 }

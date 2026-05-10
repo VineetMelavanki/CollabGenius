@@ -15,6 +15,17 @@ export default function Projectdetails() {
   const [ownerId, setownerId] = useState(null);
   const [project, setproject] = useState(null);
   const[usechat,setusechat]=useState(false);
+  const[popwork,setpopwork]=useState(false);
+  const[works,setworks]=useState([]);
+  const[listmsg,setlistmsg]=useState("");
+  const[listerror,setlisterror]=useState("");
+  const[projectdeletemsg,setprojectdeletemsg]=useState("");
+  const[projectdeleteerror,setprojectdeleteerror]=useState("");
+  const[workerror,setworkerror]=useState("");
+  const[workmsg,setworkmsg]=useState("");
+  const[workformdata,setworkformdata]=useState({
+    name:"",
+  });
   const[assignform,setassignform]=useState(false);
   const[selectedReceiver,setselectedReceiver]=useState(null);
   const[taskformdata,settaskformdata]=useState({
@@ -28,6 +39,43 @@ export default function Projectdetails() {
   const socketRef=useRef(null);
   const token = localStorage.getItem("token");
   const user=JSON.parse(localStorage.getItem("user"));
+  const fetchWorks = async () => {
+  const response = await axios.get(
+    `http://localhost:8000/api/Work/get-works/${projectId}`,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
+  setworks(response.data.Project);
+};
+
+  useEffect(()=>{
+     const getallProjects=async()=>{
+      try{
+        const response=await axios.get(`http://localhost:8000/api/Work/get-works/${projectId}`,
+          {
+            headers:
+            {
+              Authorization:`Bearer ${token}`,
+            }
+          }
+        );
+       setworks(response.data.Project);
+      setlistmsg(response.data.msg || "ALL Projects fetched successfully")
+      }catch(error)
+      {
+          if(error.response)
+          {
+            setlisterror(error?.response?.data?.msg || "No project Created");
+          }
+          else
+          {
+            setlisterror("Internal server error");
+          }
+      }
+     }
+     getallProjects();
+  },[projectId]);
   useEffect(()=>{
     const token=localStorage.getItem("token");
     
@@ -73,6 +121,39 @@ export default function Projectdetails() {
     }
     socketRef.current.emit("send-message",{content:chatinput});
     setchatinput("");
+  }
+  const handleChangeinWork=(e)=>{
+    setworkformdata((prev)=>({...prev,[e.target.name]:e.target.value}));
+  }
+  const SubmitWork=async(e)=>{
+    e.preventDefault();
+    setworkerror("");
+    setworkmsg("");
+    try{
+     const response=await axios.post(`http://localhost:8000/api/Work/create-work/${projectId}`,workformdata,
+      {
+        headers:{
+          Authorization:`Bearer ${token}`,
+        }
+      }
+     );
+    setworkmsg(response.data.msg || "Project Created successfully");
+    setworks((prev)=>[...prev,response.data.Project]);
+    setworkformdata({name : ""});
+    setworkmsg("");
+    fetchWorks();
+    setworkerror(""); 
+    }catch(error)
+    {
+       if(error.response)
+       {
+         setworkerror(error.response?.data?.msg || "Cannot create Project");
+       }
+       else
+       {
+        setworkerror("Internal server error");
+       }
+    }
   }
   const removemember = async (memberId) => {
     seterror("");
@@ -134,6 +215,32 @@ export default function Projectdetails() {
       seterror(err.response?.data?.msg || "Cannot delete project");
     }
   };
+ const deleteaproject=async(workId)=>{
+    try{
+     const response=await axios.delete(`http://localhost:8000/api/Work/delete-work/${projectId}/${workId}`,
+      {
+        headers:
+        {
+          Authorization:`Bearer ${token}`,
+        }
+      }
+     );
+     setprojectdeletemsg(response.data.msg || 'Project deleted successfully');
+     if(response.data.success)
+     {
+     fetchWorks();
+     }
+    }catch(error)
+    {
+        if(error.response)
+        {
+          setprojectdeleteerror(error.response?.data?.msg || "Project cannot be deleted");
+        }
+        else{
+          setprojectdeleteerror("Internal server error");
+        }
+    }
+ }
 
   useEffect(() => {
     const displayproject = async () => {
@@ -188,7 +295,7 @@ export default function Projectdetails() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen  py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Back button */}
        
@@ -232,14 +339,20 @@ export default function Projectdetails() {
                     </span>
                   </div>
                 </div>
+                
                 {owner && (
-                  <button
-                    onClick={deleteproject}
-                    className="flex  items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition text-sm font-medium"
-                  >
-                    <FaTrash className="w-4 h-4" />
-                    Delete Team
-                  </button>
+                  <div className="flex flex-row gap-3">
+                    <button onClick={()=>setpopwork(!popwork)} className="flex items-end gap-2  px-4 py-2 bg-green-400 text-white rounded-lg hover:bg-green-500 transition text-sm font-medium">
+                 Create Project
+                </button>
+                    <button
+                      onClick={deleteproject}
+                      className="flex  items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition text-sm font-medium"
+                    >
+                      <FaTrash className="w-4 h-4" />
+                      Delete Team
+                    </button>
+                  </div>
                 )}
               </div>
 
@@ -327,8 +440,6 @@ export default function Projectdetails() {
                       className="flex items-center justify-between gap-4 p-4 bg-gray-50 rounded-xl shadow-lg  hover:shadow-md transition border border-gray-100"
                     >
                       <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <img src={member._id?.url}
-                        className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-lg shrink-0"/>
                         <div onClick={() => navigate(`/view-profile/${member._id}`)} className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-lg shrink-0">
                           {(member.name || "U").charAt(0).toUpperCase()}
                         </div>
@@ -372,6 +483,31 @@ export default function Projectdetails() {
             </div>
           </div>
         )}
+        
+       <div className="bg-white rounded-2xl shadow-md p-6 md:p-8 mt-6">
+         {works.length===0 ? (
+          <h1 className="text-lg text-red-500 font-bold">No Project exists</h1>
+         ):(
+          <div className="grid grid-cols-1 gap-3">
+            <h1 className="flex items-start justify-start font-bold text-black">Projects</h1>
+          {works.map((work,index)=>(
+            <div key={work._id} className="bg-gray-50 flex flex-row gap-3 p-4 rounded-2xl shadow-lg hover:shadow-md">
+              <div className="flex flex-1 flex-row gap-2">
+                 <h1 className="text-black my-3 text-md">{index+1}</h1>
+                  <h1 className="text-blue-400 font-bold p-2 text-xl">{work.name}</h1>
+              </div>
+                <div className="flex flex-row gap-5">
+                  <button onClick={()=>navigate(`/Research/${projectId}/${work._id}`)} className="text-white bg-green-400 hover:bg-green-500 font-bold p-2 rounded-xl">Research</button>
+                  <button onClick={()=>deleteaproject(work._id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition">
+                   <FaTrash className="w-4 h-4" />
+                  </button>
+                </div>
+            </div>
+         
+          ))}
+          </div>
+         )}
+       </div>
         {assignform && (
           <div className="fixed inset-0 bg-black/50 flex  items-center justify-center z-50 p-4">
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
@@ -393,6 +529,38 @@ export default function Projectdetails() {
                    Assign
                   </button>
                   <button type="button" onClick={()=>setassignform(!assignform)}
+                    className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium">
+                      Cancel
+                  </button>
+                </div>
+               </form>
+            </div>
+          </div>
+        )}
+        {/*Project creation section */}
+        {popwork && (
+          <div className="fixed inset-0 bg-black/50 flex  items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+              {workerror && <p className="text-lg font-bold text-red-500 mb-2">{workerror}</p>}
+              {workmsg && <p className="text-lg font-bold text-green-500 mb-2">{workmsg}</p>}
+               <h2 className="text-xl font-bold text-gray-900 mb-4">Create Project</h2>
+               <form onSubmit={SubmitWork} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Project
+                  </label>
+                  <input type="text"
+                  name="name"
+                  placeholder="Enter Project name"
+                  value={workformdata.name}
+                  onChange={handleChangeinWork}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2" required/>
+                </div>
+                <div className="flex gap-3">
+                  <button type="submit" className="flex-1 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-medium">
+                   Create
+                  </button>
+                  <button type="button" onClick={()=>setpopwork(!popwork)}
                     className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium">
                       Cancel
                   </button>

@@ -76,10 +76,10 @@ export default function Allusers()
          }
          getallusers();
       },[token]);
-
+      
       return(
-        <div className="bg-white max-w-full">
-         <div className="bg-white rounded-2xl p-6">
+        <div className="min-h-screen max-w-full">
+         <div className=" rounded-2xl p-6">
           <div className="flex flex-col gap-3">
             <form onSubmit={handleSearch} className="flex flex-row gap-2" >
                 <input type="text"
@@ -87,8 +87,8 @@ export default function Allusers()
                 name="name"
                 onChange={handlechange} 
                 placeholder="Enter the name"
-                className="flex text-lg p-2 rounded-xl border border-blue-400"/>
-                <button  type="submit"  className="text-lg p-2  text-red-400  hover:bg-red-200 border rounded-xl border-red-400 border-2 ">
+                className="flex text-lg p-2 border-2 rounded-xl  border-blue-500"/>
+                <button  type="submit"  className="text-lg p-2  bg-red-500 font-bold text-white  hover:bg-red-600 border rounded-xl ">
                 Search 
                 </button>
             </form>
@@ -96,28 +96,28 @@ export default function Allusers()
   <p className="text-gray-500">No users found</p>
 ) : (
   <div className="grid grid-cols-1 gap-2">
-    {users.map((user) => (
-      <div
-        key={user._id}
-        className="flex justify-between items-center gap-3 border border-blue-400 rounded-2xl p-3"
-      >
-        <h1 className="text-xl font-serif">
-          User name : {user.name}
-        </h1>
-
-        <div className="flex gap-2">
-          <button
-            className="border border-blue-200 text-blue-500 p-3 rounded-xl hover:bg-blue-50"
-            onClick={() => navigate(`/view-profile/${user._id}`)}
-          >
-            View Profile
-          </button>
+  
+      {users.map((user) => (
+        <div
+          key={user._id}
+          className="flex justify-between bg-blue-500 items-center gap-3 border border-blue-400 rounded-2xl p-3"
+        >
+          <h1 className="text-xl text-white  font-bold">
+            User name : {user.name}
+          </h1>
+          <div className="flex gap-2">
+            <button
+              className="border border-blue-200 text-white p-3  bg-green-500  font-bold rounded-xl hover:bg-green-600"
+              onClick={() => navigate(`/view-profile/${user._id}`)}
+            >
+              View Profile
+            </button>
+          </div>
         </div>
-      </div>
-    ))}
-  </div>
+      ))}
+    </div>
+  
 )}
-
           </div>
          </div>
         </div>
