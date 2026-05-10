@@ -4,6 +4,7 @@ import Login from './pages/LoginPage';
 import Register from "./pages/Register";
 import ViewProfile from './pages/ViewProfile';
 import Dashboard from './pages/Dashboard';
+import Research from './pages/Research';
 import CreateProfile from './pages/CreateProfile';
 import About from './pages/About';
 import Navbar from './pages/navbar';
@@ -75,11 +76,18 @@ return (
             <Allusers/>
             </DashBoardLayout>
         }/>
+        <Route path='/Research/:projectId/:workId' element={
+          <DashBoardLayout>
+              <Research/>
+          </DashBoardLayout>
+           
+        }/>
         <Route path='/Notifications' element={
           <DashBoardLayout>
             <Notifications/>
             </DashBoardLayout>
         }/>
+       
   </Routes>
   </BrowserRouter>
 )
