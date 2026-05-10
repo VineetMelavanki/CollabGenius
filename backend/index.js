@@ -14,7 +14,6 @@ app.use(cors({
 }))
 const { swaggerUi, swaggerSpec } = require('./config/swagger');
 const Userroutes=require("./routes/User");
-
 app.use(express.json());
 const server=http.createServer(app);
 const io=new Server(server,{
@@ -24,17 +23,24 @@ const io=new Server(server,{
     credentials:true
   }
 });
+const ResearchRoutes=require("./routes/research");
 const connectmongodb= require("./connection/user");
 const Projectroutes= require("./routes/Project");
 const Profileroutes=require("./routes/Profile");
+const Workroutes=require("./routes/Work");
 const NotificationRoutes=require("./routes/Notifications");
+const DescriptionRoutes=require("./routes/Description");
 const teamsockets=require("./sockets/teamsocket");
 const assignmentsocket=require("./sockets/Assignmentsocket");
+
 app.use("/api/User",Userroutes);
 app.use("/api/Project",Projectroutes);
 app.use("/api/Profile",Profileroutes);
 app.use("/api/My",NotificationRoutes);
+app.use("/api/Work",Workroutes);
+app.use("/api/Desription",DescriptionRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use("/api/research",ResearchRoutes);
 console.log("JWT Secret :", process.env.JWT_secret);
 teamsockets(io);
 assignmentsocket(io);
