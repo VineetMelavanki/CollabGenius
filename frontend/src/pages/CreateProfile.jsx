@@ -66,7 +66,6 @@ export default function CreateProfile() {
       }
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8">
