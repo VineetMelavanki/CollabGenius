@@ -14,7 +14,6 @@ export default function ViewProfile() {
     github_link:"",
   });
   const[edit,setedit]=useState(false);
-  const token=localStorage.getItem("token");
   const handlechange=async(e)=>{
     setformdata((prev)=>({...prev,[e.target.name]:e.target.value}));
   }
@@ -26,9 +25,7 @@ export default function ViewProfile() {
     try{
      const response=await axios.post("http://localhost:8000/api/Profile/edit-profile",formdata,
       {
-        headers:{
-          Authorization:`Bearer ${token}`,
-        }
+        withCredentials: true
       }
      );
      setuser(response.data.newprofile);
@@ -59,15 +56,8 @@ export default function ViewProfile() {
   useEffect(() => {
     const showuser = async () => {
       try {
-       
-        if (!token) {
-          seterror("Please log in");
-          return;
-        }
         const response = await axios.get("http://localhost:8000/api/Profile/View-Profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
+          withCredentials: true
         });
 
         setuser(response.data.Profile);

@@ -23,11 +23,11 @@ export default function Register() {
     try {
       const response = await axios.post(
         "http://localhost:8000/api/User/register",
-        formdata
+        formdata,
+        { withCredentials: true }
       );
       setmessage(response.data.msg || "Registered Successfully");
-      localStorage.setItem('token', response.data.token);
-      setTimeout(() => navigate("/login"), 1500);
+      setTimeout(() => navigate("/dashboard"), 1500);
     } catch (error) {
       if (error.response) {
         seterror(error.response.data.msg || "Registration failed");

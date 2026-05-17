@@ -10,19 +10,14 @@ export default function DashBoardLayout({ children }) {
   const[Notifications,setnotifications]=useState([]);
   const[error,seterror]=useState("");
   const[message,setmessage]=useState("");
-  const token=localStorage.getItem("token");
   const[darkmode,setdarkmode]=useState(false);
   const[about,setabout]=useState(true);
   useEffect(() => {
     const profileverify = async () => {
       sethasprofile(false);
-      const token = localStorage.getItem("token");
-      if(!token) return;
       try {
         const response = await axios.get("http://localhost:8000/api/Profile/Get-me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
+          withCredentials: true
         });
         sethasprofile(response.data.hasprofile);
       } catch (error) {
@@ -31,21 +26,17 @@ export default function DashBoardLayout({ children }) {
       }
     };
     profileverify();
-  }, [token]);
+  }, []);
 
   useEffect(()=>{
     seterror("");
        setmessage("");
-       
+
        const getallnotifications=async()=>{
-           const token = localStorage.getItem("token");
-           if(!token) return;
            try{
                const response=await axios.get("http://localhost:8000/api/My/Notifications",
            {
-               headers:{
-                   Authorization:`Bearer ${token}`,
-               }
+               withCredentials: true
            }
        )
        setnotifications(response.data.Notify || []);
@@ -61,13 +52,17 @@ export default function DashBoardLayout({ children }) {
                    seterror("Internal server error");
                }
            }
-           
+
        }
        getallnotifications();
- },[token]);
+ },[]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
+  const handleLogout = async () => {
+    try {
+      await axios.post("http://localhost:8000/api/User/logout", {}, { withCredentials: true });
+    } catch (error) {
+      console.log(error);
+    }
     navigate("/");
   };
 

@@ -29,11 +29,6 @@ export default function CreateProfile() {
       seterror("");
       setmsg("");
 
-      const token = localStorage.getItem("token");
-      if (!token) {
-        seterror("Invalid token");
-        return;
-      }
       if (!file) {
         seterror("Please upload a profile picture");
         return;
@@ -52,9 +47,7 @@ export default function CreateProfile() {
       data.append("photo", file);
 
       const response = await axios.post("http://localhost:8000/api/Profile/Create-Profile", data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
+        withCredentials: true
       });
 
       setmsg(response.data.msg || "Profile Created Successfully");

@@ -11,8 +11,7 @@ export default function Notifications()
       const[error1,seterror1]=useState("");
       const[notifications,setnotifications]=useState([]);
       const[assignments,setassignments]=useState([]);
-      const token=localStorage.getItem("token");
-      const user=JSON.parse(localStorage.getItem("user"));
+      const[user,setuser]=useState(null);
       const socketRef=useRef(null);
       const navigate=useNavigate();
       const removeassignment=async({receiver,task})=>{
@@ -32,14 +31,10 @@ export default function Notifications()
              }
       }
       const getallnotifications=async()=>{
-        const token = localStorage.getItem("token");
-        if(!token) return;
         try{
             const response=await axios.get("http://localhost:8000/api/My/Notifications",
         {
-            headers:{
-                Authorization:`Bearer ${token}`,
-            }
+            withCredentials: true
         }
     )
     setnotifications(response.data.Notify || []);
@@ -54,7 +49,7 @@ export default function Notifications()
                 seterror("Internal server error");
             }
         }
-        
+
     }
 
       const declinereq=async(projectId)=>{
@@ -63,13 +58,11 @@ export default function Notifications()
         try{
             const response=await axios.post(`http://localhost:8000/api/My/decline-request/${projectId}`,{},
                 {
-                    headers:{
-                        Authorization:`Bearer ${token}`,
-                    }
+                    withCredentials: true
                 }
             );
             setmessage1(response.data.msg || "Request rejected");
-              
+
 if (response.data.success) {
   getallnotifications();
 }
@@ -94,14 +87,12 @@ if (response.data.success) {
       `http://localhost:8000/api/My/accept-request/${projectId}`,
       {},
       {
-        headers:{
-          Authorization:`Bearer ${token}`
-        }
+        withCredentials: true
       }
     );
-    
+
     setmessage1(response.data.msg);
-    
+
 if (response.data.success) {
   getallnotifications();
 }
@@ -117,17 +108,28 @@ if (response.data.success) {
            }
       }
       useEffect(()=>{
-        const token=localStorage.getItem("token");
+        const fetchUser = async () => {
+          try {
+            const response = await axios.get("http://localhost:8000/api/User/get-me", {
+              withCredentials: true
+            });
+            setuser(response.data.user);
+          } catch (error) {
+            console.log(error);
+          }
+        };
+        fetchUser();
+      }, []);
+      useEffect(()=>{
         const socket=io("http://localhost:8000",{
-            auth:{
-                token,
-            },
-            withCredentials:true,
+            withCredentials: true
         });
          socketRef.current=socket;
          socket.on("connect",()=>{
             console.log("user connected :",socket.id);
-            socket.emit("join-notify-room",{receiver:user?._id});
+            if(user?._id) {
+              socket.emit("join-notify-room",{receiver:user._id});
+            }
          });
          socket.on("All-assignments",(assignments)=>{
             setassignments(assignments);
@@ -138,13 +140,13 @@ if (response.data.success) {
          return ()=>{
             socket.disconnect();
          }
-      },[])
+      },[user?._id])
       useEffect(()=>{
         seterror("");
         setmessage("");
-        
+
         getallnotifications();
-      },[token]);
+      },[]);
 
       return(
         <div className="flex min-h-screen w-full">
@@ -160,7 +162,7 @@ if (response.data.success) {
                         {message1 && <h1 className="text-green-500 border-green-500 text-lg">{message1}</h1>}
                    {notifications.map((notification)=>(
                     <div className="flex bg-blue-200 items-start rounded-2xl border border-black justify-start p-4" key={notification._id}>
-                        
+
                         <div className="flex justify-between gap-3">
                             <h1 className="text-black text-xl">
                               {notification.message}

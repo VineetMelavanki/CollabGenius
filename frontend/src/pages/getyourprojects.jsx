@@ -9,7 +9,6 @@ export default function Getyourprojects()
    const[error,seterror]=useState("");
    const[message,setmessage]=useState("");
    const[projects,setprojects]=useState([]);
-   const token=localStorage.getItem("token");
    useEffect(()=>{
     seterror("");
     setmessage("");
@@ -17,9 +16,7 @@ export default function Getyourprojects()
         try{
            const response=await axios.get("http://localhost:8000/api/Project/your-projects",
             {
-                headers:{
-                    Authorization:`Bearer ${token}`,
-                }
+                withCredentials: true
             }
            )
            console.log(message);
@@ -39,7 +36,7 @@ export default function Getyourprojects()
         }
     }
     displayyourprojects();
-   },[token]);
+   },[]);
 
    return(
       <div className="flex min-h-screen w-full">

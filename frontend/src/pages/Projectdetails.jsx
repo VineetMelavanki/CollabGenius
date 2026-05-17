@@ -14,6 +14,7 @@ export default function Projectdetails() {
   const[Messages,setMessages]=useState([]);
   const [ownerId, setownerId] = useState(null);
   const [project, setproject] = useState(null);
+  const [user, setuser] = useState(null);
   const[usechat,setusechat]=useState(false);
   const[popwork,setpopwork]=useState(false);
   const[works,setworks]=useState([]);
@@ -37,13 +38,11 @@ export default function Projectdetails() {
   const [formdata, setformdata] = useState({ email: "" });
   const [edit, setedit] = useState(false);
   const socketRef=useRef(null);
-  const token = localStorage.getItem("token");
-  const user=JSON.parse(localStorage.getItem("user"));
   const fetchWorks = async () => {
   const response = await axios.get(
     `http://localhost:8000/api/Work/get-works/${projectId}`,
     {
-      headers: { Authorization: `Bearer ${token}` },
+      withCredentials: true
     }
   );
   setworks(response.data.Project);
@@ -54,10 +53,7 @@ export default function Projectdetails() {
       try{
         const response=await axios.get(`http://localhost:8000/api/Work/get-works/${projectId}`,
           {
-            headers:
-            {
-              Authorization:`Bearer ${token}`,
-            }
+            withCredentials: true
           }
         );
        setworks(response.data.Project);
@@ -77,12 +73,9 @@ export default function Projectdetails() {
      getallProjects();
   },[projectId]);
   useEffect(()=>{
-    const token=localStorage.getItem("token");
-    
     const socket=io("http://localhost:8000",
       {
-        auth:{token},
-        withCredentials:true,
+        withCredentials: true
       }
     );
     socketRef.current=socket;
@@ -132,9 +125,7 @@ export default function Projectdetails() {
     try{
      const response=await axios.post(`http://localhost:8000/api/Work/create-work/${projectId}`,workformdata,
       {
-        headers:{
-          Authorization:`Bearer ${token}`,
-        }
+        withCredentials: true
       }
      );
     setworkmsg(response.data.msg || "Project Created successfully");
@@ -161,7 +152,7 @@ export default function Projectdetails() {
     try {
       const response = await axios.delete(
         `http://localhost:8000/api/Project/remove-member/${projectId}/${memberId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { withCredentials: true }
       );
       setmembers((prev) => prev.filter((m) => (m._id || m).toString() !== memberId.toString()));
       setmessage(response.data.msg || "Member removed successfully");
@@ -179,13 +170,13 @@ export default function Projectdetails() {
       const response = await axios.post(
         `http://localhost:8000/api/Project/Add-members/${projectId}`,
         formdata,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { withCredentials: true }
       );
       setmessage(response?.data?.msg || "Added member successfully");
       if (response.data.success) {
         const refreshed = await axios.get(
           `http://localhost:8000/api/Project/get-project/${projectId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          { withCredentials: true }
         );
         setmembers(refreshed.data.projectdata.members || []);
       }
@@ -207,7 +198,7 @@ export default function Projectdetails() {
     try {
       const response = await axios.delete(
         `http://localhost:8000/api/Project/delete/${projectId}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { withCredentials: true }
       );
       setmessage(response.data?.msg || "Project deleted successfully");
       setTimeout(() => navigate("/getallprojects"), 1500);
@@ -219,10 +210,7 @@ export default function Projectdetails() {
     try{
      const response=await axios.delete(`http://localhost:8000/api/Work/delete-work/${projectId}/${workId}`,
       {
-        headers:
-        {
-          Authorization:`Bearer ${token}`,
-        }
+        withCredentials: true
       }
      );
      setprojectdeletemsg(response.data.msg || 'Project deleted successfully');
@@ -250,13 +238,14 @@ export default function Projectdetails() {
       try {
         const response = await axios.get(
           `http://localhost:8000/api/Project/get-project/${projectId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
+          { withCredentials: true }
         );
         const response1 = await axios.get("http://localhost:8000/api/Profile/View-Profile", {
-          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
         });
         const ProfileData = response1.data.Profile;
-        const user = ProfileData.userId;
+        const currentUser = ProfileData.userId;
+        setuser(currentUser);
         const projectData = response.data.projectdata;
         setproject(projectData);
         setmessage(response.data.msg || "Project fetched successfully");
@@ -272,7 +261,7 @@ export default function Projectdetails() {
             : projectData.ownerId;
         setowner(
           ownerIdVal &&
-            (ownerIdVal.toString() === user.toString() || ownerIdVal === user)
+            (ownerIdVal.toString() === currentUser?.toString() || ownerIdVal === currentUser)
         );
       } catch (err) {
         seterror(err.response?.data?.msg || "Cannot fetch project");
@@ -281,7 +270,7 @@ export default function Projectdetails() {
       }
     };
     displayproject();
-  }, [projectId, token]);
+  }, [projectId]);
 
   if (loading) {
     return (

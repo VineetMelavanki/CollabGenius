@@ -9,7 +9,6 @@ export default function Allprojects()
     const[message,setmessage]=useState("");
     const[error,seterror]=useState("");
     const[projects,setprojects]=useState([]);
-    const token=localStorage.getItem("token");
     const[formdata,setformdata]=useState({
       title:"",
     });
@@ -25,15 +24,12 @@ export default function Allprojects()
       e.preventDefault();
       seterror("");
       setmessage("");
-      
+
       try{
          const response=await axios.get("http://localhost:8000/api/Project/get-project-by-title",
           {
             params:{title:formdata.title},
-            headers:
-            {
-              Authorization:`Bearer ${token}`,
-            }
+            withCredentials: true
           }
          );
          console.log("The title is :", console.log(formdata.title));
@@ -54,17 +50,10 @@ export default function Allprojects()
      const getallprojects= async ()=>{
             setmessage("");
             seterror("");
-            if(!token)
-    {
-        seterror("Please log in again");
-        return;
-    }
             try{
                 const response=await axios.get("http://localhost:8000/api/Project/getallprojects",
                     {
-                        headers:{
-                            Authorization:`Bearer ${token}`,
-                        }
+                        withCredentials: true
                     }
                 );
                 console.log(message);
@@ -84,7 +73,7 @@ export default function Allprojects()
         };
     useEffect(()=>{
         getallprojects();
-    },[token]);
+    },[]);
     useEffect(()=>{
       if(formdata.title==="")
       {

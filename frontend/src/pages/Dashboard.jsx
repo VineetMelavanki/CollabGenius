@@ -9,23 +9,16 @@ export default function Dashboard() {
   useEffect(()=>{
     const profileverify=async()=>{
       sethasprofile(null);
-      const token=localStorage.getItem("token");
-      if(!token)
-      {
-        seterror("Invalid login");
-        navigate("/login");
-      }
       try{
         const response=await axios.get("http://localhost:8000/api/Profile/Get-me",{
-          headers:{
-            Authorization:`Bearer ${token}`,
-          }
+          withCredentials: true
         });
         sethasprofile(response.data.hasprofile);
       }catch(error)
       {
         console.log(error);
-         sethasprofile(false);
+        seterror("Invalid login");
+        navigate("/login");
       }
     }
     profileverify();

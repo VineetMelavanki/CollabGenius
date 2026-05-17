@@ -7,21 +7,18 @@ export default function Research() {
   const [projectName, setprojectName] = useState(null);
   const [msg, setmsg] = useState("");
   const [error, seterror] = useState("");
-  const token=localStorage.getItem("token");
   const[results,setresults]=useState([]);
   const[formdata,setformdata]=useState({
     topic:"",
   })
   const[researchhub,setresearchhub]=useState(false);
   useEffect(() => {
-    const getproject = async () => {       
+    const getproject = async () => {
       try {
         const response = await axios.get(
           `http://localhost:8000/api/Work/get-WORK/${workId}`,
           {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+            withCredentials: true
           }
         );
         setprojectName(response.data.Project);
@@ -33,8 +30,8 @@ export default function Research() {
         }
       }
     };
-    getproject();           
-  }, [workId]);            
+    getproject();
+  }, [workId]);
   const researchsubmit=(e)=>{
     setformdata((prev)=>({...prev,[e.target.name]:e.target.value}))
   }
@@ -46,9 +43,7 @@ export default function Research() {
       const response=await axios.get("http://localhost:8000/api/research/search-topic",
         {
           params:{topic:formdata.topic},
-          headers:{
-            Authorization:`Bearer ${token}`,
-          }
+          withCredentials: true
         }
       );
       console.log(response);

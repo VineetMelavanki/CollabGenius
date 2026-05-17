@@ -1,4 +1,3 @@
-
 const User=require("../model/User");
 const bcrypt =require("bcrypt");
 const jwt=require("jsonwebtoken");
@@ -23,9 +22,17 @@ async function UserRegisteration(req,res)
         email,
         password :hashpassword,
     });
-    const token =await jwt.sign({id: newUser._id,name:newUser.name},process.env.JWT_secret,{expiresIn :"7d"});
+    const token =await jwt.sign({id: newUser._id,name:newUser.name},process.env.JWT_SECRET,{expiresIn :"7d"});
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000
+    });
     console.log("Result",newUser);
-    return res.status(201).json({msg :"Successfully Registered", newUser,success : true , token });
+    const userResponse = newUser.toObject();
+    delete userResponse.password;
+    return res.status(201).json({msg :"Successfully Registered", user: userResponse, success : true});
 }catch(error)
 {
     console.log(error);
@@ -53,11 +60,19 @@ async function UserLogin(req,res)
     }
     const token=jwt.sign(
         {id :user1._id, name:user1.name},
-        process.env.JWT_secret,
+        process.env.JWT_SECRET,
         {expiresIn : "7d"}
     );
+    res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 7 * 24 * 60 * 60 * 1000
+    });
     console.log("User logged in : ",user1);
-    return res.status(200).json({status:"Successfull login",token,user:user1});
+    const userResponse = user1.toObject();
+    delete userResponse.password;
+    return res.status(200).json({status:"Successfull login",user:userResponse, success:true});
 }catch(error)
 {
     console.log(error);
@@ -114,4 +129,42 @@ async function getallusers(req,res)
         return res.status(500).json({msg : "Internal server error ",success : false , error : error.message});
     }
 }
-module.exports={UserLogin,UserRegisteration,getuserbyId,getallusers,getuserByname};
+async function getme(req,res)
+{
+    try{
+       const token=req.cookies.token;
+       if(!token)
+       {
+        return res.status(404).json({msg:"No authentication",success:false});
+       }
+       const decoded=jwt.verify(token,process.env.JWT_SECRET);
+       const user=await User.findById(decoded.id).select("-password");
+       if(!user)
+       {
+        return res.status(404).json({msg:"User does not exists",success:false});
+       }
+       return res.status(200).json({msg:"User authenticated successfully",user,success:true});
+    }catch(error)
+    {
+        console.log(error);
+        return res.status(500).json({msg:"Internal server error",success:false});
+    }
+}
+
+async function logout(req,res)
+{
+    try{
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax"
+        });
+        return res.status(200).json({msg:"Logged out successfully",success:true});
+    }catch(error)
+    {
+        console.log(error);
+        return res.status(500).json({msg:"Logout failed",success:false});
+    }
+}
+
+module.exports={UserLogin,UserRegisteration,getuserbyId,getallusers,getuserByname,getme,logout};

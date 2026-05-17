@@ -18,6 +18,7 @@ async function getrequests(req,res)
       console.log(error);
       return res.status(500).json({msg:"Internal server error",success:false});
    }
+   
 }
 async function acceptrequest(req,res)
 {

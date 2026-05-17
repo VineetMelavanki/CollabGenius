@@ -7,7 +7,6 @@ export default function Allusers()
       const navigate=useNavigate();
       const[error,seterror]=useState("");
       const[message,setmessage]=useState("");
-      const token=localStorage.getItem("token");
       const[users,setusers]=useState([]);
       const[formdata,setformdata]=useState({
         name:"",
@@ -24,9 +23,7 @@ export default function Allusers()
            const response=await axios.get("http://localhost:8000/api/User/search",
             {
                 params:{name:formdata.name},
-                headers:{
-                    Authorization:`Bearer ${token}`,
-                }
+                withCredentials: true
             }
            )
            setusers(response.data.userdata);
@@ -52,10 +49,7 @@ export default function Allusers()
             try{
             const response=await axios.get("http://localhost:8000/api/User/allusers",
                 {
-                    headers:
-                    {
-                        Authorization:`Bearer ${token}`,
-                    }
+                    withCredentials: true
                 }
             )
             console.log(error);
@@ -75,7 +69,7 @@ export default function Allusers()
             }
          }
          getallusers();
-      },[token]);
+      },[]);
       
       return(
         <div className="min-h-screen max-w-full">

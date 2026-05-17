@@ -7,7 +7,6 @@ export default function ViewIndiProfile()
    const[user,setuser]=useState(null);
    const[error,seterror]=useState("");
    const[message,setmessage]=useState("");
-   const token=localStorage.getItem("token");
    const {id}=useParams();
    useEffect(()=>{
      seterror("");
@@ -16,9 +15,7 @@ export default function ViewIndiProfile()
         try{
             const response=await axios.get(`http://localhost:8000/api/Profile/View-profile/${id}`,
                 {
-                    headers:{
-                        Authorization:`Bearer ${token}`,
-                    }
+                    withCredentials: true
                 }
 
             );

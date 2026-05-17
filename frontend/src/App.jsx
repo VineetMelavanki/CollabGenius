@@ -87,7 +87,7 @@ return (
             <Notifications/>
             </DashBoardLayout>
         }/>
-       
+       <Route path='/auth/github/callback' element={<Login/>}/>
   </Routes>
   </BrowserRouter>
 )

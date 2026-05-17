@@ -16,19 +16,12 @@ export default function CreateProject() {
     e.preventDefault();
     seterror("");
     setmsg("");
-    const token = localStorage.getItem("token");
-    if (!token) {
-      seterror("Please log in again");
-      return;
-    }
     try {
       const response = await axios.post(
         "http://localhost:8000/api/Project/Create-Project",
         formdata,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
+          withCredentials: true
         }
       );
       setmsg(response.data.msg || "Project Created Successfully");

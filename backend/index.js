@@ -2,11 +2,13 @@ require('dotenv').config();
 const {Server}=require("socket.io")
 const mongoose=require("mongoose");
 const express=require("express");
+const cookieParser = require("cookie-parser");
 const app=express();
 const http=require("http");
 const fs=require("fs");
 const port=8000;
 const cors=require("cors");
+app.use(cookieParser());
 app.use(cors({
   origin: 'http://localhost:5173',  // React/Vite dev server URL
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -23,6 +25,7 @@ const io=new Server(server,{
     credentials:true
   }
 });
+const AuthRoutes=require("./routes/Auth");
 const ResearchRoutes=require("./routes/research");
 const connectmongodb= require("./connection/user");
 const Projectroutes= require("./routes/Project");
@@ -41,7 +44,8 @@ app.use("/api/Work",Workroutes);
 app.use("/api/Desription",DescriptionRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/research",ResearchRoutes);
-console.log("JWT Secret :", process.env.JWT_secret);
+app.use("/auth",AuthRoutes);
+console.log("JWT Secret :", process.env.JWT_SECRET);
 teamsockets(io);
 assignmentsocket(io);
 connectmongodb("mongodb://127.0.0.1:27017/")
