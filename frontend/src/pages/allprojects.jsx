@@ -84,7 +84,7 @@ export default function Allprojects()
   <div className="min-h-full w-full p-6">
 
     <div className="flex flex-row gap-3">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">
+      <h1 className="text-2xl font-bold mb-6 text-gray-800 my-4">
         All Projects
       </h1>
       <form className="flex flex-row p-2 gap-4 mb-6" onSubmit={handleSubmit} >
@@ -96,8 +96,8 @@ export default function Allprojects()
         onChange={handlechange}
         className="flex text-lg p-2 rounded-xl border border-blue-400"
         />
-        <button className="text-red p-3 border rounded-xl border-red-300 hover:border-red-500" type="submit">Search</button>
-         <button onClick={clearformdata} className="text-lg border text-black border-red-300 hover:border-red-500 rounded-lg px-5 py-2">
+        <button className="text-red p-3 border rounded-xl text-white bg-green-500 hover:bg-green-600 font-bold" type="submit">Search</button>
+         <button onClick={clearformdata} className="text-lg text-white bg-red-500 hover:border-red-600 rounded-lg px-5 py-2 font-bold">
         Clear
       </button>
       </form>

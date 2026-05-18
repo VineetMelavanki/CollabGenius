@@ -161,17 +161,17 @@ if (response.data.success) {
                     {error1 &&  <h1 className="text-red-500 border-red-400 text-lg ">{error1}</h1>}
                         {message1 && <h1 className="text-green-500 border-green-500 text-lg">{message1}</h1>}
                    {notifications.map((notification)=>(
-                    <div className="flex bg-blue-200 items-start rounded-2xl border border-black justify-start p-4" key={notification._id}>
+                    <div className="flex bg-white items-start rounded-2xl shadow-lg hover:shadow-xl justify-start p-4" key={notification._id}>
 
                         <div className="flex justify-between gap-3">
-                            <h1 className="text-black text-xl">
+                            <h1 className="text-black text-xl font-mono">
                               {notification.message}
                             </h1>
-                            <div className="flex-1 items-center ">
-                                <button className="text-xl  text-green-500 border border-green-400 rounded-2xl p-3" onClick={()=>acceptrequest(notification.project._id)}>
+                            <div className="flex-1 sm:flex-col items-center gap-3 ">
+                                <button className="sm:text-sm md:text-sm lg:text-xl text-white bg-green-500 font-bold rounded-2xl p-3 mx-3 hover:bg-green-600" onClick={()=>acceptrequest(notification.project._id)}>
                                     Accept
                                 </button>
-                                <button className="text-xl text-red-500 border border-red-500 rounded-2xl p-3" onClick={()=>declinereq(notification.project._id)}>
+                                <button className="sm:text-sm md:text-md lg:text-xl text-white bg-red-500 rounded-2xl p-3 hover:bg-red-600" onClick={()=>declinereq(notification.project._id)}>
                                    Decline
                                 </button>
                             </div>
@@ -186,9 +186,9 @@ if (response.data.success) {
                     <div className="flex  items-start rounded-2xl bg-gray-100 shadow-xl hover:shadow-md justify-start  p-4" key={assignment._id}>
                      <div className="flex flex-row justify-center items-center  gap-3">
                       <h1 className="text-xl"><span onClick={()=>navigate(`/view-profile/${assignment.sender._id}`)} className="text-red-500 hover:underline">{assignment.sender.name}</span> has task for you : </h1>
-                      <p className="text-blue-500 text-xl">"{assignment.task}"</p>
-                      <button  onClick={()=>navigate(`/get-project/${assignment.projectId?._id}`)} className="mx-4  border-green-300  p-3 px-4 rounded-2xl hover:text-green-500 border-2">REVIEW</button>
-                      <button onClick={()=>removeassignment({receiver:assignment.receiver._id,task:assignment.task})} className="rounded-2xl p-3 px-5 border border-red-500 hover:text-red-500">OKAY</button>
+                      <p className="text-blue-500 text-xl font-mono">"{assignment.task}"</p>
+                      <button  onClick={()=>navigate(`/get-project/${assignment.projectId?._id}`)} className="mx-4 text-white bg-green-500 font-bold p-3 text-md rounded-xl hover:bg-green-600">REVIEW</button>
+                      <button onClick={()=>removeassignment({receiver:assignment.receiver._id,task:assignment.task})} className="rounded-2xl p-3 px-5 border text-white bg-red-500 font-bold hover:bg-red-600">OKAY</button>
                      </div>
                     </div>
                  ))}

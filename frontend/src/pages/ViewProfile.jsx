@@ -107,10 +107,10 @@ export default function ViewProfile() {
             <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg p-8">
               <div className="flex flex-row justify-between gap-3">
                <h3 className="text-3xl font-bold text-gray-800 mb-6">Profile Details</h3>
-            {!edit &&    <button onClick={()=>setedit(!edit)} className="text-red-500 border border-red-500 p-4 px-6 rounded-2xl font-bold hover:bg-red-100">
+            {!edit &&    <button onClick={()=>setedit(!edit)} className="text-white bg-green-500  p-4 px-6 rounded-2xl font-bold hover:bg-green-600">
                 Edit
                </button>}
-             {edit && <button onClick={()=>setedit(!edit)} className="text-red-500 border border-red-500p-4 px-6 rounded-2xl font-bold hover:bg-red-100">
+             {edit && <button onClick={()=>setedit(!edit)} className="text-white bg-red-500 p-4 px-6 rounded-2xl font-bold hover:bg-red-600">
               Cancel
               </button>}  
               </div>
@@ -201,7 +201,7 @@ export default function ViewProfile() {
                      className="text-lg text-gray-800 mt-1 border border-blue-300 rounded-xl "
                     />
                   </div>
-                  <button type="submit" className="text-red-400 border border-red-400 rounded-3xl hover:bg-red-100 mt-10">
+                  <button type="submit" className="text-white bg-red-500 p-2 font-bold  rounded-3xl hover:bg-red-600 mt-10 max-w-32">
                   Apply changes
                   </button>
                 </form>

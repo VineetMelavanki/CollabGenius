@@ -148,18 +148,18 @@ export default function DashBoardLayout({ children }) {
                   </span>
                 )}
               </button>
-              <button className="text-blue-500 border-2  border-gray-300 font-medium px-4  rounded-lg hover:bg-gray-50 transition"
+              <button className="text-white border-2 bg-blue-500 font-bold px-4  rounded-lg hover:bg-blue-600 transition"
               onClick={()=>navigate("/allusers")}>
                 All USERS
               </button>
-              <button className="text-blue-500  border-2 border-gray-300 font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition"
+              <button className="text-white bg-blue-500 border-2 border-gray-300 font-bold px-4 py-2 rounded-lg hover:bg-blue-600 transition"
               onClick={()=>navigate("/your-projects")}>
                 Your Team
               </button>
             
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 border-2 border-red-500 text-red-500 font-medium rounded-lg hover:bg-red-50 transition"
+                className="text-white px-4 py-2 border-2 border-red-500 bg-red-500 font-bold rounded-lg hover:bg-red-600 transition"
               >
                 Logout
               </button>
