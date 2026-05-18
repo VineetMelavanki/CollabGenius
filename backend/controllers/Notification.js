@@ -28,7 +28,6 @@ async function acceptrequest(req,res)
       const notification=await Notifications.findOne({
          receiver:userId,
          project:projectId,
-         
       });
       if(!notification)
       {
@@ -75,8 +74,6 @@ async function declinereq(req,res)
       return res.status(404).json({msg:"Project not found",success:false});
    }
    await Notifications.findByIdAndDelete(notification._id);
-   notification.status="declined",
-    await notification.save();
 
     return res.status(200).json({msg:"Request declined",success:true});
    }catch(errpr)
