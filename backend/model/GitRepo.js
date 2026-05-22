@@ -1,0 +1,45 @@
+const mongoose=require("mongoose");
+const GithubRepoSchema=new mongoose.Schema({
+    name:{
+        type:String,
+        required:true,
+        unique:true
+    },
+    projectId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Project",
+        required:true
+    },
+    workId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Work",
+        required:true,
+    },
+    description:{
+        type:String,
+        required:true,
+    },
+    createdby:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
+    },
+    repourl:{
+        type:String,
+    },
+    cloneurl:{
+        type:String,
+    },
+    visibility:{
+        type:String,
+        enum:["public","private"]
+    },
+    githubRepoId:{
+        type:String,
+    },
+    createdAt:{
+        type:Date,
+        default:Date.now
+    },
+},{timestamps:true});
+const GithubRepo=mongoose.model("GithubRepo",GithubRepoSchema);
+module.exports=GithubRepo;

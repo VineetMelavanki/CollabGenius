@@ -27,7 +27,7 @@ async function GithubCallback(req,res)
     );
 
     const access_token=tokenResponse.data.access_token;
-
+    
     if(!access_token)
     {
         return res.status(404).json({msg:"Failed to get access token",sucess:false});
@@ -55,7 +55,11 @@ async function GithubCallback(req,res)
         name:githubUser.name || githubUser.login,
         email:primaryEmail,
         password:randomPassword,
+        githubaccess_token:access_token
        });
+    }else{
+        user.githubaccess_token=access_token,
+        await user.save();
     }
     const token=jwt.sign({id:user._id.toString(), name:user.name},process.env.JWT_SECRET,{expiresIn:"7d"});
     res.cookie("token",token,{

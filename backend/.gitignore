@@ -1,5 +1,11 @@
 node_modules/
+<<<<<<< HEAD
 .tmp.driveupload/
 .env
 backend/
 frontend/
+=======
+.env
+.tmp.driveupload/
+backend/.github/
+>>>>>>> 2044d9e559295360d280b53a336a2a6047581ed9

@@ -4,7 +4,7 @@ const Userrouter =express.Router();
 const{authmiddleware}=require("../middleware/authmiddleware")
 const{validatelogin,validateregisteration}=require("../middleware/validator");
 const{GoogleLogin}=require("../controllers/GoogleLogin");
-const{GithubLogin}=require("../controllers/GithubLogin")
+const{GithubLogin,CreateRepo}=require("../controllers/Github")
 Userrouter.post("/register",validateregisteration,UserRegisteration)
 Userrouter.post("/google-login",GoogleLogin);
 Userrouter.get("/get-me",getme);
@@ -14,4 +14,5 @@ Userrouter.get("/allusers",authmiddleware,getallusers);
 Userrouter.get("/search",authmiddleware,getuserByname);
 Userrouter.get("/:UserId",authmiddleware,getuserbyId);
 Userrouter.get("/github/login",GithubLogin);
+Userrouter.post("/github/create-repo/:projectId/:workId",authmiddleware,CreateRepo);
 module.exports=Userrouter;
