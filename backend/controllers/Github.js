@@ -75,4 +75,26 @@ async function CreateRepo(req,res)
      return res.status(500).json({msg:"Repository cannot be created"});
    }
 }
-module.exports={GithubLogin,CreateRepo};
+async function GetAllRepo(req,res)
+{
+   try{
+    const{projectId,workId}=req.params;
+    const GithubRepos=await GithubRepo.find({projectId:projectId,workId:workId});
+
+    if(!GithubRepo)
+    {
+      return res.status(404).json({msg:"No github repo for this project",success:false});
+    }
+    const user=await User.findById(req.user.id);
+    if(!user)
+    {
+      return res.status(404).json({msg:"User is not member of this group",success:false});
+    }
+
+    return res.status(200).json({msg:"All repositories fetched successfully",allrepo:GithubRepos,success:true});
+   }catch(error)
+   {
+      return res.status(500).json({msg:"Internal server error",success:false});
+   } 
+}
+module.exports={GithubLogin,CreateRepo,GetAllRepo};
