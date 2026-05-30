@@ -47,7 +47,7 @@ export default function Projectdetails() {
   );
   setworks(response.data.Project);
 };
-
+    
   useEffect(()=>{
      const getallProjects=async()=>{
       try{

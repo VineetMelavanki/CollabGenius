@@ -29,8 +29,6 @@ export default function Dashboard() {
         <h1 className="text-4xl font-bold text-gray-800 mb-2">Welcome to the Dashboard</h1>
         <p className="text-xl text-primary-600">Access all the features below</p>
       </div>
-
-
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6">
           {error}

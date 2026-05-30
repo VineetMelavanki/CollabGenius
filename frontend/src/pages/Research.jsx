@@ -20,6 +20,32 @@ export default function Research() {
   const handlegitinfo=(e)=>{
     setgetinfo((prev)=>({...prev,[e.target.name]:e.target.value}));
   }
+  useEffect(()=>{
+     const getallRepo=async()=>{
+        seterror("");
+        setmsg("");
+        try{
+          const response=await axios.get(`http://localhost:8000/api/User/github/get-repo/${projectId}/${workId}`,
+            {
+              withCredentials:true,
+            }
+          );
+          setrepolist(response.data.allrepo);
+         
+        }catch(error)
+        {
+           if(error.response)
+           {
+            seterror(error.response?.data?.msg || "Cannot fetch repositories");
+           }
+           else
+           {
+            seterror("Internal server error");
+           }
+        }
+     }
+     getallRepo();
+  },[workId,projectId])
   const handlereposubmit=async(e)=>{
     e.preventDefault();
     seterror("");
@@ -198,16 +224,15 @@ export default function Research() {
          
         </div>
          <div className="flex bg-gray-100 flex-col gap-3 w-full h-full rounded-2xl">
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 p-3">
             <h1 className="text-lg p-3 font-mono">GITHUB repositories </h1>
             {repolist.length===0 ?(
             <div className="text-red-200 font-mono text-lg">No respositories created</div>
           ) :(
             <div className="grid grid-col-1 gap-3">
               {repolist.map((repo)=>(
-                <div key={repo._id}  className="flex flex-col  bg-white p-4 rounded-xl shadow">
-                      
-                      <div className="flex flex-row">
+                <div key={repo._id}  className="flex flex-col  bg-white p-4 rounded-xl shadow hover:-translate-y-1 transition-all duration-200">
+                      <div className="flex flex-row ">
                         <h1 className="text-blue-500 font-bold">{repo.name}</h1>
                          
                         <div className="flex flex-1 justify-end mx-4">
