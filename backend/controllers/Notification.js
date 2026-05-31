@@ -1,5 +1,6 @@
 const {Notifications}=require("../model/Notifications");
-const project=require("../model/project")
+const project=require("../model/project");
+const User=require("../model/User");
 async function getrequests(req,res)
 {
    try{

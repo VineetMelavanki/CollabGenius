@@ -42,7 +42,7 @@ async function UserRegisteration(req,res)
 async function UserLogin(req,res)
 {
     try{
-    const{name ,email,password}=req.body;
+    const{email,password}=req.body;
     if(!email ||!password)
     {
         return res.status(400).json({msg :"All fields are required"});
@@ -72,6 +72,8 @@ async function UserLogin(req,res)
     console.log("User logged in : ",user1);
     const userResponse = user1.toObject();
     delete userResponse.password;
+    console.log("Token created :",token);
+    console.log("Cookie sent");
     return res.status(200).json({status:"Successfull login",user:userResponse, success:true});
 }catch(error)
 {

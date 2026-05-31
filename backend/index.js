@@ -33,6 +33,7 @@ const Profileroutes=require("./routes/Profile");
 const Workroutes=require("./routes/Work");
 const NotificationRoutes=require("./routes/Notifications");
 const DescriptionRoutes=require("./routes/Description");
+const RequestRoutes=require("./routes/Request");
 const teamsockets=require("./sockets/teamsocket");
 const assignmentsocket=require("./sockets/Assignmentsocket");
 
@@ -45,6 +46,7 @@ app.use("/api/Desription",DescriptionRoutes);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/research",ResearchRoutes);
 app.use("/auth",AuthRoutes);
+app.use("/api/Request",RequestRoutes);
 console.log("JWT Secret :", process.env.JWT_SECRET);
 teamsockets(io);
 assignmentsocket(io);

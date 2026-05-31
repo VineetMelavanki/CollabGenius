@@ -1,7 +1,7 @@
 const User=require("../model/User");
-const Project=require("../model/project");
 const {Notifications}=require("../model/Notifications")
 const Profile=require("../model/Profile");
+const Project = require("../model/project");
 async function CreateProject(req,res)
 {
     console.log("The id of owner is : ",req.user.id)
@@ -65,6 +65,32 @@ async function getprojectBytitle(req,res)
          console.log(error);
 
          return res.status(500).json({msg:"Internal server error",success:false});
+    }
+}
+async function IsMember(req,res)
+{
+    try{
+     const{projectId}=req.params;
+     const user=await User.findById(req.user.id);
+
+     const project=await Project.findById(projectId);
+
+     if(!project)
+     {
+        return res.status(404).json({msg:"Project does not exists",success:false});
+     }
+     const isMember=project.members.some((member)=>{
+       return member.toString()===user._id.toString();
+     });
+
+     if(!isMember)
+     {
+        return res.status(401).json({msg:"You not a member of this project",success:false,isMember:false});
+     }
+     return res.status(200).json({msg:"User is a member of the project",isMember:true,success:true});
+    }catch(error)
+    {
+        return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
 async function addmembers(req,res)
@@ -205,4 +231,4 @@ async function deleteproject(req,res)
         return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
-module.exports={CreateProject,Getallprojects,getprojectbyId,deleteproject,yourprojects,addmembers,removemember,getprojectBytitle};
+module.exports={CreateProject,Getallprojects,getprojectbyId,deleteproject,yourprojects,addmembers,removemember,getprojectBytitle,IsMember};
