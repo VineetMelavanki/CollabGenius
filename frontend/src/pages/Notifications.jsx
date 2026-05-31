@@ -220,7 +220,7 @@ if (response.data.success) {
                 {requests.map((request)=>(
                   <div className="flex items-start rounded-2xl bg-gray-100 shadow-xl hover:shadow-md justify-start p-4" key={request._id}>
                      <div className="flex flex-row justify-center items-center gap-3">
-                       <p className="text-blue-500 text-xl font-mono">{request.message}</p>
+                        <h1 className="text-xl font-mono"><span onClick={()=>navigate(`/view-profile/${request.sender._id}`)} className="text-red-500 hover:underline mx-2">{request.sender.name}</span>{request.message}<span className="text-lg text-green-500 hover:underline font-sans mx-3"onClick={()=>navigate(`/get-project/${request.projectId._id}`)}>{request.projectId.title}</span></h1>
                      </div>
                   </div>
                 ))}
