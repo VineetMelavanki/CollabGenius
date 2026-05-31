@@ -24,7 +24,7 @@ async function sendRequest(req,res)
         sender:user._id,
         receiver:receiver,
         projectId:projectId,
-        message:`${user.name} has requested to join your team ${project.title}`
+        message:"has requested to join your team"
        });
        return res.status(200).json({msg:"Request sent successfully",request:newRequest,success:true});
     }catch(error)
@@ -37,7 +37,10 @@ async function getallRequests(req,res)
 {
     try{
         const user=req.user.id;
-        const Requests=await Request.find({receiver:user});
+        const Requests=await Request.find({receiver:user}).
+        populate("sender","name email")
+        .populate("receiver","name email")
+        .populate("projectId","title");
         if(Requests.length===0)
         {
             return res.status(404).json({msg:"No request found",success:false});
