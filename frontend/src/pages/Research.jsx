@@ -20,6 +20,7 @@ export default function Research() {
   const handlegitinfo=(e)=>{
     setgetinfo((prev)=>({...prev,[e.target.name]:e.target.value}));
   }
+  
   useEffect(()=>{
      const getallRepo=async()=>{
         seterror("");

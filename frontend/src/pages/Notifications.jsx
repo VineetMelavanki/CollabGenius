@@ -12,6 +12,8 @@ export default function Notifications()
       const[notifications,setnotifications]=useState([]);
       const[assignments,setassignments]=useState([]);
       const[user,setuser]=useState(null);
+      const[error2,seterror2]=useState("");
+      const[requests,setrequests]=useState([]);
       const socketRef=useRef(null);
       const navigate=useNavigate();
       const removeassignment=async({receiver,task})=>{
@@ -51,7 +53,26 @@ export default function Notifications()
         }
 
     }
-
+     useEffect(()=>{
+      const getallRequests=async()=>{
+        try{
+           const response=await axios.get(`http://localhost:8000/api/Request/get-all-requests`,
+          {
+            withCredentials:true,
+          }
+        );
+        setrequests(response.data.allrequest || []);
+        }catch(error)
+        {
+          if(error.response)
+          {
+              seterror2(error.response?.data?.msg || "Cannot fetch requests");
+              alert(error.response?.data?.msg || "Cannot fetch requests");
+          }
+        }
+      }
+      getallRequests();
+     },[])
       const declinereq=async(projectId)=>{
         seterror1("");
         setmessage1("");
@@ -193,6 +214,17 @@ if (response.data.success) {
                     </div>
                  ))}
                 </div>
+             )}
+             {requests.length> 0 && (
+              <div className="flex flex-col gap-3">
+                {requests.map((request)=>(
+                  <div className="flex items-start rounded-2xl bg-gray-100 shadow-xl hover:shadow-md justify-start p-4" key={request._id}>
+                     <div className="flex flex-row justify-center items-center gap-3">
+                       <p className="text-blue-500 text-xl font-mono">{request.message}</p>
+                     </div>
+                  </div>
+                ))}
+              </div>
              )}
             </div>
         </div>

@@ -23,10 +23,14 @@ export default function Projectdetails() {
   const[projectdeletemsg,setprojectdeletemsg]=useState("");
   const[projectdeleteerror,setprojectdeleteerror]=useState("");
   const[workerror,setworkerror]=useState("");
+   const[isMember,setisMember]=useState(null);
+   const[error3,seterror3]=useState("");
+   const[msg3,setmsg3]=useState("");
   const[workmsg,setworkmsg]=useState("");
   const[workformdata,setworkformdata]=useState({
     name:"",
   });
+  const[isRequested,setisRequested]=useState(false);
   const[assignform,setassignform]=useState(false);
   const[selectedReceiver,setselectedReceiver]=useState(null);
   const[taskformdata,settaskformdata]=useState({
@@ -47,7 +51,29 @@ export default function Projectdetails() {
   );
   setworks(response.data.Project);
 };
-    
+    useEffect(()=>{
+      const checkisMember=async()=>{
+        try{
+         const response=await axios.get(`http://localhost:8000/api/Project/is-Member/${projectId}`,
+          {
+            withCredentials:true,
+          }
+         );
+         setisMember(response.data.isMember);
+        }catch(error)
+        {
+          if(error.response)
+          {
+            seterror(error?.response?.data?.msg || "You are not a member of this project");
+          }
+          else
+          {
+            seterror("Internal server error");
+          }
+        }
+      }
+      checkisMember();
+  },[projectId]);
   useEffect(()=>{
      const getallProjects=async()=>{
       try{
@@ -282,7 +308,28 @@ export default function Projectdetails() {
       </div>
     );
   }
-
+ const handlejoinrequest=async()=>{
+  try{
+      const response=await axios.post(`http://localhost:8000/api/Request/send-request/${projectId}`,{},
+        {
+          withCredentials:true,
+        }
+      );
+      setmsg3(response.data?.msg || "Request sent successfully");
+      setisRequested(true);
+      alert(response.data?.msg || "Request sent successfully");
+  }catch(error)
+  {
+        if(error.response)
+        {
+          alert(error.response?.data?.msg || "Cannot send notification");
+          seterror3(error.response?.data?.msg || "Cannot send notification");
+        }else
+        {
+          seterror3("Internal server error");
+        }
+  }
+ }
   return (
     <div className="min-h-screen  py-8 px-4">
       <div className="max-w-4xl mx-auto">
@@ -328,7 +375,12 @@ export default function Projectdetails() {
                     </span>
                   </div>
                 </div>
-                
+                {!isMember && !isRequested && (
+                  <button  className="text-white bg-green-500 rounded-2xl p-2 font-bold hover:bg-green-600" onClick={handlejoinrequest}>Request</button>
+                )}
+                {!isMember && isRequested && (
+                  <button  className="text-white bg-red-500 rounded-2xl p-2 font-bold hover:bg-red-600">Requested</button>
+                )}
                 {owner && (
                   <div className="flex flex-row gap-3">
                     <button onClick={()=>setpopwork(!popwork)} className="flex items-end gap-2  px-4 py-2 bg-green-400 text-white rounded-lg hover:bg-green-500 transition text-sm font-medium">
@@ -373,9 +425,9 @@ export default function Projectdetails() {
                   Team Members
                 </h2>
                 <div className="flex items-center gap-2">
-                  <button className="text-lg border-2 text-white bg-blue-500 font-bold hover:bg-blue-600 rounded-xl p-2 px-4 py-1" onClick={()=>setusechat(!usechat)}>
+                {isMember &&  <button className="text-lg border-2 text-white bg-blue-500 font-bold hover:bg-blue-600 rounded-xl p-2 px-4 py-1" onClick={()=>setusechat(!usechat)}>
                     Team chat
-                  </button>
+                  </button> } 
                   {owner && (
                     <>
                       <button
@@ -448,7 +500,7 @@ export default function Projectdetails() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                      {member._id!==user._id && (
+                      {isMember && user && member._id!==user._id && (
                       <button className="px-4 py-2 border border-red-300 text-white bg-red-500 hover:bg-red-600 rounded-lg transition text-sm font-medium"
                         onClick={()=>{setassignform(!assignform);setselectedReceiver(member._id)}}>
                            Assign task
@@ -474,12 +526,14 @@ export default function Projectdetails() {
         )}
         
        <div className="bg-white rounded-2xl shadow-md p-6 md:p-8 mt-6">
-         {works.length===0 ? (
+        
+         {isMember && works.length===0 ? (
           <h1 className="text-lg text-red-500 font-bold">No Project exists</h1>
          ):(
           <div className="grid grid-cols-1 gap-3">
             <h1 className="flex items-start justify-start font-bold text-black">Projects</h1>
-          {works.map((work,index)=>(
+            {!isMember && <h1 className="text-lg text-red-400">Only team members can access the projects</h1>}
+          {isMember && works.map((work,index)=>(
             <div key={work._id} className="bg-gray-50 flex flex-row gap-3 p-4 rounded-2xl shadow-lg hover:shadow-md">
               <div className="flex flex-1 flex-row gap-2">
                  <h1 className="text-black my-3 text-md">{index+1}</h1>
