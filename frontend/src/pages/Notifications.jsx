@@ -190,9 +190,30 @@ if (response.data.success) {
                }
                else
                {
-                 alert("INternal server error");
+                 alert("Internal server error");
                }
             }
+      }
+      const declineTeamrequest=async(senderId,projectId,requestId)=>{
+        try{
+            const response=await axios.post(`http://localhost:8000/api/Request/decline-request/${projectId}/${senderId}`,{},
+              {
+                withCredentials:true,
+              }
+            );
+            setrequests((prev)=>prev.filter((r)=>(r._id || r).toString()!==requestId.toString()));
+            alert(response?.data?.msg || "Request rejected");
+        }catch(error)
+        {
+            if(error.response)
+            {
+              alert(error.response?.data?.msg || "Failed to reject request");
+            }
+            else
+            {
+              alert("Internal server error");
+            }
+        }
       }
       return(
         <div className="flex min-h-screen w-full">
@@ -249,7 +270,7 @@ if (response.data.success) {
                         <div className="flex flex-1 justify-end">
                            <div className="flex flex-row gap-3">
                               <button onClick={()=>acceptTeamrequest(request.sender._id,request.projectId._id,request._id)} className="text-lg text-white bg-green-500 p-4 font-bold rounded-2xl hover:bg-green-600">Accept</button>
-                              <button className="text-lg text-white bg-red-500 p-4 font-bold rounded-2xl hover:bg-red-600">Decline</button>
+                              <button onClick={()=>declineTeamrequest(request.sender._id,request.projectId._id,request._id)} className="text-lg text-white bg-red-500 p-4 font-bold rounded-2xl hover:bg-red-600">Decline</button>
                            </div>
                         </div>
                      </div>
