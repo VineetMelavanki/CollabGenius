@@ -12,6 +12,8 @@ export default function Notifications()
       const[notifications,setnotifications]=useState([]);
       const[assignments,setassignments]=useState([]);
       const[user,setuser]=useState(null);
+      const[msg3,setmsg3]=useState("");
+      const[error3,seterror3]=useState("");
       const[error2,seterror2]=useState("");
       const[requests,setrequests]=useState([]);
       const socketRef=useRef(null);
@@ -168,7 +170,30 @@ if (response.data.success) {
 
         getallnotifications();
       },[]);
-
+      //Request Functions
+      const acceptTeamrequest=async(senderId,projectId,requestId)=>{
+            try{
+              const response=await axios.post(`http://localhost:8000/api/Request/accept-request/${projectId}/${senderId}`,{},
+                {
+                  withCredentials:true,
+                }
+              );
+             setrequests((prev)=>prev.filter((r)=>(r._id || r).toString()!==requestId.toString()));
+             alert(response.data?.msg || "Request accepted");
+            }catch(error)
+            {
+               if(error.response)
+               {
+                console.log(error.response?.data?.msg);
+                seterror3(error.response?.data?.msg || "Cannot accept request");
+                alert(error.response?.data?.msg || "Cannot accept request");
+               }
+               else
+               {
+                 alert("INternal server error");
+               }
+            }
+      }
       return(
         <div className="flex min-h-screen w-full">
             <div className="flex items-start justify-start flex-col gap-3">
@@ -220,7 +245,13 @@ if (response.data.success) {
                 {requests.map((request)=>(
                   <div className="flex items-start rounded-2xl bg-gray-100 shadow-xl hover:shadow-md justify-start p-4" key={request._id}>
                      <div className="flex flex-row justify-center items-center gap-3">
-                        <h1 className="text-xl font-mono"><span onClick={()=>navigate(`/view-profile/${request.sender._id}`)} className="text-red-500 hover:underline mx-2">{request.sender.name}</span>{request.message}<span className="text-lg text-green-500 hover:underline font-sans mx-3"onClick={()=>navigate(`/get-project/${request.projectId._id}`)}>{request.projectId.title}</span></h1>
+                        <p className="lg:text-xl sm:text-lg font-mono "><span onClick={()=>navigate(`/view-profile/${request.sender._id}`)} className="text-red-500 hover:underline mx-2">{request.sender.name}</span>{request.message}<span className="text-lg text-green-500 hover:underline font-sans mx-3"onClick={()=>navigate(`/get-project/${request.projectId._id}`)}>{request.projectId.title}</span></p>
+                        <div className="flex flex-1 justify-end">
+                           <div className="flex flex-row gap-3">
+                              <button onClick={()=>acceptTeamrequest(request.sender._id,request.projectId._id,request._id)} className="text-lg text-white bg-green-500 p-4 font-bold rounded-2xl hover:bg-green-600">Accept</button>
+                              <button className="text-lg text-white bg-red-500 p-4 font-bold rounded-2xl hover:bg-red-600">Decline</button>
+                           </div>
+                        </div>
                      </div>
                   </div>
                 ))}

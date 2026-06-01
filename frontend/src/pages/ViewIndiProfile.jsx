@@ -6,8 +6,33 @@ export default function ViewIndiProfile()
 {
    const[user,setuser]=useState(null);
    const[error,seterror]=useState("");
+   const[error1,seterror1]=useState("");
    const[message,setmessage]=useState("");
+   const[teams,setteams]=useState([]);
    const {id}=useParams();
+   useEffect(()=>{
+    const getalljoinedteams=async()=>{
+      try{
+        const response=await axios.get(`http://localhost:8000/api/Project/get-joined-team/${id}`,
+          {
+            withCredentials:true,
+          }
+        );
+        setteams(response.data?.projects || []);
+      }catch(error)
+      {
+           if(error.response)
+           {
+            seterror1(error.response?.data?.msg || "Cannot fetch teams");
+           }
+           else
+           {
+            seterror1("Internal server error");
+           }
+      }
+    }
+    getalljoinedteams();
+   },[id]);
    useEffect(()=>{
      seterror("");
      setmessage("");
@@ -68,6 +93,9 @@ export default function ViewIndiProfile()
               <p className="text-gray-600 mb-4 border p-2 rounded">User ID: {user?.userId}</p>
               <div className="inline-block px-4 py-2 bg-primary-100 text-primary-700 rounded-full font-medium">
                 {user?.skillevel}
+              </div>
+              <div className="flex bg-slate-100">
+                
               </div>
             </div>
 
