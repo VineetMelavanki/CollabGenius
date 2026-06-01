@@ -231,4 +231,24 @@ async function deleteproject(req,res)
         return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
-module.exports={CreateProject,Getallprojects,getprojectbyId,deleteproject,yourprojects,addmembers,removemember,getprojectBytitle,IsMember};
+async function getjoinedTeam(req,res)
+{
+    try{
+      const {id}=req.params;
+      const projects=await Project.find({
+        $or:[
+            {members:id},
+            {ownerId:id},
+        ],
+      });
+      if(projects.length==0)
+      {
+        return res.status(404).json({msg:"User hasn't joined or created any team",success:false});
+      }
+      return res.status(200).json({msg:"All team fetched successfully",projects:projects,success:true});
+    }catch(error)
+    {
+       return res.status(500).json({msg:"Internal server error",success:false});
+    }
+}
+module.exports={CreateProject,Getallprojects,getprojectbyId,deleteproject,yourprojects,addmembers,removemember,getprojectBytitle,IsMember,getjoinedTeam};
