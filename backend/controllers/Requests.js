@@ -89,4 +89,24 @@ async function acceptRequest(req,res)
          return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
-module.exports={sendRequest,getallRequests,acceptRequest};
+async function declineRequest(req,res)
+{
+    try{
+        const{senderId,projectId}=req.params;
+        const user=await User.findById(senderId);
+        const request=await Request.findOne({
+            sender:senderId,
+            projectId:projectId,
+        });
+        if(!request)
+        {
+            return res.status(404).json({msg:"Request not found",success:false});
+        }
+        await Request.findByIdAndDelete(request._id);
+        return res.status(200).json({msg:"Request rejected",success:true});
+    }catch(error)
+    {
+        return res.status(500).json({msg:"Internal server error",success:false});
+    }
+}
+module.exports={sendRequest,getallRequests,acceptRequest,declineRequest};
