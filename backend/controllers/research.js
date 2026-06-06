@@ -1,5 +1,6 @@
 const axios=require("axios");
 const xml2js=require("xml2js");
+const User = require("../model/User");
 async function arXivResearch(req,res)
 {
      const {topic}=req.query;
@@ -34,4 +35,43 @@ async function arXivResearch(req,res)
         return res.status(500).json({msg:"Internal server error"});
      }
 }
-module.exports={arXivResearch};
+async function githubResearch(req,res)
+{
+   try{
+     const{topic}=req.query;
+     const user=await User.findById(req.user.id);
+     if(!topic)
+     {
+      return res.status(409).json({msg:"Please enter a topic",success:false});
+     }
+     if(!user)
+     {
+      return res.status(404).json({msg:"User not found",success:false});
+     }
+     const access_token=user?.githubaccess_token;
+     const config={
+        params:{
+            q:topic,
+            sort:"stars",
+            order:"desc",
+            per_page:20,
+         },
+     }
+
+     if(access_token)
+     {
+      config.headers={
+         Authorization:`Bearer ${access_token}`,
+      };
+     }
+     const response=await axios.get(
+      "https://api.github.com/search/repositories",
+      config
+     );
+     return res.status(200).json({msg:"All repositories fetched successfully",repositories:response.data.items,success:true});
+   }catch(error)
+   {
+      return res.status(500).json({msg:"Internal server error",success:false});
+   }
+}
+module.exports={arXivResearch,githubResearch};
