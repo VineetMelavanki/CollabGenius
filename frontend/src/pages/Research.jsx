@@ -2,6 +2,8 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import githublogo from "../assets/logos/github.png"
+import arxivlogo from "../assets/logos/arxiv.png"
 export default function Research() {
   const { workId, projectId } = useParams();
   const [projectName, setprojectName] = useState(null);
@@ -11,12 +13,28 @@ export default function Research() {
   const[formdata,setformdata]=useState({
     topic:"",
   });
+  const[githubresults,setgithubresults]=useState([]);
   const[repolist,setrepolist]=useState([]);
   const[gitinfo,setgetinfo]=useState({
     name:"",
     description:"",
     private:false,
   });
+  const sources=[
+    {
+      name:"github",
+      logo:githublogo,
+    },
+    {
+      name:"arxiv",
+      logo:arxivlogo,
+    },
+  ];
+  const[selectedResources,setselectedResources]=useState({
+    name:"github",
+    logo:githublogo,
+  });
+  const[showResources,setshowResources]=useState(false);
   const handlegitinfo=(e)=>{
     setgetinfo((prev)=>({...prev,[e.target.name]:e.target.value}));
   }
@@ -95,6 +113,16 @@ export default function Research() {
   }
   const handleSearch=async(e)=>{
     e.preventDefault();
+    if(selectedResources.name==="arxiv")
+    {
+      await searcharxiv();
+    }
+    if(selectedResources.name==="github")
+    {
+      await searchgithub();
+    }
+  }
+  const searcharxiv=async()=>{
     setmsg("");
     seterror("");
     try{
@@ -118,6 +146,31 @@ export default function Research() {
         seterror("Internal server error");
       }
     }
+  }
+  const searchgithub=async()=>{
+      setmsg("");
+      seterror("");
+      try{
+        const response=await axios.get("http://localhost:8000/api/research/github-search",
+          {
+            params:{topic:formdata.topic},
+            withCredentials:true,
+          },
+        );
+        console.log(response);
+        setgithubresults(response.data.repositories);
+
+      }catch(error)
+      {
+              if(error.response)
+              {
+                seterror(error.response?.data?.msg || "Cannot fetch github repositories");
+              }
+              else
+              {
+                seterror("Internal server error");
+              }
+      }
   }
   return (
     <div className="flex w-full  rounded-2xl">
@@ -169,17 +222,37 @@ export default function Research() {
                 </div>
                 <div className="flex p-4 justify-center items-center">
                   <form onSubmit={handleSearch} className="flex flex-col gap-3">
-                   <input type="text"
-                   name="topic"
-                   placeholder="Search research papers"
-                   onChange={researchsubmit}
-                  className="w-full border border-blue-200 border-2 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500" />
-                   <button type="submit" className="text-white bg-blue-500 font-bold p-3 rounded-xl hover:bg-blue-600">Search</button>
+                   <div className="flex flex-row gap-3">
+                     <div className="relative w-full flex flex-row gap-3">
+                       <input type="text"
+                       name="topic"
+                       placeholder="Search research papers"
+                       onChange={researchsubmit}
+                        className="w-full border border-blue-200 border-2 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                       <button className="hover:bg-gray-100 rounded-2xl p-2" type="button" onClick={()=>setshowResources(!showResources)}>
+                       <img src={selectedResources.logo} alt={selectedResources.name} className="w-8 h-8 rounded-full"/>
+                       </button>
+                       {showResources && (
+                      <div className="absolute right-0 top-14 w-56 bg-white rounded-xl shadow-xl border z-50">
+                         {sources.map((source)=>(
+                          <div key={source.name}
+                          onClick={()=>{setselectedResources(source);setshowResources(false)}}
+                          className="flex items-center gap-3 p-3 hover:bg-gray-100 cursor-pointer">
+                          <img src={source.logo} alt={source.name} 
+                          className="w-8 h-8 object-contain"/>
+
+                          <span>{source.name}</span>
+                          </div>
+                         ))}
+                      </div>
+                     )}
+                     </div>
+                     
+                   </div>
+                   <button type="submit" className="text-white  bg-blue-500 font-bold p-3 rounded-xl hover:bg-blue-600 ">Search</button>
                   </form>
                 </div>
-                {results.length===0 ? (
-                  <h1 className="text-md text-gray-400 ">No results found</h1>
-                ):(
+                {results.length> 0 && (
                   <div className="grid gap-3 grid-cols-1 md:grid-cols-1 lg:grid-cols-1">
                      {results.map((result,index)=>(
                         <div key={index} className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
@@ -194,6 +267,24 @@ export default function Research() {
                             Open Paper
                         </a>
                         </div>
+                     ))}
+                  </div>
+                )}
+                {githubresults.length>0 && (
+                  <div className="grid gap-3 grid-cols-1 md:grid-cols-1 lg:grid-cols-1">
+                     {githubresults.map((result,index)=>(
+                      <div key={index} className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition">
+                           <h2 className="text-md font-semibold text-gray-800">
+                            Repository name :{result.name}
+                           </h2>
+                            <h3 className="text-sm font-semibold text-gray-600">{result.description}</h3>
+                            <a href={result.html_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-700 mt-4 inline-flex items-center gap-2 font-semibold ">
+                            Open Repository
+                        </a>
+                      </div>
                      ))}
                   </div>
                 )}
