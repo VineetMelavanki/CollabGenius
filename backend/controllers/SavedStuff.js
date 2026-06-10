@@ -1,6 +1,7 @@
 const SavedRepo=require("../model/SavedRepo");
 const SavedDocs=require("../model/SaveDocs");
 const User=require("../model/User");
+const Project = require("../model/project");
 async function SaveGithubRepo(req,res)
 {
     try{
@@ -23,7 +24,6 @@ async function SaveGithubRepo(req,res)
         repourl:html_url,
         savedby:req.user.id,
        });
-
        return res.status(201).json({msg:"Repository saved successfully",repository:NewSavedRepo,success:true});
     }catch(error)
     {
@@ -48,4 +48,32 @@ async function fetchAllsavedRepos(req,res)
       return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
-module.exports={SaveGithubRepo,fetchAllsavedRepos};
+async function DeletesavedRepos(req,res)
+{
+    try{
+        const{repoId,projectId,workId}=req.params;
+        const user=await User.findById(req.user.id);
+        const GithubRepo=await SavedRepo.findById(repoId);
+        if(!GithubRepo)
+        {
+            return res.status(404).json({msg:"Github repo does not exists",success:false});
+        }
+        const projectexists=await Project.findById(projectId);
+        if(!projectexists)
+        {
+            return res.status(404).json({msg:"Project does not exists",success:false});
+        }
+        const ownerId=projectexists?.ownerId;
+        if(user._id.toString()!== ownerId.toString())
+            {
+                return res.status(401).json({msg:"Only Team Leaders can delete the saved Repositories",success:false});
+            }
+        await SavedRepo.findByIdAndDelete(repoId);
+        
+        return res.status(200).json({msg:"Saved repository deleted successfully",success:true});
+    }catch(error)
+    {
+        return res.status(500).json({msg:"Internal server error",success:false});
+    }
+}
+module.exports={SaveGithubRepo,fetchAllsavedRepos,DeletesavedRepos};
