@@ -12,7 +12,6 @@ async function getrequests(req,res)
       {
          return res.status(200).json({msg:"No notifications received",Notify:[],success:true});
       }
-      
       return res.status(200).json({msg:"Notification available",Notify:Notification,success:true});
    }catch(error)
    {
