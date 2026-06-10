@@ -5,6 +5,7 @@ import axios from "axios";
 import { MagnifyingGlassIcon,FolderOpenIcon ,PlusIcon ,ChatBubbleOvalLeftIcon,ChevronDoubleDownIcon,ChevronDoubleUpIcon} from "@heroicons/react/24/outline";
 import githublogo from "../assets/logos/github.png"
 import arxivlogo from "../assets/logos/arxiv.png"
+import{FaTrash} from "react-icons/fa"
 export default function Research() {
   const { workId, projectId } = useParams();
   const [projectName, setprojectName] = useState(null);
@@ -221,6 +222,25 @@ export default function Research() {
         }
     }
   }
+  const deletesavedRepo=async(repoId)=>{
+    try{
+      const response=await axios.delete(`http://localhost:8000/api/research/delete-github-repo/${projectId}/${workId}/${repoId}`,{
+        withCredentials:true,
+      });
+      setSaveRepos((prev)=>prev.filter((r)=>(r._id || r).toString()!==repoId.toString()));
+      alert(response?.data?.msg || "Repository deleted");
+    }catch(error)
+    {
+      if(error?.response)
+      {
+        alert("Cannot delete repo");
+      }
+      else
+      {
+        alert("Internal server error");
+      }
+    }
+  }
   return (
     <div className="flex w-full  rounded-2xl">
        {repooption && 
@@ -263,7 +283,7 @@ export default function Research() {
                  <div className="absolute inset-0 bg-black/40"
                  onClick={()=>setfoldersection(false)}/>
                   <div className="relative bg-white w-full max-w-2xl h-full flex flex-col shadow-2xl overflow-y-auto">
-                      <div className="flex flex-col gap-3 justify-start items-start p-6">
+                      <div className="flex flex-col  gap-3 justify-start items-start p-6">
                         <div className="flex flex-row gap-3">
                           <div className="border border-2 flex flex-row gap-2 p-2">
                             <FolderOpenIcon className="w-8 h-8 text-yellow-500"/>
@@ -275,22 +295,26 @@ export default function Research() {
                           {!arrowdown && <ChevronDoubleUpIcon className="w-8 h-8"/>}
                           </button>
                         </div>
-                        {!arrowdown && SavedRepos.length>0 && (
-                          <div className="grid grid-cols-1 gap-3">
+                        
+                      </div>
+                     {!arrowdown && SavedRepos.length>0 && (
+                          <div className="grid grid-cols-1 gap-3 ">
                             {SavedRepos.map((repo)=>(
-                              <div key={repo._id} className="flex flex-col  bg-white p-4 rounded-xl shadow hover:-translate-y-1 transition-all duration-200">
+                              <div key={repo._id} className="flex flex-col  bg-white p-6 rounded-xl shadow hover:-translate-y-1 transition-all duration-200">
                                 <div className="flex flex-row gap-3">
                                 <h1 className="text-blue-500 font-bold">{repo.name}</h1>
+                                 
                                  <div className="flex flex-1 justify-end">
-                                   <h1 className="text-black">Saved by : {repo.savedby?.name}</h1>
+                                  <h1 className="text-black mx-8">Saved by : {repo.savedby?.name}</h1>
+                                   <button className="mx-2" onClick={()=>deletesavedRepo(repo._id)}>
+                                    <FaTrash className="h-5 w-5 text-red-500 hover:text-red-600"/>
+                                   </button>
                                  </div>
                                 </div>
                               </div>
                             ))}
                           </div>
                         )}
-                      </div>
-                
                   </div>
               </div>
             )}
