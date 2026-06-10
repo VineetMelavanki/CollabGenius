@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { MagnifyingGlassIcon,FolderOpenIcon ,PlusIcon ,ChatBubbleOvalLeftIcon,ChevronDoubleDownIcon,ChevronDoubleUpIcon} from "@heroicons/react/24/outline";
 import githublogo from "../assets/logos/github.png"
 import arxivlogo from "../assets/logos/arxiv.png"
 export default function Research() {
@@ -13,6 +14,10 @@ export default function Research() {
   const[formdata,setformdata]=useState({
     topic:"",
   });
+  const[arrowup,setarrowup]=useState(false);
+  const[arrowdown,setarrowdown]=useState(true);
+  const[foldersection,setfoldersection]=useState(false);
+  const[repoerror,setrepoerror]=useState("");
   const[githubresults,setgithubresults]=useState([]);
   const[repolist,setrepolist]=useState([]);
   const[gitinfo,setgetinfo]=useState({
@@ -20,6 +25,8 @@ export default function Research() {
     description:"",
     private:false,
   });
+  const[isSaved,setisSaved]=useState(false);
+  const[SavedRepos,setSaveRepos]=useState([]);
   const sources=[
     {
       name:"github",
@@ -172,6 +179,48 @@ export default function Research() {
               }
       }
   }
+  const saveGithubRepo=async(repo)=>{
+    try{
+         const response=await axios.post(`http://localhost:8000/api/research/save-github-repo/${projectId}/${workId}`,
+          {
+            name:repo.name,
+            html_url:repo.html_url,
+          },{
+            withCredentials:true,
+          }
+      );
+      alert("Saved successfully");
+    }catch(error)
+    {
+       if(error.response)
+       {
+        alert("Cannot be saved")
+        setrepoerror(error.response?.data?.msg || "Cannot save repository");
+       }
+       else
+       {
+        setrepoerror("Internal server error");
+       }
+    }
+  }
+  const fetchsavedgithubrepos=async(e)=>{
+    try{
+     const response=await axios.get(`http://localhost:8000/api/research/saved-github-repos/${projectId}/${workId}`,{
+      withCredentials:true,
+     });
+     setSaveRepos(response.data.Repos);
+    }catch(error)
+    {
+        if(error.response)
+        {
+          alert(error.response?.data?.msg || "Repos cannot be fetched");
+        }
+        else
+        {
+          alert("Internal server error");
+        }
+    }
+  }
   return (
     <div className="flex w-full  rounded-2xl">
        {repooption && 
@@ -209,16 +258,55 @@ export default function Research() {
                 </div>
               </div>
             </div>}
+            {foldersection && !researchhub &&  (
+              <div className="fixed inset-0 z-50 flex justify-end">
+                 <div className="absolute inset-0 bg-black/40"
+                 onClick={()=>setfoldersection(false)}/>
+                  <div className="relative bg-white w-full max-w-2xl h-full flex flex-col shadow-2xl overflow-y-auto">
+                      <div className="flex flex-col gap-3 justify-start items-start p-6">
+                        <div className="flex flex-row gap-3">
+                          <div className="border border-2 flex flex-row gap-2 p-2">
+                            <FolderOpenIcon className="w-8 h-8 text-yellow-500"/>
+                            <h1 className="text-lg font-mono">Github Saves</h1>
+                            
+                          </div>
+                          <button onClick={()=>{setarrowdown(!arrowdown);fetchsavedgithubrepos()}} className="border border-2 hover:bg-gray-200">
+                          {arrowdown && <ChevronDoubleDownIcon className="w-8 h-8"/>}  
+                          {!arrowdown && <ChevronDoubleUpIcon className="w-8 h-8"/>}
+                          </button>
+                        </div>
+                        {!arrowdown && SavedRepos.length>0 && (
+                          <div className="grid grid-cols-1 gap-3">
+                            {SavedRepos.map((repo)=>(
+                              <div key={repo._id} className="flex flex-col  bg-white p-4 rounded-xl shadow hover:-translate-y-1 transition-all duration-200">
+                                <div className="flex flex-row gap-3">
+                                <h1 className="text-blue-500 font-bold">{repo.name}</h1>
+                                 <div className="flex flex-1 justify-end">
+                                   <h1 className="text-black">Saved by : {repo.savedby?.name}</h1>
+                                 </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                
+                  </div>
+              </div>
+            )}
       {researchhub && (
         <div className="fixed inset-0 z-50 flex justify-end">
             <div className="absolute inset-0 bg-black/40"
-            onClick={()=>{setresearchhub(false);setresults([])}}>
+            onClick={()=>{setresearchhub(false);setresults([]);setgithubresults([])}}>
             </div>
              <div className="relative bg-white w-full max-w-md h-full flex flex-col shadow-2xl overflow-y-auto"
              onClick={(e)=>e.stopPropagation()}>
               <div className="flex flex-col gap-3">
-                <div>
+                <div className="flex flex-row gap-3">
                   <h1 className="p-5 font-bold text-2xl">Research Hub</h1>
+                  <div className="flex flex-1 justify-end items-center mx-7">
+                    <button className="text-lg font-bold text-red-500 hover:text-red-600"  onClick={()=>{setresearchhub(false);setresults([]);setgithubresults([])}}>X</button>
+                  </div>
                 </div>
                 <div className="flex p-4 justify-center items-center">
                   <form onSubmit={handleSearch} className="flex flex-col gap-3">
@@ -284,6 +372,7 @@ export default function Research() {
                             className="text-blue-600 hover:text-blue-700 mt-4 inline-flex items-center gap-2 font-semibold ">
                             Open Repository
                         </a>
+                       <button onClick={()=>saveGithubRepo(result)} className="mx-6 text-md text-red-500 hover:text-red-600">Save</button>
                       </div>
                      ))}
                   </div>
@@ -300,24 +389,38 @@ export default function Research() {
            <div className="flex flex-row">
               <h1 className="text-2xl sm:text-md md:text-2xl lg:text-2xl text-black   font-bold p-2 rounded-xl">Project Name:</h1>
               <h1 className="text-2xl sm:text-md md:text-2xl lg:text-2xl text-green-500 font-bold p-2">{projectName?.name}</h1>
-              <button onClick={()=>setresearchhub(!researchhub)} className="text-lg font-bold mx-5 text-white border bg-purple-400 p-3 rounded-2xl  hover:bg-purple-500">Research HUB</button>
+              
            </div>
             
            </div>
            
         </div>
         <div className="flex bg-gray-100 flex-col gap-3 rounded-2xl">
-         <div className="flex flex-row gap-3">
+         <div className="flex flex-row ">
            <h1 className="flex items-start justify-start p-4 font-bold text-2xl">Workspace</h1>
            <div className="flex items-center justify-center">
-            <button onClick={()=>setrepooption(true)} className="text-sm font-bold text-white bg-red-500 rounded-2xl p-2 hover:bg-red-600">Create github Repo</button>
+              <button onClick={()=>setresearchhub(!researchhub)} className="text-lg font-bold mx-5 text-white border bg-black/80 p-3 rounded-2xl  hover:bg-black">
+                    <MagnifyingGlassIcon className="h-5 w-5 text-white" />
+              </button>
+              <button>
+                <FolderOpenIcon onClick={()=>setfoldersection(true)} className="h-7 w-7 text-yellow-500 "/>
+              </button>
+              
+          
             </div>
          </div>
          
         </div>
          <div className="flex bg-gray-100 flex-col gap-3 w-full h-full rounded-2xl">
           <div className="flex flex-col gap-2 p-3">
-            <h1 className="text-lg p-3 font-mono">GITHUB repositories </h1>
+            <div className="flex flex-row gap-3">
+              <h1 className="text-lg p-3 font-mono">GITHUB repositories </h1>
+              <div className="flex flex-1 justify-end">
+                <button onClick={()=>setrepooption(true)} className="text-sm font-bold text-red-500   rounded-2xl p-2 hover:text-red-600">
+                  <PlusIcon className="text-red h-6 w-6"/>
+                </button>
+              </div>
+            </div>
             {repolist.length===0 ?(
             <div className="text-red-200 font-mono text-lg">No respositories created</div>
           ) :(
