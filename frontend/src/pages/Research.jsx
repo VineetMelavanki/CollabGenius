@@ -6,7 +6,9 @@ import { MagnifyingGlassIcon,FolderOpenIcon ,PlusIcon ,ChatBubbleOvalLeftIcon,Ch
 import githublogo from "../assets/logos/github.png"
 import arxivlogo from "../assets/logos/arxiv.png"
 import{FaTrash} from "react-icons/fa"
+import { useNavigate } from "react-router-dom";
 export default function Research() {
+  const navigate=useNavigate();
   const { workId, projectId } = useParams();
   const [projectName, setprojectName] = useState(null);
   const [msg, setmsg] = useState("");
@@ -302,10 +304,10 @@ export default function Research() {
                             {SavedRepos.map((repo)=>(
                               <div key={repo._id} className="flex flex-col  bg-white p-6 rounded-xl shadow hover:-translate-y-1 transition-all duration-200">
                                 <div className="flex flex-row gap-3">
-                                <h1 className="text-blue-500 font-bold">{repo.name}</h1>
+                                <h1 className="text-blue-500 font-bold text-xl">{repo.name}</h1>
                                  
                                  <div className="flex flex-1 justify-end">
-                                  <h1 className="text-black mx-8">Saved by : {repo.savedby?.name}</h1>
+                                  <h1 className="text-black mx-12 font-mono">Saved by : <span className="hover:underline text-green-500" onClick={() => navigate(`/view-profile/${repo.savedby?._id}`)}>{repo.savedby?.name}</span></h1>
                                    <button className="mx-2" onClick={()=>deletesavedRepo(repo._id)}>
                                     <FaTrash className="h-5 w-5 text-red-500 hover:text-red-600"/>
                                    </button>
