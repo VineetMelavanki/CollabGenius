@@ -2,6 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import { NotebookPen } from "lucide-react";
 import { MagnifyingGlassIcon,FolderOpenIcon ,PlusIcon ,ChatBubbleOvalLeftIcon,ChevronDoubleDownIcon,ChevronDoubleUpIcon} from "@heroicons/react/24/outline";
 import githublogo from "../assets/logos/github.png"
 import arxivlogo from "../assets/logos/arxiv.png"
@@ -17,6 +18,8 @@ export default function Research() {
   const[formdata,setformdata]=useState({
     topic:"",
   });
+  const[githubnoteslists,setgithubnoteslist]=useState({});
+  const[reponotes,setreponotes]=useState({});
   const[arrowup,setarrowup]=useState(false);
   const[arrowdown,setarrowdown]=useState(true);
   const[foldersection,setfoldersection]=useState(false);
@@ -121,6 +124,7 @@ export default function Research() {
   const researchsubmit=(e)=>{
     setformdata((prev)=>({...prev,[e.target.name]:e.target.value}))
   }
+  
   const handleSearch=async(e)=>{
     e.preventDefault();
     if(selectedResources.name==="arxiv")
@@ -243,6 +247,52 @@ export default function Research() {
       }
     }
   }
+  
+  const handleNotesAdditon=async(repoId)=>{
+  
+    try{
+      const description=reponotes[repoId];
+      const response=await axios.post(`http://localhost:8000/api/Notes/create-notes/${repoId}`,{description},
+        {
+          withCredentials:true,
+        }
+      );
+
+      setreponotes(prev=>({
+   ...prev,
+   [repoId]:""
+}));
+    }catch(error)
+    {
+       if(error.response)
+       {
+        alert(error.response?.data?.msg || "Cannot add notes");
+       }
+       else
+       {
+        alert("Internal server error");
+       }
+    }
+  }
+  const fetchallnotes=async(repoId)=>{
+    try{
+      const response=await axios.get(`http://localhost:8000/api/Notes/get-all-notes/${repoId}`,{
+        withCredentials:true,
+      });
+      setgithubnoteslist((prev)=>({...prev,[repoId]:response.data.Notes}));
+     
+    }catch(error)
+    {
+        if(error.response)
+        {
+          alert(error.response?.data?.msg || "Cannot fetch notes");
+        }
+        else
+        {
+          alert("Internal server error");
+        }
+    }
+  }
   return (
     <div className="flex w-full  rounded-2xl">
        {repooption && 
@@ -282,8 +332,8 @@ export default function Research() {
             </div>}
             {foldersection && !researchhub &&  (
               <div className="fixed inset-0 z-50 flex justify-end">
-                 <div className="absolute inset-0 bg-black/40"
-                 onClick={()=>setfoldersection(false)}/>
+                 <div  className="absolute inset-0 bg-black/40"
+                 onClick={()=>{setfoldersection(false);setarrowdown(true)}}/>
                   <div className="relative bg-white w-full max-w-2xl h-full flex flex-col shadow-2xl overflow-y-auto">
                       <div className="flex flex-col  gap-3 justify-start items-start p-6">
                         <div className="flex flex-row gap-3">
@@ -302,17 +352,56 @@ export default function Research() {
                      {!arrowdown && SavedRepos.length>0 && (
                           <div className="grid grid-cols-1 gap-3 ">
                             {SavedRepos.map((repo)=>(
-                              <div key={repo._id} className="flex flex-col  bg-white p-6 rounded-xl shadow hover:-translate-y-1 transition-all duration-200">
+                              <div key={repo._id} className="flex flex-col  bg-white p-6 rounded-xl shadow-lg ">
                                 <div className="flex flex-row gap-3">
-                                <h1 className="text-blue-500 font-bold text-xl">{repo.name}</h1>
+                                <h1 className="text-blue-500 font-bold text-2xl">{repo.name}</h1>
                                  
                                  <div className="flex flex-1 justify-end">
-                                  <h1 className="text-black mx-12 font-mono">Saved by : <span className="hover:underline text-green-500" onClick={() => navigate(`/view-profile/${repo.savedby?._id}`)}>{repo.savedby?.name}</span></h1>
+                                  <h1 className="text-black mx-12 font-mono py-2">Saved by : <span className="hover:underline text-green-500" onClick={() => navigate(`/view-profile/${repo.savedby?._id}`)}>{repo.savedby?.name}</span></h1>
                                    <button className="mx-2" onClick={()=>deletesavedRepo(repo._id)}>
                                     <FaTrash className="h-5 w-5 text-red-500 hover:text-red-600"/>
                                    </button>
                                  </div>
                                 </div>
+                                <div className="flex flex-col gap-3 border p-4 w-full mt-2">
+                                  <div className="flex flex-row gap-3 justify-start items-center">
+                                    <h1 className="font-mono text-lg ">Notes</h1>
+                                    <form onSubmit={(e)=>{e.preventDefault();handleNotesAdditon(repo._id);}} className="flex flex-row gap-3">
+                                      <input type="text"
+                                      name="description"
+                                      value={reponotes[repo._id]|| ""}
+                                      onChange={(e)=>{
+                                        setreponotes(prev=>({
+                                          ...prev,
+                                          [repo._id]:e.target.value,
+                                        }))
+                                      }}
+                                      placeholder="Enter your notes"
+                                      className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500" />
+                                      <button type="submit" className="text-white bg-red-500 font-bold px-4 rounded-2xl hover:bg-red-600">Add</button>
+                                    </form>
+                                    <button onClick={()=>fetchallnotes(repo._id)}  className="text-white bg-yellow-500 font-mono text-lg p-3 rounded-2xl">
+                                      <NotebookPen className="w-8 h-8"/>
+                                    </button>
+                                  </div>
+                                {!(githubnoteslists[repo._id]?.length) ?(
+                                  <div className="text-slate-100 font-mono text-lg">No notes created</div>
+                                ):(
+                                  <div className="flex flex-col gap-2">
+                                    {githubnoteslists[repo._id]?.map((note)=>(
+                                      <div key={note._id} className="bg-white items-start justify-start">
+                                          <div className="text-md font-semibold"><span className="text-purple-500">{note.author?.name} : </span>{note.description}</div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                                </div>
+                                <a href={repo.repourl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-red-600 hover:text-red-700 mt-4 inline-flex items-center gap-2 font-semibold ">
+                            Open Repository
+                        </a>
                               </div>
                             ))}
                           </div>
