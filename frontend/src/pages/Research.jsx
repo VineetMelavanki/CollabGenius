@@ -31,6 +31,10 @@ export default function Research() {
     description:"",
     private:false,
   });
+  const[ResearchTaskformdata,setResearchTaskformdata]=useState({
+    description:"",
+  })
+  const[ResearchTasks,setResearchTasks]=useState([]);
   const[isSaved,setisSaved]=useState(false);
   const[SavedRepos,setSaveRepos]=useState([]);
   const sources=[
@@ -293,6 +297,49 @@ export default function Research() {
         }
     }
   }
+  const handletaskSubmit=async(e)=>{
+    e.preventDefault();
+    try{
+       const response=await axios.post(`http://localhost:8000/api/ResearchTask/create-task/${projectId}/${workId}`,ResearchTaskformdata,
+        {
+          withCredentials:true,
+        }
+       );
+       alert("Task added successfully");
+       setResearchTasks((prev)=>[...prev,response.data.Task]);
+       setResearchTaskformdata({description:""});
+    }catch(error)
+    {
+         if(error.response)
+         {
+          alert(error.response?.data?.msg ||"Cannot create task");
+         }else
+         {
+          alert("Internal server error");
+         }
+    }
+  }
+  useEffect(()=>{
+    const fetchTasks=async()=>{
+       try{
+          const response=await axios.get(`http://localhost:8000/api/ResearchTask/get-all-tasks/${projectId}/${workId}`,{
+            withCredentials:true,
+          });
+          setResearchTasks(response.data.Tasks ||[]);
+       }catch(error)
+       {
+           if(error.response)
+           {
+            alert("Cannot fetch tasks");
+           }
+           else
+           {
+            alert("Internal server error");
+           }
+       }
+    }
+    fetchTasks();
+  },[workId]);
   return (
     <div className="flex w-full  rounded-2xl">
        {repooption && 
@@ -492,6 +539,7 @@ export default function Research() {
                      ))}
                   </div>
                 )}
+               
               </div>
                </div>
         </div>
@@ -562,6 +610,36 @@ export default function Research() {
           }
           </div>
           
+         </div>
+         <div className="flex bg-gray-100 flex-col gap-3 w-full h-full rounded-2xl">
+          <div className="flex flex-col gap-3 p-5">
+            <div className="flex flex-row gap-2">
+              <h1 className="mx-1 text-lg font-mono my-2">Task management</h1>
+              <form onSubmit={handletaskSubmit} className="flex flex-row gap-2">
+                <input type="text"
+                placeholder="Create task"
+                name="description"
+                value={ResearchTaskformdata.description}
+                onChange={(e)=>{
+                  setResearchTaskformdata((prev)=>({...prev,[e.target.name]:e.target.value}));
+                }}
+                 className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none mx-2 focus:ring-2 focus:ring-purple-500" />
+                 <button type="submit" className="text-lg font-bold bg-green-500 text-white p-2 rounded-xl ">Create</button>
+              </form>
+            </div>
+            {ResearchTasks.length==0 ?(
+              <h1 className="text text-md text-red-400 font-sans">No task Created</h1>
+            ):(
+              <div className="grid grid-cols-1 gap-2">
+                {ResearchTasks.map((task,index)=>(
+                  <div key={task._id} className="bg-white p-4  flex items-start justify-start">
+                    
+                      <p className="text-black font-mono "><span className="text-red-500 text-sans">Task :{index+1} </span>{task.description}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
          </div>
       </div>
     </div>
