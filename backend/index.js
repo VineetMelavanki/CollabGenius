@@ -35,6 +35,7 @@ const NotificationRoutes=require("./routes/Notifications");
 const NotesRoutes=require('./routes/Notes');
 const DescriptionRoutes=require("./routes/Description");
 const RequestRoutes=require("./routes/Request");
+const ReseachTaskroutes=require("./routes/ResearchTask");
 const teamsockets=require("./sockets/teamsocket");
 const assignmentsocket=require("./sockets/Assignmentsocket");
 
@@ -49,6 +50,7 @@ app.use("/api/research",ResearchRoutes);
 app.use("/auth",AuthRoutes);
 app.use("/api/Request",RequestRoutes);
 app.use("/api/Notes",NotesRoutes);
+app.use("/api/ResearchTask",ReseachTaskroutes);
 console.log("JWT Secret :", process.env.JWT_SECRET);
 teamsockets(io);
 assignmentsocket(io);
