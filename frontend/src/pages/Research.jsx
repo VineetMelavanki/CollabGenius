@@ -18,7 +18,9 @@ export default function Research() {
   const[formdata,setformdata]=useState({
     topic:"",
   });
+  const[choosesavedrepo,setchoosesavedrepo]=useState(false);
   const[githubnoteslists,setgithubnoteslist]=useState({});
+  const[relatedrepolists,setrelatedrepolist]=useState([]);
   const[reponotes,setreponotes]=useState({});
   const[arrowup,setarrowup]=useState(false);
   const[arrowdown,setarrowdown]=useState(true);
@@ -31,6 +33,7 @@ export default function Research() {
     description:"",
     private:false,
   });
+  
   const[Taskedit,setTaskedit]=useState(false);
   const[ResearchTaskformdata,setResearchTaskformdata]=useState({
     description:"",
@@ -215,7 +218,7 @@ export default function Research() {
        }
     }
   }
-  const fetchsavedgithubrepos=async(e)=>{
+  const fetchsavedgithubrepos=async()=>{
     try{
      const response=await axios.get(`http://localhost:8000/api/research/saved-github-repos/${projectId}/${workId}`,{
       withCredentials:true,
@@ -360,6 +363,25 @@ export default function Research() {
           alert("Internal server error");
          }
     }
+  }
+  const AddRelatedRepos=async(TaskId,repoId)=>{
+     try{
+      console.log("Task Id : ",TaskId);
+      console.log("Repo Id : ",repoId);
+      const response=await axios.post(`http://localhost:8000/api/ResearchTask/add-related-repos/${projectId}/${workId}/${TaskId}/${repoId}`,{},{
+        withCredentials:true,
+      });
+      alert(response?.data?.msg || "Related Repositories added");
+     }catch(error)
+     {
+      if(error.response)
+      {
+        alert(error.response?.data?.msg || "Cannot add Repositories");
+      }else
+      {
+        alert("Internal server error");
+      }
+     }
   }
   return (
     <div className="flex w-full  rounded-2xl">
@@ -654,26 +676,90 @@ export default function Research() {
               <h1 className="text text-md text-red-400 font-sans">No task Created</h1>
             ):(
               <div className="grid grid-cols-1 gap-2">
-                {!Taskedit && ResearchTasks.map((task,index)=>(
+                {!Taskedit && ResearchTasks.map((task,index)=>{
+                  return (
+                   console.log("Task : ",task),
+                   console.log("Related repos : ",task.relatedrepos),
+                  
                   <div key={task._id} className="bg-white p-4  flex items-start justify-start rounded-2xl">
                     <div className="flex flex-col">
                       <h1 className="text-red-500 font-mono">Task {index+1}</h1>
                       <p className="text-md">{task.description}</p>
+                      <div className="flex flex-row gap-3">
+                        <h1 className="text-lg text-blue-500 font-mono py-4">Related Respositories</h1>
+                        
+                      </div>
+                      <div className="grid grid-cols-1 gap-2 w-full">
+                        {task?.relatedrepos?.length>0 ?(
+                          task.relatedrepos?.map((repo)=>(
+                             <div className="flex bg-white shadow-lg p-2 rounded-lg  justify-start w-full">
+                               <div className="flex flex-row gap-2">
+                                 <span className="font-mono text-blue-500">{repo.name}</span>
+                                 <div className="flex flex-1 gap-3 justify-end">
+                                    <a href={repo.repourl}
+                                    target="_balnk"
+                                    rel="noopener noreferrer"
+                                    className="text-green-500">View
+                                    </a>
+                                 </div>
+                               </div>
+                             </div>
+                          ))
+                        ):(
+                         <p className="text-gray-500">No related repositories</p>
+                        )}
+
+                      </div>
                     </div>
-                      
-                  </div>
-                ))}
+                  </div>)
+})}
                 {Taskedit && ResearchTasks.map((task,index)=>(
                   <div key={task._id} className="bg-white p-4  flex items-start justify-start rounded-2xl">
-                    <div className="flex flex-col">
-                      <h1 className="text-red-500 font-mono">Task {index+1}</h1>
-                      <p className="text-md">{task.description}</p>
-                    </div>
-                      <div className="flex flex-1 justify-end">
+                    <div className="flex flex-col w-full ">
+                      <div className="flex flex-row gap-3 w-full">
+                        <h1 className="text-red-500 font-mono">Task {index+1}</h1>
+                        <div className="flex flex-1 justify-end">
+                          
                         <button onClick={()=>handledeletetask(task._id)}  className="text-2xl text-red-500">
                          <FaTrash className="w-4 h-4"/>
                         </button>
+                      </div>          
                       </div>
+                      <p className="text-md">{task.description}</p>
+                      <div className="flex flex-row gap-3">
+                        <h1 className="text-lg text-blue-500 font-mono py-4">Related Respositories</h1>
+                        <button onClick={()=>{setchoosesavedrepo(true);fetchsavedgithubrepos()}} className="text-2xl text-red-500 my-3 mx-2 font-bold rounded-3xl px-2">+</button>
+                      </div>
+                      
+                    </div>
+                   {choosesavedrepo &&  <div className="fixed inset-0 z-50 p-4 flex bg-black/40 items-center justify-center" >
+                      <div className="absolute inset-0 bg-black/40" onClick={()=>setchoosesavedrepo(false)}/>
+                      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+                        <div className="flex flex-row gap-3 w-full">
+                          <h1 className="text-xl font-bold text-black my-2">Choose repositories</h1>
+                          <div className="flex flex-1 justify-end">
+                             <button className="mx-4 font-bold text-red-500" onClick={()=>setchoosesavedrepo(false)} >X</button>
+                          </div>
+                        </div>
+                        {SavedRepos.length==0 ? (
+                           <h1 className="text-lg font-sans text-red-500">No saved Repositories</h1>
+                        ):(
+                          <div className="grid grid-cols-1 gap-2">
+                           {SavedRepos.map((repo,index)=>(
+                            <div key={repo._id} className="flex bg-slate-100 p-2">
+                                <div className="flex flex-row gap-3 w-full">
+                                  <h1 className="text-blue-500 font-mono text-lg"><span className="text-red-500 font-mono mx-2">{index+1}</span>{repo.name}</h1>
+                                  <div className="flex flex-1 justify-end">
+                                    <button onClick={()=>AddRelatedRepos(task._id,repo._id)} className="text-md text-white p-2 rounded-xl font-bold bg-red-500 ">Add</button>
+                                  </div>
+                                </div>
+                            </div>
+                           ))}
+                          </div>
+                        )}
+                      </div>
+                       
+                    </div>}     
                   </div>
                 ))}
               </div>
