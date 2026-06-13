@@ -64,4 +64,34 @@ async function GetallTasks(req,res)
         return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
-module.exports={CreateTask,GetallTasks};
+async function DeleteTask(req,res)
+{
+  
+    try{
+      console.log("Delete route hit");
+  console.log(req.params);
+      const {TaskId,projectId,workId}=req.params;
+      const Projectexists=await Project.findById(projectId);
+      if(!Projectexists)
+      {
+        return res.status(404).json({msg:"Team does not exists",success:false});
+      }
+      const researchexists=await Work.findById(workId);
+      if(!researchexists)
+      {
+        return res.status(404).json({msg:"Research does not exists",syccess:false});
+      }
+      const Taskexists=await ResearchTask.findById(TaskId);
+      if(!Taskexists)
+      {
+        return res.status(404).json({msg:"Task does not exists",success:false});
+      }
+      await ResearchTask.findByIdAndDelete(TaskId);
+      return res.status(200).json({msg:"Task deleted successfully",success:true});
+    }catch(error)
+    {
+       console.log(error);
+       return res.status(500).json({msg:"Internal server error",success:false});
+    }
+}
+module.exports={CreateTask,GetallTasks,DeleteTask};
