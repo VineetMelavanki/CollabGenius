@@ -2,7 +2,7 @@ const Work=require("../model/Work");
 const Project=require("../model/project");
 const User=require("../model/User");
 const ResearchTask=require("../model/ResearchTask");
-
+const SavedRepo=require("../model/SavedRepo");
 async function CreateTask(req,res)
 {
     try{
@@ -51,7 +51,7 @@ async function GetallTasks(req,res)
         {
             return res.status(404).json({msg:"No research exists",success:false});
         }
-        const Tasks=await ResearchTask.find({projectId,workId});
+        const Tasks=await ResearchTask.find({projectId,workId}).populate("relatedrepos","name repourl");
         if(Tasks.length==0)
         {
             return res.status(200).json({msg:"No task created",success:true});
@@ -94,4 +94,28 @@ async function DeleteTask(req,res)
        return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
-module.exports={CreateTask,GetallTasks,DeleteTask};
+async function AddSavedRepositories(req,res)
+{
+     try{
+        const{projectId,workId,TaskId,repoId}=req.params;
+        
+        
+        const taskexists=await ResearchTask.findById(TaskId);
+        if(!taskexists)
+        {
+          return res.status(404).json({msg:"Task does not exists",success:false});
+        } 
+        await ResearchTask.findByIdAndUpdate(
+    TaskId,
+    {
+        $addToSet: { relatedrepos: repoId }
+    }
+);
+        return res.status(201).json({msg:"Added this saved repository to related repository",success:true});
+     }catch(error)
+     {
+      console.log(error);
+      return res.status(500).json({msg:"Internal server error",success:false});
+     }
+}
+module.exports={CreateTask,GetallTasks,DeleteTask,AddSavedRepositories};

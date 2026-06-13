@@ -16,7 +16,7 @@ const ResearchTaskSchema=new mongoose.Schema({
     },
     relatedrepos:[{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"SaveRepo",
+        ref:"SavedRepo",
     }],
     assignedto:{
         type:mongoose.Schema.Types.ObjectId,
