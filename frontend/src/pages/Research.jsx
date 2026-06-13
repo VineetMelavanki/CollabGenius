@@ -6,7 +6,7 @@ import { NotebookPen } from "lucide-react";
 import { MagnifyingGlassIcon,FolderOpenIcon ,PlusIcon ,ChatBubbleOvalLeftIcon,ChevronDoubleDownIcon,ChevronDoubleUpIcon} from "@heroicons/react/24/outline";
 import githublogo from "../assets/logos/github.png"
 import arxivlogo from "../assets/logos/arxiv.png"
-import{FaTrash} from "react-icons/fa"
+import{FaTrash,FaPencilAlt} from "react-icons/fa"
 import { useNavigate } from "react-router-dom";
 export default function Research() {
   const navigate=useNavigate();
@@ -31,6 +31,7 @@ export default function Research() {
     description:"",
     private:false,
   });
+  const[Taskedit,setTaskedit]=useState(false);
   const[ResearchTaskformdata,setResearchTaskformdata]=useState({
     description:"",
   })
@@ -340,6 +341,26 @@ export default function Research() {
     }
     fetchTasks();
   },[workId]);
+  const handledeletetask=async(TaskId)=>{
+   ;
+    try{
+        const response=await axios.delete(`http://localhost:8000/api/ResearchTask/delete-task/${projectId}/${workId}/${TaskId}`,{
+          withCredentials:true,
+        });
+         setResearchTasks((prev)=>prev.filter((r)=>(r._id || r).toString()!==TaskId.toString()));
+         alert(response.data?.msg || "Task deleted successfully");
+    }catch(error)
+    {
+         if(error.response)
+         {
+          alert("Cannot delete task");
+         }
+         else
+         {
+          alert("Internal server error");
+         }
+    }
+  }
   return (
     <div className="flex w-full  rounded-2xl">
        {repooption && 
@@ -625,16 +646,34 @@ export default function Research() {
                 }}
                  className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none mx-2 focus:ring-2 focus:ring-purple-500" />
                  <button type="submit" className="text-lg font-bold bg-green-500 text-white p-2 rounded-xl ">Create</button>
+                 
               </form>
+              <button onClick={()=>setTaskedit(!Taskedit)} className="bg-slate-100 rounded-3xl hover:bg-gray-200"><FaPencilAlt className="w-4 h-4 mx-4 "/></button>
             </div>
-            {ResearchTasks.length==0 ?(
+            {ResearchTasks.length==0  ?(
               <h1 className="text text-md text-red-400 font-sans">No task Created</h1>
             ):(
               <div className="grid grid-cols-1 gap-2">
-                {ResearchTasks.map((task,index)=>(
-                  <div key={task._id} className="bg-white p-4  flex items-start justify-start">
-                    
-                      <p className="text-black font-mono "><span className="text-red-500 text-sans">Task :{index+1} </span>{task.description}</p>
+                {!Taskedit && ResearchTasks.map((task,index)=>(
+                  <div key={task._id} className="bg-white p-4  flex items-start justify-start rounded-2xl">
+                    <div className="flex flex-col">
+                      <h1 className="text-red-500 font-mono">Task {index+1}</h1>
+                      <p className="text-md">{task.description}</p>
+                    </div>
+                      
+                  </div>
+                ))}
+                {Taskedit && ResearchTasks.map((task,index)=>(
+                  <div key={task._id} className="bg-white p-4  flex items-start justify-start rounded-2xl">
+                    <div className="flex flex-col">
+                      <h1 className="text-red-500 font-mono">Task {index+1}</h1>
+                      <p className="text-md">{task.description}</p>
+                    </div>
+                      <div className="flex flex-1 justify-end">
+                        <button onClick={()=>handledeletetask(task._id)}  className="text-2xl text-red-500">
+                         <FaTrash className="w-4 h-4"/>
+                        </button>
+                      </div>
                   </div>
                 ))}
               </div>
