@@ -18,6 +18,7 @@ export default function Research() {
   const[formdata,setformdata]=useState({
     topic:"",
   });
+  const[Leader,setLeader]=useState(null);
   const[choosesavedrepo,setchoosesavedrepo]=useState(false);
   const[githubnoteslists,setgithubnoteslist]=useState({});
   const[relatedrepolists,setrelatedrepolist]=useState([]);
@@ -59,7 +60,27 @@ export default function Research() {
   const handlegitinfo=(e)=>{
     setgetinfo((prev)=>({...prev,[e.target.name]:e.target.value}));
   }
-  
+  useEffect(()=>{
+    const verifyowner=async()=>{
+         try{
+            const response=await axios.get(`http://localhost:8000/api/Project/verify-Leader/${projectId}`,{
+              withCredentials:true,
+            });
+            setLeader(response.data.isLeader);
+         }catch(error)
+         {
+          if(error.response)
+          {
+            alert(error.response?.data?.msg || "Cannot verify Leader");
+          }
+          else
+          {
+            alert("Internal server error");
+          }
+         }
+    } 
+    verifyowner();
+  },[workId,projectId])
   useEffect(()=>{
      const getallRepo=async()=>{
         seterror("");
@@ -448,9 +469,9 @@ export default function Research() {
                                  
                                  <div className="flex flex-1 justify-end">
                                   <h1 className="text-black mx-12 font-mono py-2">Saved by : <span className="hover:underline text-green-500" onClick={() => navigate(`/view-profile/${repo.savedby?._id}`)}>{repo.savedby?.name}</span></h1>
-                                   <button className="mx-2" onClick={()=>deletesavedRepo(repo._id)}>
+                                  {Leader && <button className="mx-2" onClick={()=>deletesavedRepo(repo._id)}>
                                     <FaTrash className="h-5 w-5 text-red-500 hover:text-red-600"/>
-                                   </button>
+                                   </button>} 
                                  </div>
                                 </div>
                                 <div className="flex flex-col gap-3 border p-4 w-full mt-2">
@@ -622,9 +643,10 @@ export default function Research() {
             <div className="flex flex-row gap-3">
               <h1 className="text-lg p-3 font-mono">GITHUB repositories </h1>
               <div className="flex flex-1 justify-end">
+              {Leader && 
                 <button onClick={()=>setrepooption(true)} className="text-sm font-bold text-red-500   rounded-2xl p-2 hover:text-red-600">
                   <PlusIcon className="text-red h-6 w-6"/>
-                </button>
+                </button>}  
               </div>
             </div>
             {repolist.length===0 ?(
@@ -658,7 +680,8 @@ export default function Research() {
           <div className="flex flex-col gap-3 p-5">
             <div className="flex flex-row gap-2">
               <h1 className="mx-1 text-lg font-mono my-2">Task management</h1>
-              <form onSubmit={handletaskSubmit} className="flex flex-row gap-2">
+            {Leader && 
+            <form onSubmit={handletaskSubmit} className="flex flex-row gap-2">
                 <input type="text"
                 placeholder="Create task"
                 name="description"
@@ -669,38 +692,47 @@ export default function Research() {
                  className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none mx-2 focus:ring-2 focus:ring-purple-500" />
                  <button type="submit" className="text-lg font-bold bg-green-500 text-white p-2 rounded-xl ">Create</button>
                  
-              </form>
-              <button onClick={()=>setTaskedit(!Taskedit)} className="bg-slate-100 rounded-3xl hover:bg-gray-200"><FaPencilAlt className="w-4 h-4 mx-4 "/></button>
+              </form> }  
+            {Leader && !Taskedit && <button onClick={()=>setTaskedit(!Taskedit)} className="bg-slate-100 rounded-3xl hover:bg-gray-200"><FaPencilAlt className="w-4 h-4 mx-4 "/></button>  }  
+              {Leader && Taskedit && <button onClick={()=>setTaskedit(!Taskedit)} className="text-lg text-red-500 p-2 mx-2 font-bold ">X</button>}
             </div>
             {ResearchTasks.length==0  ?(
               <h1 className="text text-md text-red-400 font-sans">No task Created</h1>
             ):(
               <div className="grid grid-cols-1 gap-2">
-                {!Taskedit && ResearchTasks.map((task,index)=>{
-                  return (
-                   console.log("Task : ",task),
-                   console.log("Related repos : ",task.relatedrepos),
+                {!Taskedit && ResearchTasks.map((task,index)=>(
                   
-                  <div key={task._id} className="bg-white p-4  flex items-start justify-start rounded-2xl">
-                    <div className="flex flex-col">
-                      <h1 className="text-red-500 font-mono">Task {index+1}</h1>
-                      <p className="text-md">{task.description}</p>
+                  <div key={task._id}  className="bg-white p-4  flex items-start justify-start rounded-2xl">
+                    <div className="flex flex-col w-full">
                       <div className="flex flex-row gap-3">
+                        <h1 className="text-red-500 font-mono">Task {index+1}</h1>
+                        <div className="flex flex-1 justify-end">
+                        {Leader && <button className="text-white font-bold bg-red-500 rounded-xl p-2 mx-2">Assign</button> }  
+                        </div>
+                      </div>
+                      <p className="text-md mb-2">{task.description}</p>
+                       <div className="flex flex-row gap-2">
+                         <h1 className="text-black font-thin ">Assigned to : </h1>
+
+                       </div>
                         <h1 className="text-lg text-blue-500 font-mono py-4">Related Respositories</h1>
                         
-                      </div>
+                      
                       <div className="grid grid-cols-1 gap-2 w-full">
                         {task?.relatedrepos?.length>0 ?(
                           task.relatedrepos?.map((repo)=>(
                              <div className="flex bg-white shadow-lg p-2 rounded-lg  justify-start w-full">
-                               <div className="flex flex-row gap-2">
+                               <div className="flex flex-row gap-2 w-full p-3">
                                  <span className="font-mono text-blue-500">{repo.name}</span>
                                  <div className="flex flex-1 gap-3 justify-end">
-                                    <a href={repo.repourl}
-                                    target="_balnk"
-                                    rel="noopener noreferrer"
-                                    className="text-green-500">View
-                                    </a>
+                                    <div className="flex flex-row gap-3">
+                                      <button onClick={()=>{setfoldersection(true);setarrowdown(false)}} className="text-red-500 font-bold ">Open</button>
+                                      <a href={repo.repourl}
+                                      target="_balnk"
+                                      rel="noopener noreferrer"
+                                      className="text-green-500 font-bold mx-2">View
+                                      </a>
+                                    </div>
                                  </div>
                                </div>
                              </div>
@@ -712,7 +744,7 @@ export default function Research() {
                       </div>
                     </div>
                   </div>)
-})}
+)}
                 {Taskedit && ResearchTasks.map((task,index)=>(
                   <div key={task._id} className="bg-white p-4  flex items-start justify-start rounded-2xl">
                     <div className="flex flex-col w-full ">
@@ -730,10 +762,30 @@ export default function Research() {
                         <h1 className="text-lg text-blue-500 font-mono py-4">Related Respositories</h1>
                         <button onClick={()=>{setchoosesavedrepo(true);fetchsavedgithubrepos()}} className="text-2xl text-red-500 my-3 mx-2 font-bold rounded-3xl px-2">+</button>
                       </div>
+                      <div className="grid grid-cols-1 gap-2 w-full">
+                        {task?.relatedrepos?.length>0 ?(
+                          task.relatedrepos?.map((repo)=>(
+                             <div className="flex bg-white shadow-lg p-2 rounded-lg  justify-start w-full">
+                               <div className="flex flex-row gap-2 w-full p-3">
+                                 <span className="font-mono text-blue-500">{repo.name}</span>
+                                 <div className="flex flex-1 gap-3 justify-end">
+                                    <div className="flex flex-row gap-2">
+                                      
+                                      <button className="text-3xl font-bold text-red-500">-</button>
+                                    </div>
+                                 </div>
+                               </div>
+                             </div>
+                          ))
+                        ):(
+                         <p className="text-gray-500">No related repositories</p>
+                        )}
+
+                      </div>
                       
                     </div>
-                   {choosesavedrepo &&  <div className="fixed inset-0 z-50 p-4 flex bg-black/40 items-center justify-center" >
-                      <div className="absolute inset-0 bg-black/40" onClick={()=>setchoosesavedrepo(false)}/>
+                   {choosesavedrepo &&  <div className="fixed inset-0 z-50 p-4 flex items-center justify-center" >
+                      <div className="absolute inset-0 bg-black/20" onClick={()=>setchoosesavedrepo(false)}/>
                       <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
                         <div className="flex flex-row gap-3 w-full">
                           <h1 className="text-xl font-bold text-black my-2">Choose repositories</h1>
