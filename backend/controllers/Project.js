@@ -251,4 +251,21 @@ async function getjoinedTeam(req,res)
        return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
-module.exports={CreateProject,Getallprojects,getprojectbyId,deleteproject,yourprojects,addmembers,removemember,getprojectBytitle,IsMember,getjoinedTeam};
+async function Ownerverify(req,res)
+{
+    try{
+        const{projectId}=req.params;
+        const Projectexists=await Project.findById(projectId);
+        
+        if(!Projectexists)
+        {
+            return res.status(404).json({msg:"Project does not exists",success:false});
+        }
+        const isLeader=Projectexists?.ownerId.toString()===req.user.id.toString();
+        return res.status(200).json({success:true,isLeader:isLeader,msg :isLeader?"User is the leader":"User is not the leader"});
+    }catch(error)
+    {
+        return res.status(500).json({msg:"Internal server error",success:false});
+    }
+}
+module.exports={CreateProject,Getallprojects,getprojectbyId,deleteproject,yourprojects,addmembers,removemember,getprojectBytitle,IsMember,getjoinedTeam,Ownerverify};
