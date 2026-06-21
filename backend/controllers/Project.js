@@ -268,4 +268,34 @@ async function Ownerverify(req,res)
         return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
-module.exports={CreateProject,Getallprojects,getprojectbyId,deleteproject,yourprojects,addmembers,removemember,getprojectBytitle,IsMember,getjoinedTeam,Ownerverify};
+async function getallmembers(req,res)
+{
+    try{
+        const{projectId}=req.params;
+        const projectexists=await Project.findById(projectId).populate("members","name email");
+        if(!projectexists)
+        {
+            return res.status(404).json({msg:"Project does not exists",success:false});
+        }
+       
+        const memberIds=projectexists.members.map(
+            member=>member._id
+        );
+        const profiles=await Profile.find({
+            userId:{$in:memberIds}
+        });
+        const profilemap={};
+        profiles.forEach(profile=>
+           profilemap[profile.userId.toString()]=profile.photo
+        );
+        const members=projectexists.members.map(member=>({
+            ...member.toObject(),
+            photo:profilemap[member._id.toString()]|| null
+        }));
+        return res.status(200).json({msg:"Members fetched successfully",members:members,success:true});
+    }catch(error)
+    {
+        return res.status(500).json({msg:"Internal server error",success:false});
+    }
+}
+module.exports={CreateProject,Getallprojects,getprojectbyId,deleteproject,yourprojects,addmembers,removemember,getprojectBytitle,IsMember,getjoinedTeam,Ownerverify,getallmembers};

@@ -95,4 +95,5 @@ async function deletework(req,res)
         return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
+
 module.exports={CreateWork,getWork,deletework,getWorkById};

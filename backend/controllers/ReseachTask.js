@@ -3,6 +3,7 @@ const Project=require("../model/project");
 const User=require("../model/User");
 const ResearchTask=require("../model/ResearchTask");
 const SavedRepo=require("../model/SavedRepo");
+const Profile = require("../model/Profile");
 async function CreateTask(req,res)
 {
     try{
@@ -51,13 +52,29 @@ async function GetallTasks(req,res)
         {
             return res.status(404).json({msg:"No research exists",success:false});
         }
-        const Tasks=await ResearchTask.find({projectId,workId}).populate("relatedrepos","name repourl");
+        const Tasks=await ResearchTask.find({projectId,workId}).populate("relatedrepos","name repourl")
+        .populate("assignedto","name email");
         if(Tasks.length==0)
         {
             return res.status(200).json({msg:"No task created",success:true});
         }
-        return res.status(200).json({msg:"Tasks fetched successfully",Tasks:Tasks,success:true});
-        
+        const assigneduserIds=Tasks.filter(
+          task=>task.assignedto
+        )
+        .map(task=>task.assignedto._id);
+        const profiles=await Profile.find({
+          userId:{$in:assigneduserIds},
+        });
+        const profilemap={};
+        profiles.forEach(profile=>
+           profilemap[profile.userId.toString()]=profile.photo,
+        );
+        const taskswithphotos=Tasks.map(task=>({
+          ...task.toObject(),
+          assignedphoto:task.assignedto ?
+          profilemap[task.assignedto._id.toString()]|| null : null,
+        }))
+        return res.status(200).json({msg:"Tasks fetched successfully",Tasks:taskswithphotos,success:true});
     }catch(error)
     {
         console.log(error);
@@ -118,4 +135,44 @@ async function AddSavedRepositories(req,res)
       return res.status(500).json({msg:"Internal server error",success:false});
      }
 }
-module.exports={CreateTask,GetallTasks,DeleteTask,AddSavedRepositories};
+async function assignTask(req,res)
+{
+  try{
+       const{projectId,workId,TaskId,memberId}=req.params;
+       const projectexists=await Project.findById(projectId);
+       if(!projectexists)
+       {
+        return res.status(404).json({msg:"Project does not exists",success:false});
+       }
+       const workexists=await Work.findById(workId);
+       if(!workexists)
+       {
+        return res.status(404).json({msg:"Research topic does not exists",success:false});
+       }
+       const taskexists=await ResearchTask.findById(TaskId);
+       if(!taskexists)
+       {
+        return res.status(404).json({msg:"Task does not exist",success:false});
+       }
+       const isMember=projectexists.members.some(
+        member=>member._id.toString()==memberId,
+       );
+       if(!isMember)
+       {
+        return res.status(400).json({msg:"User is not a member of this project"});
+       }
+
+       const profile=await Profile.findOne({
+        userId:memberId,
+       });
+      
+       taskexists.assignedto=memberId;
+       await taskexists.save();
+       return res.status(200).json({msg:"Task successfully assigned to the member",success:true});
+
+  }catch(error)
+  {
+    return res.status(500).json({msg:"Internal sercver error",success:true});
+  }
+}
+module.exports={CreateTask,GetallTasks,DeleteTask,AddSavedRepositories,assignTask};
