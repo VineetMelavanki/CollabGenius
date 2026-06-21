@@ -69,7 +69,6 @@ export default function Notifications()
           if(error.response)
           {
               seterror2(error.response?.data?.msg || "Cannot fetch requests");
-              alert(error.response?.data?.msg || "Cannot fetch requests");
           }
         }
       }

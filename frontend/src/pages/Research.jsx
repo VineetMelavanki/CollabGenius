@@ -2,11 +2,12 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { NotebookPen } from "lucide-react";
+import { NotebookPen ,UserRound ,ChevronUp,ChevronDown} from "lucide-react";
 import { MagnifyingGlassIcon,FolderOpenIcon ,PlusIcon ,ChatBubbleOvalLeftIcon,ChevronDoubleDownIcon,ChevronDoubleUpIcon} from "@heroicons/react/24/outline";
 import githublogo from "../assets/logos/github.png"
 import arxivlogo from "../assets/logos/arxiv.png"
-import{FaTrash,FaPencilAlt} from "react-icons/fa"
+import nulllogo from  "../assets/logos/null.png"
+import{FaTrash,FaPencilAlt,FaUser} from "react-icons/fa"
 import { useNavigate } from "react-router-dom";
 export default function Research() {
   const navigate=useNavigate();
@@ -18,12 +19,18 @@ export default function Research() {
   const[formdata,setformdata]=useState({
     topic:"",
   });
+
+  const[memberslist,setmemberslist]=useState(null);
+  const[allmembers,setallmembers]=useState([]);
   const[Leader,setLeader]=useState(null);
   const[choosesavedrepo,setchoosesavedrepo]=useState(false);
   const[githubnoteslists,setgithubnoteslist]=useState({});
   const[relatedrepolists,setrelatedrepolist]=useState([]);
   const[reponotes,setreponotes]=useState({});
   const[arrowup,setarrowup]=useState(false);
+  const[taskarrowdown,settaskarrowdown]=useState(true);
+  const[opentask,setopentask]=useState(null);
+  const[openmembers,setopenmembers]=useState(null);
   const[arrowdown,setarrowdown]=useState(true);
   const[foldersection,setfoldersection]=useState(false);
   const[repoerror,setrepoerror]=useState("");
@@ -404,6 +411,45 @@ export default function Research() {
       }
      }
   }
+  const getallmembers=async()=>{
+    try{
+        const response=await axios.get(`http://localhost:8000/api/Project/all-members/${projectId}`,{
+          withCredentials:true,
+        });
+        setallmembers(response.data.members);
+     
+    }catch(error)
+    {
+        if(error.response)
+        {
+          alert("Unable to fetch members");
+        }
+        else
+        {
+          alert("Internal server error");
+        }
+    }
+  }
+  const assigntask=async(TaskId,memberId)=>{
+    try{
+      const response=await axios.post(`http://localhost:8000/api/ResearchTask/assign-task/${projectId}/${workId}/${TaskId}/${memberId}`,{},
+        {
+          withCredentials:true
+        }
+      );
+      alert(response.data?.msg || "Task assigned successfully");
+    }catch(error)
+    {
+         if(error.response)
+         {
+          alert(error.response?.data?.msg || "Failed to assign task");
+         }
+         else
+         {
+          alert("Internal server error");
+         }
+    }
+  }
   return (
     <div className="flex w-full  rounded-2xl">
        {repooption && 
@@ -454,8 +500,8 @@ export default function Research() {
                             
                           </div>
                           <button onClick={()=>{setarrowdown(!arrowdown);fetchsavedgithubrepos()}} className="border border-2 hover:bg-gray-200">
-                          {arrowdown && <ChevronDoubleDownIcon className="w-8 h-8"/>}  
-                          {!arrowdown && <ChevronDoubleUpIcon className="w-8 h-8"/>}
+                          {arrowdown && <ChevronDown className="w-8 h-8"/>}  
+                          {!arrowdown && <ChevronUp className="w-8 h-8"/>}
                           </button>
                         </div>
                         
@@ -693,32 +739,64 @@ export default function Research() {
                  <button type="submit" className="text-lg font-bold bg-green-500 text-white p-2 rounded-xl ">Create</button>
                  
               </form> }  
-            {Leader && !Taskedit && <button onClick={()=>setTaskedit(!Taskedit)} className="bg-slate-100 rounded-3xl hover:bg-gray-200"><FaPencilAlt className="w-4 h-4 mx-4 "/></button>  }  
-              {Leader && Taskedit && <button onClick={()=>setTaskedit(!Taskedit)} className="text-lg text-red-500 p-2 mx-2 font-bold ">X</button>}
+            
             </div>
             {ResearchTasks.length==0  ?(
               <h1 className="text text-md text-red-400 font-sans">No task Created</h1>
             ):(
               <div className="grid grid-cols-1 gap-2">
+                
                 {!Taskedit && ResearchTasks.map((task,index)=>(
-                  
+                
                   <div key={task._id}  className="bg-white p-4  flex items-start justify-start rounded-2xl">
                     <div className="flex flex-col w-full">
                       <div className="flex flex-row gap-3">
-                        <h1 className="text-red-500 font-mono">Task {index+1}</h1>
+                        <h1 className="text-red-500 font-mono text-2xl mb-2">Task {index+1}</h1>
+                        {Leader && !Taskedit && <FaPencilAlt onClick={()=>setTaskedit(!Taskedit)} className="w-4 h-4 mx-3 my-2 "/>  }  
+              {Leader && Taskedit && <button onClick={()=>setTaskedit(!Taskedit)} className="text-lg text-red-500 p-2 mx-2 font-bold ">X</button>}
                         <div className="flex flex-1 justify-end">
-                        {Leader && <button className="text-white font-bold bg-red-500 rounded-xl p-2 mx-2">Assign</button> }  
+                        {Leader && 
+                          <div className="flex flex-row gap-2 mx-2">
+
+                          {openmembers===task._id ?(
+                           <img onClick={()=>{setmemberslist(true);getallmembers();setopenmembers(null)}} src={task?.assignedphoto?.url||nulllogo} className="w-10 h-10 mx-2 rounded-full"/>
+                          ):(
+                            <img onClick={()=>{setmemberslist(true);getallmembers();setopenmembers(task._id)}} src={task?.assignedphoto?.url||nulllogo} className="w-10 h-10 mx-2 rounded-full"/>
+                          )}  
+                          </div>
+                          }
+                        {!Leader &&  <img  src={task?.assignedphoto?.url||nulllogo} className="w-10 h-10 mx-2 rounded-full"/> }   
+                        {openmembers===task._id && memberslist && 
+                         <div className="relative inline-block" >
+                          <div className="absolute top-full right-0 mt-2 z-50" >
+                              <div className="bg-white shadow-lg rounded-2xl w-48 flex flex-col gap-1 " >
+                                {allmembers.map((member)=>(
+                                    <div key={member._id} className="bg-white flex flex-row gap-4 hover:bg-blue-200 p-4" onClick={()=>assigntask(task._id,member._id)} >
+                                      <img src={member.photo?.url ||nulllogo}  className="w-8 h-8 rounded-full "/>
+                                       <h1 className="text-md font-mono">{member.name}</h1>
+                                    </div>
+                                ))}
+                              </div>
+                          </div>
+                          </div>}  
+                        {opentask===task._id ?(
+                          <ChevronUp className="w-5 h-5"
+                          onClick={()=>setopentask(null)}/>
+                        ):(
+                          <ChevronDown className="w-5 h-5"
+                          onClick={()=>setopentask(task._id)}/>
+                        )}
                         </div>
                       </div>
-                      <p className="text-md mb-2">{task.description}</p>
-                       <div className="flex flex-row gap-2">
-                         <h1 className="text-black font-thin ">Assigned to : </h1>
-
-                       </div>
-                        <h1 className="text-lg text-blue-500 font-mono py-4">Related Respositories</h1>
+                    {opentask==task._id &&
+                    <div>
+                      <p className="text-lg "><span className="text-purple-500">Description </span>: {task.description}</p>
+                          <h1 className="text-lg text-blue-500 font-mono py-4">Related Respositories</h1>
+                    </div> }  
                         
                       
-                      <div className="grid grid-cols-1 gap-2 w-full">
+                    {opentask==task._id &&
+                    <div className="grid grid-cols-1 gap-2 w-full">
                         {task?.relatedrepos?.length>0 ?(
                           task.relatedrepos?.map((repo)=>(
                              <div className="flex bg-white shadow-lg p-2 rounded-lg  justify-start w-full">
@@ -741,10 +819,10 @@ export default function Research() {
                          <p className="text-gray-500">No related repositories</p>
                         )}
 
-                      </div>
+                      </div> }  
                     </div>
                   </div>)
-)}
+)}               
                 {Taskedit && ResearchTasks.map((task,index)=>(
                   <div key={task._id} className="bg-white p-4  flex items-start justify-start rounded-2xl">
                     <div className="flex flex-col w-full ">
