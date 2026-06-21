@@ -765,7 +765,7 @@ export default function Research() {
                           )}  
                           </div>
                           }
-                        {!Leader &&  <img  src={task?.assignedphoto?.url||nulllogo} className="w-10 h-10 mx-2 rounded-full"/> }   
+                        {!Leader &&  <img onClick={()=>navigate(`/view-profile/${task?.assignedto?._id}`)}  src={task?.assignedphoto?.url||nulllogo} className="w-10 h-10 mx-2 rounded-full"/> }   
                         {openmembers===task._id && memberslist && 
                          <div className="relative inline-block" >
                           <div className="absolute top-full right-0 mt-2 z-50" >
