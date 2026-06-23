@@ -51,6 +51,29 @@ export default function Projectdetails() {
   );
   setworks(response.data.Project);
 };
+useEffect(()=>{
+  const getallmembers=async()=>{
+    try{
+      const response=await axios.get(`http://localhost:8000/api/Project/all-members/${projectId}`,{
+        withCredentials:true,
+      });
+      console.log("All members : ",response.data.members);
+      setmembers(response.data.members);
+      
+    }catch(error)
+    {
+        if(error.response)
+        {
+          alert(error.response?.data.msg || "Cannot fetch members");
+        }
+        else
+        {
+          alert("Internal server error");
+        }
+    }
+  }
+  getallmembers();
+},[projectId]);
     useEffect(()=>{
       const checkisMember=async()=>{
         try{
@@ -274,8 +297,8 @@ export default function Projectdetails() {
         setuser(currentUser);
         const projectData = response.data.projectdata;
         setproject(projectData);
-        setmessage(response.data.msg || "Project fetched successfully");
-        setmembers(projectData.members || []);
+        
+       
         const oid =
           typeof projectData.ownerId === "object"
             ? projectData.ownerId._id
@@ -474,15 +497,17 @@ export default function Projectdetails() {
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {members.map((member, index) => (
+                  {members.map((member, index) => {
+                    console.log(member);
+                  return(    
                     <div
                       key={member._id || member || index}
                       
                       className="flex items-center justify-between gap-4 p-4 bg-gray-50 rounded-xl shadow-lg  hover:shadow-md transition border border-gray-100"
                     >
                       <div className="flex items-center gap-4 flex-1 min-w-0">
-                        <div onClick={() => navigate(`/view-profile/${member._id}`)} className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-lg shrink-0">
-                          {(member.name || "U").charAt(0).toUpperCase()}
+                        <div onClick={() => navigate(`/view-profile/${member._id}`)} >
+                          <img src={member.photo?.url} className="w-12 h-12 rounded-full" />
                         </div>
                         <div  className="min-w-0">
                           <p onClick={() => navigate(`/view-profile/${member._id}`)} className="font-semibold text-gray-900 truncate">
@@ -517,8 +542,8 @@ export default function Projectdetails() {
                           </button>
                         )}
                       </div>
-                    </div>
-                  ))}
+                    </div>)
+                    })}
                 </div>
               )}
             </div>
