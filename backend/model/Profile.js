@@ -30,7 +30,34 @@ const ProfileSchema = new mongoose.Schema({
     photo:{
         url:String,
         public_id:String,
-    }
+    },
+    domains:[{
+        type:String,
+        enum: [
+            "CLI Tools",
+            "Web Frameworks",
+            "Mobile Development",
+            "AI/ML",
+            "Backend Development",
+            "Frontend Development",
+            "DevOps",
+            "Blockchain",
+            "Data Science",
+            "Cybersecurity",
+            "Research",
+            "Game Development",
+            "IoT",
+            "Computer Vision",
+            "Natural Language Processing",
+            "Full Stack",
+            "Others"
+        ],
+        trim:true
+    }]
 });
+ProfileSchema.index({domains:1});
+ProfileSchema.index({skills:1});
+ProfileSchema.index({skillevel:1});
+ProfileSchema.index({domains:1,skillevel:1});
 const Profile=mongoose.model("Profile",ProfileSchema);
 module.exports=Profile;

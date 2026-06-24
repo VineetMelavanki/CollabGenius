@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {FolderIcon} from "@heroicons/react/24/solid"
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 export default function Dashboard() {
   const navigate=useNavigate();
   const[hasprofile,sethasprofile]=useState(false);
@@ -16,7 +17,7 @@ export default function Dashboard() {
         sethasprofile(response.data.hasprofile);
       }catch(error)
       {
-        console.log(error);
+        console.log("The error is : ",error);
         seterror("Invalid login");
         navigate("/login");
       }
@@ -75,7 +76,7 @@ export default function Dashboard() {
           
 
           </div>
-          </div>
+        </div>
           <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
             <div className="text-center ">
                 <div className=" rounded-full flex flex-col items-center justify-center mx-auto mb-4 gap-4">
@@ -92,7 +93,26 @@ export default function Dashboard() {
                 </div>
             </div>
           </div>
+          <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200">
+          <div className="text-center ">
+            <div className=" rounded-full flex flex-col items-center justify-center mx-auto mb-4 gap-4">
+              <MagnifyingGlassIcon className="w-12 h-12 text-blue-500"/>
+               <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                Search Team-mates
+               </h3>
+               <h3 className="text-lg font-thin text-gray-400 mb-2">
+                Find a team-mate of your required domain
+               </h3>
+               <button className="text-xl font-bold bg-green-400 hover:bg-green-500 text-white p-5 rounded-2xl my-2">
+                 Search
+               </button>
+            </div>
+          
+
           </div>
+        </div>
+          </div>
+          
       </div>
       
   );

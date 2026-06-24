@@ -4,7 +4,7 @@ const User=require("../model/User");
 async function CreateProfile(req,res){
    console.log("CREATE PROFILE REQ.USER:", req.user)
     try{
-      const{name,Bio,skills,skillevel,github_link}=req.body;
+      const{name,Bio,skills,skillevel,github_link,domains}=req.body;
       if(!name || !Bio || !skills || !skillevel || !github_link)
       {
         return res.status(400).json({msg:"All fields are required",success:false});
@@ -26,11 +26,13 @@ async function CreateProfile(req,res){
         userId:req.user.id,
         name,
         Bio,
-        skills,
+        skills:skills || [],
         skillevel,
         github_link,
+        domains:domains ||[],
         photo:photodata,
-      })
+      });
+      
       return res.status(200).json({msg:"Profile created successfully",data:profile,success:true});
     }catch(error)
     {
@@ -88,7 +90,7 @@ async function getmyprofile(req,res)
 async function EditProfile(req,res)
 {
   try{
-    const{name,Bio,skills,skillevel,github_link}=req.body;
+    const{name,Bio,skills,skillevel,github_link,domains}=req.body;
   const profile=await Profile.findOne({userId:req.user.id});
   if(!profile)
   {
@@ -98,10 +100,12 @@ async function EditProfile(req,res)
   {
     return res.status(409).json({msg:"Field cannot be blank",success:false});
   }
-  profile.name=name,
-  profile.Bio=Bio,
-  profile.skills=skills,
-  profile.github_link=github_link,
+        if (name) profile.name = name;
+        if (Bio) profile.Bio = Bio;
+        if (skills !== undefined) profile.skills = Array.isArray(skills) ? skills : [];
+        if (skillevel) profile.skillevel = skillevel;
+        if (github_link) profile.github_link = github_link;
+        if (domains !== undefined) profile.domains = Array.isArray(domains) ? domains : [];
   await profile.save();
   return res.status(200).json({msg:"Profile saved successfully",newprofile:profile,success:true});
   }catch(error)
