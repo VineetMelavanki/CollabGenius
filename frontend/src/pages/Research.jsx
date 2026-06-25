@@ -4,10 +4,10 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { NotebookPen ,UserRound ,ChevronUp,ChevronDown} from "lucide-react";
 import { MagnifyingGlassIcon,FolderOpenIcon ,PlusIcon ,ChatBubbleOvalLeftIcon,ChevronDoubleDownIcon,ChevronDoubleUpIcon} from "@heroicons/react/24/outline";
-import ResearchSearchBar from "../Components/ResearchSearchBar";
-import SavedGithubRepos from "../Components/SavedGithubrepos";
-import CreatedRepos from "../Components/CreatedRepos";
-import TaskManagement from "../Components/Taskmanagement";
+import ResearchSearchBar from "../Components/Research/ResearchSearchBar"
+import SavedGithubRepos from "../Components/Research/SavedGithubrepos"
+import CreatedRepos from "../Components/Research/CreatedRepos"
+import TaskManagement from "../Components/Research/Taskmanagement"
 import{FaTrash,FaPencilAlt,FaUser} from "react-icons/fa"
 
 export default function Research() {

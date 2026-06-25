@@ -4,7 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown,ChevronUp } from "lucide-react";
 import { FaTrash } from "react-icons/fa";
-import nulllogo from "../assets/logos/null.png"
+import nulllogo from "../../assets/logos/null.png"
 import { FaPencilAlt } from "react-icons/fa";
 export default function TaskManagement({projectId,workId,Leader,openSavedRepo}){
     const navigate=useNavigate();

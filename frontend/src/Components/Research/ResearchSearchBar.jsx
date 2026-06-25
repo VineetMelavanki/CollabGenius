@@ -2,8 +2,8 @@ import React from "react";
 import { useState } from "react";
 import axios from "axios";
 import { MagnifyingGlassIcon,XMarkIcon } from "@heroicons/react/24/outline";
-import githublogo from "../assets/logos/github.png"
-import arxivlogo from "../assets/logos/arxiv.png"
+import githublogo from "../../assets/logos/github.png"
+import arxivlogo from "../../assets/logos/arxiv.png"
 const sources=[
     {
         name:"github",

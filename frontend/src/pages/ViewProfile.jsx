@@ -106,11 +106,9 @@ export default function ViewProfile() {
                   <div className="absolute bottom-1 right-1 rounded-full border border-white bg-emerald-500 p-1.5 shadow-sm" />
                 </div>
 
-                <div className="space-y-2">
-                  <h2 className="text-2xl font-semibold text-slate-800">{user?.name}</h2>
-                  <p className="text-sm font-medium uppercase tracking-[0.24em] text-purple-600">
-                    {user?.skillevel || "Professional"}
-                  </p>
+                <div className="space-y-2 ">
+                  <h2 className="text-2xl p-2 font-semibold text-slate-800">{user?.name}</h2>
+
                   <p className="text-sm leading-6 text-slate-600">
                     {user?.Bio || "A thoughtful collaborator building polished digital experiences."}
                   </p>
