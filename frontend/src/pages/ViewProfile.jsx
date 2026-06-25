@@ -1,84 +1,64 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import{FaTrash,FaPencilAlt,FaUser} from "react-icons/fa"
+import { FaPencilAlt, FaGithub, FaCode } from "react-icons/fa";
+
 export default function ViewProfile() {
   const [error, seterror] = useState("");
   const [user, setuser] = useState(null);
-  const[msg,setmsg]=useState("");
-  const[error1,seterror1]=useState("");
-  const[formdata,setformdata]=useState({
-    name:"",
-    Bio:"",
-    skills:"",
-    skillevel:"",
-    github_link:"",
+  const [msg, setmsg] = useState("");
+  const [error1, seterror1] = useState("");
+  const [formdata, setformdata] = useState({
+    name: "",
+    Bio: "",
+    skills: "",
+    skillevel: "",
+    github_link: "",
   });
-  const domains=[
-            "CLI Tools",
-            "Web Frameworks",
-            "Mobile Development",
-            "AI/ML",
-            "Backend Development",
-            "Frontend Development",
-            "DevOps",
-            "Blockchain",
-            "Data Science",
-            "Cybersecurity",
-            "Research",
-            "Game Development",
-            "IoT",
-            "Computer Vision",
-            "Natural Language Processing",
-            "Full Stack",
-            "Others"
-  ]
-  const[edit,setedit]=useState(false);
-  const handlechange=async(e)=>{
-    setformdata((prev)=>({...prev,[e.target.name]:e.target.value}));
-  }
-  const handleedit=async(e)=>{
+  const [edit, setedit] = useState(false);
+
+  const handlechange = (e) => {
+    setformdata((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleedit = async (e) => {
     e.preventDefault();
     seterror1("");
     setmsg("");
-    console.log("Sending data : ",formdata);
-    try{
-     const response=await axios.post("http://localhost:8000/api/Profile/edit-profile",formdata,
-      {
-        withCredentials: true
+
+    try {
+      const response = await axios.post("http://localhost:8000/api/Profile/edit-profile", formdata, {
+        withCredentials: true,
+      });
+      setuser(response.data.newprofile);
+      setedit(false);
+      setmsg("Profile updated successfully");
+    } catch (error) {
+      if (error.response) {
+        seterror1(error.response?.data?.msg || "Cannot edit user profile");
+      } else {
+        seterror1("Internal server error");
       }
-     );
-     setuser(response.data.newprofile);
-     setedit(false);
-    }catch(error)
-    {
-        if(error.response)
-        {
-          seterror1(error.response?.data?.msg || "Cannot edit user profile");
-        }else
-        {
-          seterror1("Internal server error");
-        }
     }
-  }
-  useEffect(()=>{
-     if(user)
-        {
-          setformdata({
-            name:user.name,
-            Bio:user.Bio,
-            skillevel:user.skillevel,
-            skills:user.skills,
-            github_link:user.github_link,
-          })
-        }
-  },[user])
+  };
+
+  useEffect(() => {
+    if (user) {
+      setformdata({
+        name: user.name || "",
+        Bio: user.Bio || "",
+        skillevel: user.skillevel || "",
+        skills: user.skills || "",
+        github_link: user.github_link || "",
+      });
+    }
+  }, [user]);
+
   useEffect(() => {
     const showuser = async () => {
       try {
         const response = await axios.get("http://localhost:8000/api/Profile/View-Profile", {
-          withCredentials: true
+          withCredentials: true,
         });
-
         setuser(response.data.Profile);
       } catch (error) {
         if (error.response) {
@@ -90,141 +70,216 @@ export default function ViewProfile() {
     };
     showuser();
   }, []);
-  
+
+  const skillItems = user?.skills
+    ? user.skills
+        .split(",")
+        .map((skill) => skill.trim())
+        .filter(Boolean)
+    : [];
+
   return (
-    <div className="min-h-screen px-4 py-8">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(233,213,255,0.25),_rgba(255,255,255,0.95)_45%,_rgba(224,242,254,0.35))] px-4 py-8 sm:px-6 lg:px-8">
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 max-w-4xl mx-auto">
+        <div className="mx-auto mb-6 max-w-6xl rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 shadow-sm">
           {error}
         </div>
       )}
 
       {!error && !user && (
-        <div className="text-center text-primary-600 text-xl">Loading...</div>
+        <div className="mx-auto max-w-6xl rounded-2xl border border-slate-200 bg-white/80 px-6 py-10 text-center text-lg font-medium text-slate-600 shadow-sm">
+          Loading profile...
+        </div>
       )}
 
       {user && (
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Profile Card */}
-            <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-              <div className="mb-6">
-                <img
-                  src={user?.photo?.url}
-                  alt={user?.name}
-                  className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-primary-100"
-                />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">{user?.name}</h2>
+        <div className="mx-auto max-w-6xl">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.05fr_1.55fr]">
+            <div className="overflow-hidden rounded-[28px] border border-slate-200/80 bg-white/80 p-6 shadow-[0_20px_50px_-24px_rgba(15,23,42,0.28)] backdrop-blur sm:p-8">
+              <div className="flex flex-col items-center text-center">
+                <div className="relative mb-5">
+                  <img
+                    src={user?.photo?.url || "https://ui-avatars.com/api/?name=" + encodeURIComponent(user?.name || "User")}
+                    alt={user?.name}
+                    className="h-28 w-28 rounded-full border-4 border-white object-cover shadow-lg sm:h-32 sm:w-32"
+                  />
+                  <div className="absolute bottom-1 right-1 rounded-full border border-white bg-emerald-500 p-1.5 shadow-sm" />
+                </div>
 
-              <div className="inline-block px-4 py-2 bg-primary-100 text-primary-700 rounded-full font-medium">
-                {user?.skillevel}
+                <div className="space-y-2">
+                  <h2 className="text-2xl font-semibold text-slate-800">{user?.name}</h2>
+                  <p className="text-sm font-medium uppercase tracking-[0.24em] text-purple-600">
+                    {user?.skillevel || "Professional"}
+                  </p>
+                  <p className="text-sm leading-6 text-slate-600">
+                    {user?.Bio || "A thoughtful collaborator building polished digital experiences."}
+                  </p>
+                </div>
+
+                <div className="mt-6 flex flex-wrap justify-center gap-2">
+                  {skillItems.length > 0 ? (
+                    skillItems.map((skill, index) => (
+                      <span
+                        key={`${skill}-${index}`}
+                        className="rounded-full border border-purple-100 bg-purple-50 px-3 py-1.5 text-sm font-medium text-purple-700"
+                      >
+                        {skill}
+                      </span>
+                    ))
+                  ) : (
+                    <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-sm font-medium text-slate-500">
+                      Skills coming soon
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* Details Card */}
-            <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg p-8">
-              <div className="flex flex-row justify-between gap-3">
-               <h3 className="text-3xl font-bold text-gray-800 mb-6">Profile Details</h3>
-            {!edit && <FaPencilAlt onClick={()=>setedit(!edit)} className="text-red-500 w-5 h-5"/>   }
-             {edit && <button onClick={()=>setedit(!edit)} className="text-red-500 font-bold text-2xl ">
-                x
-              </button>}  
+            <div className="rounded-[28px] border border-slate-200/80 bg-white/80 p-5 shadow-[0_20px_50px_-24px_rgba(15,23,42,0.28)] backdrop-blur sm:p-7">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.26em] text-slate-500">Profile overview</p>
+                  <h3 className="text-xl font-semibold text-slate-800">Professional details</h3>
+                </div>
+                {!edit ? (
+                  <button
+                    onClick={() => setedit(true)}
+                    className="rounded-full border border-slate-200 bg-slate-50 p-2.5 text-slate-600 transition hover:border-purple-200 hover:bg-purple-50 hover:text-purple-600"
+                    aria-label="Edit profile"
+                  >
+                    <FaPencilAlt className="h-4 w-4" />
+                  </button>
+                ) : (
+                  <button onClick={() => setedit(false)} className="text-sm font-semibold text-red-500 transition hover:text-red-600">
+                    Cancel
+                  </button>
+                )}
               </div>
 
-            {!edit && <div className="space-y-6">
-                <div>
-                  <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Name</label>
-                  <p className="text-lg text-gray-800 mt-1">{user?.name}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Bio</label>
-                  <p className="text-lg text-gray-800 mt-1">{user?.Bio}</p>
-                </div>
+              {msg && <p className="mt-4 rounded-xl bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{msg}</p>}
+              {error1 && <p className="mt-4 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700">{error1}</p>}
 
-                <div>
-                  <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Skills</label>
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {user?.skills?.split(',').map((skill, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium"
-                      >
-                        {skill.trim()}
-                      </span>
-                    ))}
+              {!edit ? (
+                <div className="mt-6 space-y-4">
+                  <div className="rounded-2xl border border-slate-200 bg-[linear-gradient(135deg,_rgba(248,250,252,0.95),_rgba(255,255,255,0.9))] p-4">
+                    <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">About</p>
+                    <p className="mt-2 text-sm leading-7 text-slate-700">{user?.Bio || "No bio added yet."}</p>
                   </div>
-                </div>
-                <div>
-                  <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Skill Level</label>
-                  <p className="text-lg text-gray-800 mt-1">{user?.skillevel}</p>
-                </div>
 
-                <div className="flex flex-col gap-1 mb-2">
-                  <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">GitHub </label>
-                  <a
-                    href={user?.github_link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-lg text-primary-600 hover:text-primary-700 mt-1 inline-flex items-center gap-2"
-                  >
-                    {user?.github_link}
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
-                  </a>
-                 <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide my-4">Domain</label>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+                      <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Experience level</p>
+                      <p className="mt-2 text-sm font-semibold text-slate-800">{user?.skillevel || "Not specified"}</p>
+                    </div>
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+                      <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">GitHub</p>
+                      {user?.github_link ? (
+                        <a
+                          href={user.github_link}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="mt-2 inline-flex items-center gap-2 text-sm font-semibold text-blue-600 transition hover:text-blue-700"
+                        >
+                          <FaGithub className="h-4 w-4" />
+                          Open profile
+                        </a>
+                      ) : (
+                        <p className="mt-2 text-sm text-slate-500">No GitHub link added</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+                    <div className="flex items-center gap-2">
+                      <FaCode className="h-4 w-4 text-purple-600" />
+                      <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Skills</p>
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {skillItems.length > 0 ? (
+                        skillItems.map((skill, index) => (
+                          <span key={`${skill}-${index}`} className="rounded-full bg-white px-3 py-1.5 text-sm text-slate-700 shadow-sm">
+                            {skill}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-sm text-slate-500">No skills listed yet.</span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                 
-              </div>}
-              {edit && <div className="space y-6">
-                <form onSubmit={handleedit} className="flex flex-col gap-3">
-                  <div className="flex flex-col gap-2">
-                      <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Name</label>
-                  <input type="text"
-                  value={formdata.name}
-                  name="name"
-                  onChange={handlechange}
-                  className="text-lg text-gray-800 mt-1 border border-blue-300 rounded-xl "/>
-                  
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Bio</label>
-                    <input type="text"
-                    value={formdata.Bio}
-                    name="Bio"
-                    onChange={handlechange}
-                    className="text-lg text-gray-800 mt-1 border border-blue-300 rounded-xl " />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                   <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Skills</label>
-                   <input type="text" name="skills"
-                   value={formdata.skills}
-                   onChange={handlechange}
-                   className="text-lg text-gray-800 mt-1 border border-blue-300 rounded-xl " />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                   <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">Skill Level</label>
-                   <input type="text"
-                   name="skillevel"
-                   value={formdata.skillevel}
-                   onChange={handlechange}
-                   className="text-lg text-gray-800 mt-1 border border-blue-300 rounded-xl "/>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                   <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">GitHub </label>
-                   <input type="url"
-                     name="github_link"
-                     value={formdata.github_link}
-                     onChange={handlechange}
-                     className="text-lg text-gray-800 mt-1 border border-blue-300 rounded-xl "
+              ) : (
+                <form onSubmit={handleedit} className="mt-6 space-y-4">
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-slate-700">Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formdata.name}
+                      onChange={handlechange}
+                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-purple-400 focus:bg-white focus:ring-2 focus:ring-purple-100"
                     />
                   </div>
-                  <button type="submit" className="text-white bg-red-500 p-2 font-bold  rounded-3xl hover:bg-red-600 mt-10 max-w-32">
-                  Apply changes
+
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-slate-700">Bio</label>
+                    <textarea
+                      name="Bio"
+                      rows="3"
+                      value={formdata.Bio}
+                      onChange={handlechange}
+                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-purple-400 focus:bg-white focus:ring-2 focus:ring-purple-100"
+                    />
+                  </div>
+
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div>
+                      <label className="mb-1.5 block text-sm font-medium text-slate-700">Skill level</label>
+                      <select
+                        name="skillevel"
+                        value={formdata.skillevel}
+                        onChange={handlechange}
+                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-purple-400 focus:bg-white focus:ring-2 focus:ring-purple-100"
+                      >
+                        <option value="">Select level</option>
+                        <option value="Beginner">Beginner</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Advanced">Advanced</option>
+                        <option value="Expert">Expert</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="mb-1.5 block text-sm font-medium text-slate-700">GitHub link</label>
+                      <input
+                        type="url"
+                        name="github_link"
+                        value={formdata.github_link}
+                        onChange={handlechange}
+                        className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-purple-400 focus:bg-white focus:ring-2 focus:ring-purple-100"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-slate-700">Skills</label>
+                    <textarea
+                      name="skills"
+                      rows="2"
+                      value={formdata.skills}
+                      onChange={handlechange}
+                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-purple-400 focus:bg-white focus:ring-2 focus:ring-purple-100"
+                      placeholder="React, Node.js, UI Design"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="rounded-2xl bg-gradient-to-r from-purple-600 to-blue-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:brightness-105"
+                  >
+                    Save changes
                   </button>
                 </form>
-                </div>}
+              )}
             </div>
           </div>
         </div>
