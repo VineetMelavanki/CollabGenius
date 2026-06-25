@@ -135,7 +135,7 @@ export default function ResearchSearchBar({projectId,workId,onClose}){
                      <div className="relative w-full flex flex-row gap-3">
                        <input type="text"
                        name="topic"
-                       placeholder="Search research papers"
+                       placeholder={selectedResources.name==="github" ?"Search github repositories" : "search research papers"}
                        onChange={researchsubmit}
                         className="w-full border border-blue-200 border-2 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500" />
                        <button className="hover:bg-gray-100 rounded-2xl p-2" type="button" onClick={()=>setshowResources(!showResources)}>
