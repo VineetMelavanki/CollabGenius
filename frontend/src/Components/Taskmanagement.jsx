@@ -167,7 +167,7 @@ export default function TaskManagement({projectId,workId,Leader,openSavedRepo}){
     }
 
     return(
-        <div className="flex min-h-full w-full flex-col gap-4 rounded-[24px] border border-slate-200/80 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.95),_rgba(248,250,252,0.9))] p-4 shadow-[0_20px_60px_-24px_rgba(15,23,42,0.38)]">
+        <div className="flex  w-full flex-col gap-4 rounded-[24px] border border-slate-200/80 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.95),_rgba(248,250,252,0.9))] p-4 shadow-[0_20px_60px_-24px_rgba(15,23,42,0.38)]">
           <div className="flex flex-col gap-4 rounded-[20px] border border-slate-200/70 bg-white/80 p-4 shadow-sm sm:p-5">
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div>
@@ -226,14 +226,14 @@ export default function TaskManagement({projectId,workId,Leader,openSavedRepo}){
                             )}
                           </div>
 
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2" >
                             {Leader && (
                               <div className="flex items-center gap-2">
                                 <img
                                   onClick={() => {
                                     setmemberslist(true);
                                     getallmembers();
-                                    setopenmembers(task._id);
+                                    openmembers===null ?setopenmembers(task._id) : setopenmembers(null);
                                   }}
                                   src={task?.assignedphoto?.url || nulllogo}
                                   className="h-10 w-10 cursor-pointer rounded-full border border-slate-200 object-cover"
