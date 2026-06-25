@@ -200,8 +200,8 @@ export default function TaskManagement({projectId,workId,Leader,openSavedRepo}){
               </div>
             ) : (
               <div className="grid grid-cols-1 gap-3">
-                {!Taskedit &&
-                  ResearchTasks.map((task, index) => (
+                
+                { ResearchTasks.map((task, index) => (
                     <div key={task._id} className="rounded-[20px] border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-4 shadow-sm transition duration-200 hover:shadow-md">
                       <div className="flex flex-col gap-3">
                         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -211,15 +211,15 @@ export default function TaskManagement({projectId,workId,Leader,openSavedRepo}){
                             </span>
                             {Leader && !Taskedit && (
                               <button
-                                onClick={() => setTaskedit(!Taskedit)}
-
+                                onClick={() =>{setTaskedit(task._id);setopentask(null)}}
+                                
                                 className="rounded-full p-2 text-slate-500 transition hover:bg-slate-100 hover:text-purple-600"
                                 aria-label="Edit tasks"
                               >
                                 <FaPencilAlt className="h-4 w-4" />
                               </button>
                             )}
-                            {Leader && Taskedit && (
+                            {Leader && Taskedit===task._id && (
                               <button onClick={() => setTaskedit(!Taskedit)} className="rounded-full px-3 py-1 text-sm font-semibold text-red-500 transition hover:bg-red-50">
                                 Exit edit
                               </button>
@@ -322,20 +322,10 @@ export default function TaskManagement({projectId,workId,Leader,openSavedRepo}){
                             </div>
                           </div>
                         )}
-                      </div>
-                    </div>
-                  ))}
-
-                {Taskedit &&
-                  ResearchTasks.map((task, index) => (
-                    <div key={task._id} className="rounded-[20px] border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-4 shadow-sm">
+                        {Taskedit===task._id && (
+                          <div key={task._id} className="rounded-[20px] border border-slate-200 bg-gradient-to-br from-white to-slate-50 p-4 shadow-sm">
                       <div className="flex flex-col gap-3">
-                        <div className="flex items-center justify-between">
-                          <span className="rounded-full bg-red-100 px-3 py-1 text-sm font-semibold text-red-600">Task {index + 1}</span>
-                          <button onClick={() => handledeletetask(task._id)} className="rounded-full p-2 text-red-500 transition hover:bg-red-50">
-                            <FaTrash className="h-4 w-4" />
-                          </button>
-                        </div>
+                        
                         <p className="text-sm leading-6 text-slate-700">{task.description}</p>
                         <div className="flex items-center justify-between">
                           <h1 className="text-sm font-semibold text-blue-600">Related repositories</h1>
@@ -399,6 +389,9 @@ export default function TaskManagement({projectId,workId,Leader,openSavedRepo}){
                           </div>
                         </div>
                       )}
+                    </div>
+                        )}
+                      </div>
                     </div>
                   ))}
               </div>
