@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-
+import{FaTrash,FaPencilAlt,FaUser} from "react-icons/fa"
 export default function ViewProfile() {
   const [error, seterror] = useState("");
   const [user, setuser] = useState(null);
@@ -13,6 +13,25 @@ export default function ViewProfile() {
     skillevel:"",
     github_link:"",
   });
+  const domains=[
+            "CLI Tools",
+            "Web Frameworks",
+            "Mobile Development",
+            "AI/ML",
+            "Backend Development",
+            "Frontend Development",
+            "DevOps",
+            "Blockchain",
+            "Data Science",
+            "Cybersecurity",
+            "Research",
+            "Game Development",
+            "IoT",
+            "Computer Vision",
+            "Natural Language Processing",
+            "Full Stack",
+            "Others"
+  ]
   const[edit,setedit]=useState(false);
   const handlechange=async(e)=>{
     setformdata((prev)=>({...prev,[e.target.name]:e.target.value}));
@@ -97,7 +116,7 @@ export default function ViewProfile() {
                 />
               </div>
               <h2 className="text-2xl font-bold text-gray-800 mb-2">{user?.name}</h2>
-              <p className="text-gray-600 mb-4 border p-2 rounded">User ID: {user?.userId}</p>
+
               <div className="inline-block px-4 py-2 bg-primary-100 text-primary-700 rounded-full font-medium">
                 {user?.skillevel}
               </div>
@@ -107,11 +126,9 @@ export default function ViewProfile() {
             <div className="lg:col-span-2 bg-white rounded-2xl shadow-lg p-8">
               <div className="flex flex-row justify-between gap-3">
                <h3 className="text-3xl font-bold text-gray-800 mb-6">Profile Details</h3>
-            {!edit &&    <button onClick={()=>setedit(!edit)} className="text-white bg-green-500  p-4 px-6 rounded-2xl font-bold hover:bg-green-600">
-                Edit
-               </button>}
-             {edit && <button onClick={()=>setedit(!edit)} className="text-white bg-red-500 p-4 px-6 rounded-2xl font-bold hover:bg-red-600">
-              Cancel
+            {!edit && <FaPencilAlt onClick={()=>setedit(!edit)} className="text-red-500 w-5 h-5"/>   }
+             {edit && <button onClick={()=>setedit(!edit)} className="text-red-500 font-bold text-2xl ">
+                x
               </button>}  
               </div>
 
@@ -143,7 +160,7 @@ export default function ViewProfile() {
                   <p className="text-lg text-gray-800 mt-1">{user?.skillevel}</p>
                 </div>
 
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1 mb-2">
                   <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide">GitHub </label>
                   <a
                     href={user?.github_link}
@@ -156,7 +173,9 @@ export default function ViewProfile() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
                   </a>
+                 <label className="text-sm font-semibold text-gray-500 uppercase tracking-wide my-4">Domain</label>
                 </div>
+                 
               </div>}
               {edit && <div className="space y-6">
                 <form onSubmit={handleedit} className="flex flex-col gap-3">
