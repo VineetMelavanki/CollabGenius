@@ -4,8 +4,10 @@ const User=require("../model/User");
 async function CreateProfile(req,res){
    console.log("CREATE PROFILE REQ.USER:", req.user)
     try{
-      const{name,Bio,skills,skillevel,github_link,domains}=req.body;
-      if(!name || !Bio || !skills || !skillevel || !github_link)
+      let{name,Bio,skills,skillevel,github_link,domains}=req.body;
+      skills=JSON.parse(skills || "[]");
+      domains=JSON.parse(domains || "[]");
+      if(!name || !Bio || skills.length==0 || !skillevel || !github_link || domains.length==0)
       {
         return res.status(400).json({msg:"All fields are required",success:false});
       }
@@ -78,12 +80,34 @@ async function getmyprofile(req,res)
      const profile=await Profile.findOne({userId:req.user.id});
   if(!profile)
   {
-    return res.status(404).json({hasprofile:false});
+    return res.status(200).json({hasprofile:false});
   }
   return res.status(200).json({hasprofile:true});
   }catch(error)
   {
     console.log(error);
+    return res.status(500).json({msg:"Internal server error",success:false});
+  }
+}
+async function getskills(req,res)
+{
+  try{
+     const skills=Profile.schema.path("skills").caster.enumValues;
+     
+     return res.status(200).json({msg:"Skills fecthed successfully",skills:skills,success:true});
+  }catch(error)
+  {
+    return res.status(500).json({msg:"Internal server error",success:false});
+  }
+}
+async function getdomain(req,res)
+{
+  try{
+      const domains=Profile.schema.path("domains").caster.enumValues;
+     
+      return res.status(200).json({msg:"Domains fetched successfully",domains:domains,success:true});
+  }catch(error)
+  {
     return res.status(500).json({msg:"Internal server error",success:false});
   }
 }
@@ -113,4 +137,26 @@ async function EditProfile(req,res)
     return res.status(500).json({msg:"Internal server error",success:false});
   }
 }
-module.exports={CreateProfile,ViewProfile,getmyprofile,ViewprofileById,EditProfile};
+async function getprofilebyskills(req,res)
+{
+  try{
+     const {skills}=req.body;
+     if(skills.length==0)
+     {
+      return res.status(200).json({msg:"No inputs provided",success:true});
+     }
+     const allProfiles=await Profile.find({
+       skills:{$in :skills}
+     });
+     if(allProfiles.length==0)
+     {
+      return res.status(200).json({msg:"No profiles found",Profiles:[],success:true});
+     }
+     return res.status(200).json({msg:"Profiles fetched successsfully",Profiles:allProfiles,success:true});
+     }catch(error)
+     {
+      return res.status(500).json({msg:"Internal server error",success:false});
+     }
+}
+
+module.exports={CreateProfile,ViewProfile,getmyprofile,ViewprofileById,EditProfile,getprofilebyskills,getskills,getdomain};
