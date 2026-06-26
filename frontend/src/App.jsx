@@ -16,6 +16,7 @@ import Getyourprojects from './pages/getyourprojects';
 import Allusers from './pages/Getallusers';
 import Notifications from './pages/Notifications';
 import ViewIndiProfile from './pages/ViewIndiProfile';
+import SearchUsers from './pages/SearchUsers';
 export default function App()
 {
 return (
@@ -88,6 +89,11 @@ return (
             </DashBoardLayout>
         }/>
        <Route path='/auth/github/callback' element={<Login/>}/>
+       <Route path='/Search-Users' element={
+        <DashBoardLayout>
+          <SearchUsers/>
+        </DashBoardLayout>
+       }/>
   </Routes>
   </BrowserRouter>
 )
