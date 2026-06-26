@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
-
+import { useEffect } from "react";
+import Selectskills from "../Components/Profile/Selectskills";
+import SelectDomain from "../Components/Profile/SelectDomain";
 export default function CreateProfile() {
   const [formdata, setformdata] = useState({
     name: "",
@@ -9,11 +11,13 @@ export default function CreateProfile() {
     skillevel: "",
     github_link: "",
   });
-
+  const[selectedskills,setselectedskills]=useState([]);
   const [file, setfile] = useState(null);
   const [error, seterror] = useState("");
   const [msg, setmsg] = useState("");
-
+  const[open,setopen]=useState(false);
+  const[opendomain,setopendomain]=useState(false);
+  const[selecteddomains,setselecteddomains]=useState([]);
   const handlefilechange = (e) => {
     const requiredfile = e.target.files[0];
     setfile(requiredfile);
@@ -33,7 +37,7 @@ export default function CreateProfile() {
         seterror("Please upload a profile picture");
         return;
       }
-      if (!formdata.name || !formdata.Bio || !formdata.skills || !formdata.github_link) {
+      if (!formdata.name || !formdata.Bio || selectedskills.length==0 || !formdata.github_link) {
         seterror("All fields are required");
         return;
       }
@@ -41,11 +45,11 @@ export default function CreateProfile() {
       const data = new FormData();
       data.append("name", formdata.name);
       data.append("Bio", formdata.Bio);
-      data.append("skills", formdata.skills);
+      data.append("skills", JSON.stringify(selectedskills));
       data.append("skillevel", formdata.skillevel);
       data.append("github_link", formdata.github_link);
       data.append("photo", file);
-
+      data.append("domains",JSON.stringify(selecteddomains));
       const response = await axios.post("http://localhost:8000/api/Profile/Create-Profile", data, {
         withCredentials: true
       });
@@ -101,18 +105,14 @@ export default function CreateProfile() {
             />
           </div>
 
-          <div>
+          <div className="flex flex-row">
             <label className="block text-gray-700 mb-2 text-sm font-medium">Skills</label>
-            <input
-              type="text"
-              name="skills"
-              value={formdata.skills}
-              onChange={handlechange}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition"
-              placeholder="e.g., JavaScript, React, Node.js"
-            />
+            <button type="button" onClick={()=>setopen(true)} className="text-red-500 text-md">+</button>
+            {open && <Selectskills onClose={()=>setopen(false)}
+              selectedskills={selectedskills}
+              setselectedskills={setselectedskills}/>}
           </div>
-
+          
           <div>
             <label className="block text-gray-700 mb-2 text-sm font-medium">Skill Level</label>
             <select
@@ -127,7 +127,15 @@ export default function CreateProfile() {
               <option value="Advanced">Advanced</option>
             </select>
           </div>
-
+           <div className="flex flex-row">
+             <label className="block text-gray-700 mb-2 text-sm font-medium">Domains</label>
+             <button type="button" onClick={()=>setopendomain(true)} className="text-red-500 text-md">+</button>
+             {opendomain && 
+             <SelectDomain
+             onClose={()=>setopendomain(false)}
+             selecteddomain={selecteddomains}
+             setselecteddomain={setselecteddomains}/>}
+           </div>
           <div>
             <label className="block text-gray-700 mb-2 text-sm font-medium">GitHub Link</label>
             <input
