@@ -15,9 +15,12 @@ export default function Dashboard() {
           withCredentials: true
         });
         sethasprofile(response.data.hasprofile);
-      }catch(error)
-      {
-        console.log("The error is : ",error);
+      } catch (error) {
+        console.log("The error is : ", error);
+        if (error.response?.status === 404) {
+          sethasprofile(false);
+          return;
+        }
         seterror("Invalid login");
         navigate("/login");
       }
@@ -103,7 +106,7 @@ export default function Dashboard() {
                <h3 className="text-lg font-thin text-gray-400 mb-2">
                 Find a team-mate of your required domain
                </h3>
-               <button className="text-xl font-bold bg-green-400 hover:bg-green-500 text-white p-5 rounded-2xl my-2">
+               <button onClick={()=>navigate("/Search-users")} className="text-xl font-bold bg-green-400 hover:bg-green-500 text-white p-5 rounded-2xl my-2">
                  Search
                </button>
             </div>
