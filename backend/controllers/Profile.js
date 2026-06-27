@@ -120,13 +120,13 @@ async function EditProfile(req,res)
   {
     return res.status(404).json({msg:"Profile not found",success:false});
   }
-  if(!name || !Bio  || !skillevel ||!skills ||  !github_link)
+  if(!name || !Bio  || !skillevel || skills.length==0 ||  !github_link)
   {
     return res.status(409).json({msg:"Field cannot be blank",success:false});
   }
         if (name) profile.name = name;
         if (Bio) profile.Bio = Bio;
-        if (skills !== undefined) profile.skills = Array.isArray(skills) ? skills : [];
+        if (skills.length>0) profile.skills.push(skills);
         if (skillevel) profile.skillevel = skillevel;
         if (github_link) profile.github_link = github_link;
         if (domains !== undefined) profile.domains = Array.isArray(domains) ? domains : [];
