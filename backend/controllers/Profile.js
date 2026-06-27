@@ -114,7 +114,8 @@ async function getdomain(req,res)
 async function EditProfile(req,res)
 {
   try{
-    const{name,Bio,skills,skillevel,github_link,domains}=req.body;
+    let{name,Bio,skills,skillevel,github_link,domains}=req.body;
+    skills=JSON.parse(skills || "[]");
   const profile=await Profile.findOne({userId:req.user.id});
   if(!profile)
   {
@@ -126,7 +127,7 @@ async function EditProfile(req,res)
   }
         if (name) profile.name = name;
         if (Bio) profile.Bio = Bio;
-        if (skills.length>0) profile.skills.push(skills);
+        if (skills.length>0) profile.skills=skills;
         if (skillevel) profile.skillevel = skillevel;
         if (github_link) profile.github_link = github_link;
         if (domains !== undefined) profile.domains = Array.isArray(domains) ? domains : [];
@@ -134,6 +135,8 @@ async function EditProfile(req,res)
   return res.status(200).json({msg:"Profile saved successfully",newprofile:profile,success:true});
   }catch(error)
   {
+    console.log("Error name : ",error.name);
+    console.log("Error message : ",error.message);
     return res.status(500).json({msg:"Internal server error",success:false});
   }
 }
