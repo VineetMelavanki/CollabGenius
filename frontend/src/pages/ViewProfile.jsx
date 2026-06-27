@@ -10,7 +10,7 @@ export default function ViewProfile() {
   const [formdata, setformdata] = useState({
     name: "",
     Bio: "",
-    skills: "",
+    skills:[],
     skillevel: "",
     github_link: "",
   });
@@ -47,7 +47,7 @@ export default function ViewProfile() {
         name: user.name || "",
         Bio: user.Bio || "",
         skillevel: user.skillevel || "",
-        skills: user.skills || "",
+        skills: user.skills,
         github_link: user.github_link || "",
       });
     }
@@ -71,12 +71,6 @@ export default function ViewProfile() {
     showuser();
   }, []);
 
-  const skillItems = user?.skills
-    ? user.skills
-        .split(",")
-        .map((skill) => skill.trim())
-        .filter(Boolean)
-    : [];
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(233,213,255,0.25),_rgba(255,255,255,0.95)_45%,_rgba(224,242,254,0.35))] px-4 py-8 sm:px-6 lg:px-8">
@@ -115,8 +109,8 @@ export default function ViewProfile() {
                 </div>
 
                 <div className="mt-6 flex flex-wrap justify-center gap-2">
-                  {skillItems.length > 0 ? (
-                    skillItems.map((skill, index) => (
+                  {user.skills.length > 0 ? (
+                    user.skills.map((skill, index) => (
                       <span
                         key={`${skill}-${index}`}
                         className="rounded-full border border-purple-100 bg-purple-50 px-3 py-1.5 text-sm font-medium text-purple-700"
@@ -193,8 +187,8 @@ export default function ViewProfile() {
                       <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Skills</p>
                     </div>
                     <div className="mt-3 flex flex-wrap gap-2">
-                      {skillItems.length > 0 ? (
-                        skillItems.map((skill, index) => (
+                      {user.skills.length > 0 ? (
+                        user.skills.map((skill, index) => (
                           <span key={`${skill}-${index}`} className="rounded-full bg-white px-3 py-1.5 text-sm text-slate-700 shadow-sm">
                             {skill}
                           </span>
