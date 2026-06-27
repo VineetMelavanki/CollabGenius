@@ -44,7 +44,6 @@ const ProfileSchema = new mongoose.Schema({
             "TensorFlow",
             "PyTorch",
             "Scikit-Learn",
-            "Pandas",
             "OpenCV",
             "LangChain",
             "Hugging Face",
