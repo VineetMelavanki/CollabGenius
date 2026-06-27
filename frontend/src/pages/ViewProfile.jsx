@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaPencilAlt, FaGithub, FaCode } from "react-icons/fa";
-
+import Selectskills from "../Components/Profile/Selectskills";
 export default function ViewProfile() {
   const [error, seterror] = useState("");
   const [user, setuser] = useState(null);
@@ -15,7 +15,8 @@ export default function ViewProfile() {
     github_link: "",
   });
   const [edit, setedit] = useState(false);
-
+  const[openskills,setopenskills]=useState(false);
+  const[selectedskills,setselectedskills]=useState([]);
   const handlechange = (e) => {
     setformdata((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -26,14 +27,22 @@ export default function ViewProfile() {
     setmsg("");
 
     try {
-      const response = await axios.post("http://localhost:8000/api/Profile/edit-profile", formdata, {
+
+      const data=new FormData();
+      data.append("name", formdata.name);
+      data.append("Bio", formdata.Bio);
+      data.append("skills", JSON.stringify(selectedskills));
+      data.append("skillevel", formdata.skillevel);
+      data.append("github_link", formdata.github_link);
+      const response = await axios.post("http://localhost:8000/api/Profile/edit-profile", data, {
         withCredentials: true,
       });
       setuser(response.data.newprofile);
       setedit(false);
       setmsg("Profile updated successfully");
     } catch (error) {
-      if (error.response) {
+      if (error.response){
+        console.log(error);
         seterror1(error.response?.data?.msg || "Cannot edit user profile");
       } else {
         seterror1("Internal server error");
@@ -43,6 +52,7 @@ export default function ViewProfile() {
 
   useEffect(() => {
     if (user) {
+      const skills=user.skills;
       setformdata({
         name: user.name || "",
         Bio: user.Bio || "",
@@ -50,6 +60,7 @@ export default function ViewProfile() {
         skills: user.skills,
         github_link: user.github_link || "",
       });
+      setselectedskills(skills);
     }
   }, [user]);
 
@@ -254,14 +265,12 @@ export default function ViewProfile() {
 
                   <div>
                     <label className="mb-1.5 block text-sm font-medium text-slate-700">Skills</label>
-                    <textarea
-                      name="skills"
-                      rows="2"
-                      value={formdata.skills}
-                      onChange={handlechange}
-                      className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 outline-none transition focus:border-purple-400 focus:bg-white focus:ring-2 focus:ring-purple-100"
-                      placeholder="React, Node.js, UI Design"
-                    />
+                    <button onClick={()=>setopenskills(true)} className="text-lg text-red-500 font-bold">+</button>
+                    {openskills && <Selectskills
+                    onClose={()=>setopenskills(false)}
+                    selectedskills={selectedskills}
+                    setselectedskills={setselectedskills}
+                    />}
                   </div>
 
                   <button
