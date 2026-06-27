@@ -2,20 +2,24 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaPencilAlt, FaGithub, FaCode } from "react-icons/fa";
 import Selectskills from "../Components/Profile/Selectskills";
+import SelectDomain from "../Components/Profile/SelectDomain";
 export default function ViewProfile() {
   const [error, seterror] = useState("");
   const [user, setuser] = useState(null);
-
+  
   const [formdata, setformdata] = useState({
     name: "",
     Bio: "",
     skills:[],
     skillevel: "",
     github_link: "",
+    domains:[],
   });
   const [edit, setedit] = useState(false);
   const[openskills,setopenskills]=useState(false);
+  const[opendomains,setopendomains]=useState(false);
   const[selectedskills,setselectedskills]=useState([]);
+  const[selecteddomains,setselecteddomains]=useState([]);
   const handlechange = (e) => {
     setformdata((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -32,6 +36,7 @@ export default function ViewProfile() {
       data.append("skills", JSON.stringify(selectedskills));
       data.append("skillevel", formdata.skillevel);
       data.append("github_link", formdata.github_link);
+      data.append("domains",JSON.stringify(selecteddomains));
       const response = await axios.post("http://localhost:8000/api/Profile/edit-profile", data, {
         withCredentials: true,
       });
@@ -51,14 +56,17 @@ export default function ViewProfile() {
   useEffect(() => {
     if (user) {
       const skills=user.skills;
+      const domains=user.domains;
       setformdata({
         name: user.name || "",
         Bio: user.Bio || "",
         skillevel: user.skillevel || "",
         skills: user.skills,
         github_link: user.github_link || "",
+        domains:user.domains || "",
       });
       setselectedskills(skills);
+      setselecteddomains(domains);
     }
   }, [user]);
 
@@ -189,6 +197,7 @@ export default function ViewProfile() {
                     </div>
                   </div>
 
+                  
                   <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
                     <div className="flex items-center gap-2">
                       <FaCode className="h-4 w-4 text-purple-600" />
@@ -203,6 +212,24 @@ export default function ViewProfile() {
                         ))
                       ) : (
                         <span className="text-sm text-slate-500">No skills listed yet.</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+                    <div className="flex items-center gap-2">
+                      <FaCode className="h-4 w-4 text-purple-600" />
+                      <p className="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Domains</p>
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {user.domains.length > 0 ? (
+                        user.domains.map((domain, index) => (
+                          <span key={`${domain}-${index}`} className="rounded-full bg-white px-3 py-1.5 text-sm text-slate-700 shadow-sm">
+                            {domain}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-sm text-slate-500">No domains listed yet.</span>
                       )}
                     </div>
                   </div>
@@ -282,7 +309,27 @@ export default function ViewProfile() {
                       )}
                     </div>
                   </div>
-
+                  <div>
+                    <div className="flex flex-row gap-2">
+                        <label className="mb-1.5 block text-sm font-medium text-slate-700">Domains</label>
+                        <button type="button" onClick={()=>setopendomains(true)} className="text-lg text-red-500 font-bold">+</button>     
+                    </div>
+                    {opendomains && <SelectDomain
+                        onClose={()=>setopendomains(false)}
+                        selecteddomain={selecteddomains}
+                        setselecteddomain={setselecteddomains}/>}
+                    <div className="flex flex-wrap gap-2 w-full rounded-2xl border border-slate-200 bg-slate-50 p-2">
+                      {user.domains.length > 0 ? (
+                        user.domains.map((domain, index) => (
+                          <span key={`${domain}-${index}`} className="rounded-full bg-white px-3 py-1.5 text-sm text-slate-700 shadow-sm">
+                            {domain}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-sm text-slate-500">No domains listed yet.</span>
+                      )}
+                    </div>
+                  </div>
                   <button
                     type="submit"
                     className="rounded-2xl bg-gradient-to-r from-purple-600 to-blue-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:brightness-105"
