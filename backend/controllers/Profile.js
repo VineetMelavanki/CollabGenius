@@ -116,12 +116,13 @@ async function EditProfile(req,res)
   try{
     let{name,Bio,skills,skillevel,github_link,domains}=req.body;
     skills=JSON.parse(skills || "[]");
+    domains=JSON.parse(domains || "[]");
   const profile=await Profile.findOne({userId:req.user.id});
   if(!profile)
   {
     return res.status(404).json({msg:"Profile not found",success:false});
   }
-  if(!name || !Bio  || !skillevel || skills.length==0 ||  !github_link)
+  if(!name || !Bio  || !skillevel || skills.length==0 ||  !github_link ||domains.length==0)
   {
     return res.status(409).json({msg:"Field cannot be blank",success:false});
   }
@@ -130,7 +131,7 @@ async function EditProfile(req,res)
         if (skills.length>0) profile.skills=skills;
         if (skillevel) profile.skillevel = skillevel;
         if (github_link) profile.github_link = github_link;
-        if (domains !== undefined) profile.domains = Array.isArray(domains) ? domains : [];
+        if (domains.length>0) profile.domains=domains;
   await profile.save();
   return res.status(200).json({msg:"Profile saved successfully",newprofile:profile,success:true});
   }catch(error)
