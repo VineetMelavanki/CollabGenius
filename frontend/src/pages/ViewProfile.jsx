@@ -5,8 +5,7 @@ import Selectskills from "../Components/Profile/Selectskills";
 export default function ViewProfile() {
   const [error, seterror] = useState("");
   const [user, setuser] = useState(null);
-  const [msg, setmsg] = useState("");
-  const [error1, seterror1] = useState("");
+
   const [formdata, setformdata] = useState({
     name: "",
     Bio: "",
@@ -23,8 +22,7 @@ export default function ViewProfile() {
 
   const handleedit = async (e) => {
     e.preventDefault();
-    seterror1("");
-    setmsg("");
+    
 
     try {
 
@@ -39,13 +37,13 @@ export default function ViewProfile() {
       });
       setuser(response.data.newprofile);
       setedit(false);
-      setmsg("Profile updated successfully");
+      alert("profile updated successfully");
     } catch (error) {
       if (error.response){
         console.log(error);
-        seterror1(error.response?.data?.msg || "Cannot edit user profile");
+        alert(error.response?.data?.msg || "Cannot edit user profile");
       } else {
-        seterror1("Internal server error");
+        alert("Internal server error");
       }
     }
   };
@@ -159,8 +157,7 @@ export default function ViewProfile() {
                 )}
               </div>
 
-              {msg && <p className="mt-4 rounded-xl bg-emerald-50 px-3 py-2 text-sm text-emerald-700">{msg}</p>}
-              {error1 && <p className="mt-4 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-700">{error1}</p>}
+           
 
               {!edit ? (
                 <div className="mt-6 space-y-4">
@@ -264,13 +261,26 @@ export default function ViewProfile() {
                   </div>
 
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-slate-700">Skills</label>
-                    <button onClick={()=>setopenskills(true)} className="text-lg text-red-500 font-bold">+</button>
+                    <div className="flex flex-row gap-2">
+                      <label className="mb-1.5 block text-sm font-medium text-slate-700">Skills</label>
+                      <button type="button" onClick={()=>setopenskills(true)} className="text-lg text-red-500 font-bold">+</button>
+                    </div>
                     {openskills && <Selectskills
                     onClose={()=>setopenskills(false)}
                     selectedskills={selectedskills}
                     setselectedskills={setselectedskills}
                     />}
+                    <div className="flex flex-wrap gap-2 w-full rounded-2xl border border-slate-200 bg-slate-50 p-2">
+                      {user.skills.length > 0 ? (
+                        user.skills.map((skill, index) => (
+                          <span key={`${skill}-${index}`} className="rounded-full bg-white px-3 py-1.5 text-sm text-slate-700 shadow-sm">
+                            {skill}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-sm text-slate-500">No skills listed yet.</span>
+                      )}
+                    </div>
                   </div>
 
                   <button
