@@ -3,7 +3,7 @@ import { useState,useEffect } from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom"
 import { FaSearch } from "react-icons/fa";
-import { FaUser ,FaCode } from "react-icons/fa";
+import { FaUser ,FaCode ,FaTrash } from "react-icons/fa";
 import {MdDomain} from "react-icons/md"
 import { ChevronUp ,ChevronDown} from "lucide-react";
 import { MdAdd } from "react-icons/md";
@@ -12,11 +12,20 @@ import Selectskills from "../Components/Profile/Selectskills";
 export default function SearchUsers(){
   
   const navigate=useNavigate();
-  const[profiles,setprofiles]=useState([]);
+  const[profiles,setprofiles]=useState(()=>{
+   const cached=sessionStorage.getItem("searchProfiles");
+   return cached ? JSON.parse(cached) : [];
+  });
   const[opendomains,setopendomains]=useState(false);
   const[openskills,setopenskills]=useState(false);
-    const[selectedskills,setselectedskills]=useState([]);
-    const[selecteddomains,setselecteddomains]=useState([]);
+    const[selectedskills,setselectedskills]=useState(()=>{
+      const cached=sessionStorage.getItem("searchskills");
+      return cached ? JSON.parse(cached) : [];
+    });
+    const[selecteddomains,setselecteddomains]=useState(()=>{
+      const cached=sessionStorage.getItem("searchdomains");
+      return cached ? JSON.parse(cached) :[];
+    });
     const fetchProfiles=async()=>{
       try{
        const response=await axios.post("http://localhost:8000/api/Profile/get-profiles-by-skills",
@@ -27,6 +36,8 @@ export default function SearchUsers(){
          }
        );
        console.log(response.data.Profiles);
+       const data=response.data.Profiles;
+       sessionStorage.setItem("searchProfiles",JSON.stringify(data));
       setprofiles(response.data.Profiles || []);
 
       }catch(error)
@@ -42,16 +53,17 @@ export default function SearchUsers(){
       }
    }
   useEffect(()=>{
-   if(selectedskills.length==0 || selecteddomains.length==0)
+   if(selectedskills.length==0 && selecteddomains.length==0)
    {
       setprofiles([]);
+      sessionStorage.removeItem("searchProfiles");
       return;
-   }
-   
+   }  
+   sessionStorage.setItem("searchskills",JSON.stringify(selectedskills));
+   sessionStorage.setItem("searchdomains",JSON.stringify(selecteddomains));
    fetchProfiles();
   },[selectedskills,selecteddomains]);
-
-
+   
    return(
     <div className="flex bg-white min-h-screen">
          <aside className="fixed left-0 top-20 h-[calc(100vh-80px)] w-96  border-r bg-white shadow-xl ">
@@ -66,7 +78,11 @@ export default function SearchUsers(){
                         <FaCode className="w-5 h-5 my-1"/>
                             <h1 className="text-black text-lg  font-sans">Domains</h1>
                             <div className="flex flex-1 gap-2 justify-end">
-                              <MdAdd onClick={()=>setopendomains(true)} className="w-7 h-7 text-red-500 hover:bg-red-200 rounded-full "/>
+                              
+                              <div className="flex flex-row  gap-4">
+                                 <button><FaTrash onClick={()=>{setselecteddomains([]);fetchProfiles()}} className="text-red-500"/></button>
+                                 <MdAdd onClick={()=>setopendomains(true)} className="w-7 h-7 text-green-500 hover:bg-green-200 rounded-full "/>
+                              </div>
                                  {opendomains && <SelectDomain
                                  onClose={()=>setopendomains(false)}
                                  selecteddomain={selecteddomains}
@@ -94,7 +110,10 @@ export default function SearchUsers(){
                         <FaCode className="w-5 h-5 my-1"/>
                             <h1 className="text-black text-lg  font-sans">Skills</h1>
                             <div className="flex flex-1 gap-2 justify-end">
-                              <MdAdd onClick={()=>setopenskills(true)} className="w-7 h-7 text-red-500 hover:bg-red-200 rounded-full "/>
+                             <div className="flex flex-row  gap-4">
+                                 <button><FaTrash onClick={()=>setselectedskills([])} className="text-red-500"/></button>
+                                 <MdAdd onClick={()=>setopenskills(true)} className="w-7 h-7 text-green-500 hover:bg-green-200 rounded-full "/>
+                              </div>
                                 {openskills && <Selectskills
                                 onClose={()=>setopenskills(false)}
                                 selectedskills={selectedskills}
@@ -142,7 +161,7 @@ export default function SearchUsers(){
                      </div>
 
                      <button
-                    onClick={() => navigate(`/view-profile/${profile.userId}`)}
+                    onClick={() =>navigate(`/view-profile/${profile.userId}`)}
                     className="w-full border border-gray-200 rounded-xl py-2 text-xs text-gray-600 font-medium font-inter hover:bg-violet-50 hover:text-violet-600 hover:border-violet-200 transition-all duration-200">
                          View profile
                      </button>
