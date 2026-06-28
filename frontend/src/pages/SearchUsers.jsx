@@ -3,7 +3,7 @@ import { useState,useEffect } from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom"
 import { FaSearch } from "react-icons/fa";
-import { FaUser ,FaCode ,FaTrash } from "react-icons/fa";
+import { FaUser ,FaCode ,FaTrash ,FaUserPlus ,FaClock} from "react-icons/fa";
 import {MdDomain} from "react-icons/md"
 import { ChevronUp ,ChevronDown} from "lucide-react";
 import { MdAdd } from "react-icons/md";
@@ -12,6 +12,14 @@ import Selectskills from "../Components/Profile/Selectskills";
 export default function SearchUsers(){
   
   const navigate=useNavigate();
+  const[SentRequests,setSentRequests]=useState(()=>{
+     const cached=sessionStorage.getItem("sentRequests");
+     if(!cached || cached==="undefined")
+     {
+      return [];
+     }
+     return JSON.parse(cached);
+  })
   const[profiles,setprofiles]=useState(()=>{
    const cached=sessionStorage.getItem("searchProfiles");
    if(!cached || cached=="undefined")
@@ -79,6 +87,28 @@ export default function SearchUsers(){
    fetchProfiles();
   },[selectedskills,selecteddomains]);
    
+  const sendfriendrequest=async(profileId,receiverId)=>{
+   try{
+      const response=await axios.post(`http://localhost:8000/api/FriendRequest/send-request/${profileId}/${receiverId}`,{},
+         {
+            withCredentials:true,
+         }
+      );
+      alert(response?.data?.msg || "Friend Request sent successfully");
+        const updated=[...SentRequests,profileId];
+        setSentRequests(updated);
+       sessionStorage.setItem("sentRequests",JSON.stringify(updated));
+   }catch(error){
+         if(error.response)
+         {
+            alert(error.response?.data?.msg || "Cannot sent friend request");
+         }
+         else
+         {
+            alert("Internal server error");
+         }
+   }
+  }
    return(
     <div className="flex bg-white min-h-screen">
          <aside className="fixed left-0 top-20 h-[calc(100vh-80px)] w-96  border-r bg-white shadow-xl ">
@@ -152,9 +182,18 @@ export default function SearchUsers(){
          </aside>
          <main className="ml-96 flex-1 p-6">
              {profiles?.length> 0 &&
-              <div className="grid  sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6"  >
+              <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6"  >
                {profiles.map((profile)=>(
-                 <div key={profile._id} className="bg-white rounded-2xl p-8 flex flex-col items-center shadow-md gap-3 border border-gray-100 cursor-pointer hover:border-violet-200 hover:shadow-md transition-all duration-200">
+                 <div key={profile._id} className="bg-white rounded-2xl p-8 flex flex-col items-center shadow-md gap-3 border-1 border-gray-100 cursor-pointer hover:border-violet-200 hover:shadow-md transition-all duration-200">
+                  <div className="flex flex-row gap-2 w-full">
+                      <div className="flex flex-1 justify-end">
+                     {SentRequests.includes(profile._id) ?(
+                        <FaClock className="text-gray-500 w-5 h-5" />
+                     ):(
+                        <FaUserPlus onClick={()=>sendfriendrequest(profile._id,profile.userId)} className="text-green-500 w-5 h-5"/>
+                     )}
+                      </div>
+                  </div>
                      <img src={profile?.photo?.url} alt="user" className="w-12 h-12 rounded-full ring-gray-500 " />
                      <div className="text-center">
                          <p className=" mt-2 text-sm font-bold text-gray-900">{profile.name}.</p>
@@ -180,9 +219,7 @@ export default function SearchUsers(){
                     className="w-full border border-gray-200 rounded-xl py-2 text-xs text-gray-600 font-medium font-inter hover:bg-violet-50 hover:text-violet-600 hover:border-violet-200 transition-all duration-200">
                          View profile
                      </button>
-                 </div> 
-                 
-                 
+                 </div>   
                ))}
                </div>}     
          </main>
