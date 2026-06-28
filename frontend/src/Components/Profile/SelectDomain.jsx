@@ -38,9 +38,9 @@ export default function SelectDomain({onClose,selecteddomain,setselecteddomain})
         setselecteddomain(updateddomains);
     }
     return(
-        <div className="fixed inset-0 flex items-center justify-center m">
+        <div className="fixed inset-0 flex items-center justify-center ">
             <div className="absolute inset-0 bg-black/40 " onClick={()=>onClose()}/>
-            <div className=" relative  p-4 z-50 bg-white flex rounded-xl">
+            <div className=" relative  p-4 z-50 bg-white flex rounded-xl max-w-lg">
               <div className="flex flex-col gap-2">
                 <div className="flex flex-row gap-2">
                    <h1 className="text-black text-lg font-sans">Select your Domains</h1>
