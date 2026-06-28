@@ -2,7 +2,7 @@ import React from "react";
 import { useState,useEffect } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
-import { FaGithub ,FaCode} from "react-icons/fa";
+import { FaGithub ,FaCode ,FaUserPlus} from "react-icons/fa";
 export default function ViewIndiProfile()
 {
    const[user,setuser]=useState(null);
