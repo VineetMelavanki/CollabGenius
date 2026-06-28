@@ -98,8 +98,6 @@ export default function Research() {
               <button>
                 <FolderOpenIcon onClick={()=>setfoldersection(true)} className="h-7 w-7 text-yellow-500 "/>
               </button>
-              
-          
             </div>
          </div>
          {researchhub && (
