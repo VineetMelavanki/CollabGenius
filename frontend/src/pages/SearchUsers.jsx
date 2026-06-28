@@ -1,6 +1,7 @@
 import React from "react";
 import { useState,useEffect } from "react";
 import axios from "axios";
+import {useNavigate} from "react-router-dom"
 import { FaSearch } from "react-icons/fa";
 import { FaUser ,FaCode } from "react-icons/fa";
 import {MdDomain} from "react-icons/md"
@@ -10,7 +11,7 @@ import SelectDomain from "../Components/Profile/SelectDomain";
 import Selectskills from "../Components/Profile/Selectskills";
 export default function SearchUsers(){
   
-
+  const navigate=useNavigate();
   const[profiles,setprofiles]=useState([]);
   const[opendomains,setopendomains]=useState(false);
   const[openskills,setopenskills]=useState(false);
@@ -27,7 +28,7 @@ export default function SearchUsers(){
        );
        console.log(response.data.Profiles);
       setprofiles(response.data.Profiles || []);
-      alert("Profile fetched successfully");
+
       }catch(error)
       {
         if(error.response)
@@ -48,7 +49,7 @@ export default function SearchUsers(){
    }
    
    fetchProfiles();
-  },[selectedskills]);
+  },[selectedskills,selecteddomains]);
 
 
    return(
@@ -115,19 +116,41 @@ export default function SearchUsers(){
                  </div>
              </div>
          </aside>
-         <main className="ml-96  w-full border">
-           <div className="bg-gray-100  h-full">
-              {profiles?.length> 0 &&
-              <div className="grid grid-cols-5 p-2 border max-w-md">
+         <main className="ml-96 flex-1 p-6">
+             {profiles?.length> 0 &&
+              <div className="grid  sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6"  >
                {profiles.map((profile)=>(
-                  <div key={profile._id} className="">
-                     <div className="flex flex-row gap-3">
-                        <h1 className="text-black font-sans">{profile.name}</h1>
+                 <div key={profile._id} className="bg-white rounded-2xl p-8 flex flex-col items-center shadow-md gap-3 border border-gray-100 cursor-pointer hover:border-violet-200 hover:shadow-md transition-all duration-200">
+                     <img src={profile?.photo?.url} alt="user" className="w-12 h-12 rounded-full ring-gray-500 " />
+                     <div className="text-center">
+                         <p className=" mt-2 text-sm font-bold text-gray-900">{profile.name}.</p>
+                         <p className="text-sm mt-2 text-gray-400">{profile.domains?.join(" | ")}</p>
                      </div>
-                  </div>
+                     <div className="w-full h-px bg-gray-300" />
+                     <div className="flex flex-wrap gap-2 mb-2">
+                     {profile.skills.length > 0 && (
+                        profile.skills.map((skill,index)=>(
+                         <div key={`${skill}-${index}`} className="bg-violet-50 text-violet-700 rounded-full
+                           px-2.5 py-0.5 text-sm font-medium">
+                           {skill}
+                         </div>
+                        ))
+                     )}
+                     </div>
+                     <div className="text-md text-gray-400">
+                       Level: <span className="text-gray-700 font-semibold">{profile.skillevel}</span>
+                     </div>
+
+                     <button
+                    onClick={() => navigate(`/view-profile/${profile.userId}`)}
+                    className="w-full border border-gray-200 rounded-xl py-2 text-xs text-gray-600 font-medium font-inter hover:bg-violet-50 hover:text-violet-600 hover:border-violet-200 transition-all duration-200">
+                         View profile
+                     </button>
+                 </div> 
+                 
+                 
                ))}
-               </div>}
-           </div>
+               </div>}     
          </main>
     </div>
    );
