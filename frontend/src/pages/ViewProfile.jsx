@@ -26,8 +26,7 @@ export default function ViewProfile() {
 
   const handleedit = async (e) => {
     e.preventDefault();
-    
-
+  
     try {
 
       const data=new FormData();
@@ -147,7 +146,7 @@ export default function ViewProfile() {
             <div className="rounded-[28px] border border-slate-200/80 bg-white/80 p-5 shadow-[0_20px_50px_-24px_rgba(15,23,42,0.28)] backdrop-blur sm:p-7">
               <div className="flex items-center justify-between border-b border-slate-200 pb-4">
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.26em] text-slate-500">Profile overview</p>
+                  <p className="text-xs font-smibold uppercase tracking-[0.26em] text-slate-500">Profile overview</p>
                   <h3 className="text-xl font-semibold text-slate-800">Professional details</h3>
                 </div>
                 {!edit ? (
