@@ -38,7 +38,7 @@ const RequestRoutes=require("./routes/Request");
 const ReseachTaskroutes=require("./routes/ResearchTask");
 const teamsockets=require("./sockets/teamsocket");
 const assignmentsocket=require("./sockets/Assignmentsocket");
-
+const FriendRequestRoutes=require("./routes/FriendReq");
 app.use("/api/User",Userroutes);
 app.use("/api/Project",Projectroutes);
 app.use("/api/Profile",Profileroutes);
@@ -51,6 +51,7 @@ app.use("/auth",AuthRoutes);
 app.use("/api/Request",RequestRoutes);
 app.use("/api/Notes",NotesRoutes);
 app.use("/api/ResearchTask",ReseachTaskroutes);
+app.use("/api/FriendRequest",FriendRequestRoutes);
 console.log("JWT Secret :", process.env.JWT_SECRET);
 teamsockets(io);
 assignmentsocket(io);
