@@ -14,17 +14,29 @@ export default function SearchUsers(){
   const navigate=useNavigate();
   const[profiles,setprofiles]=useState(()=>{
    const cached=sessionStorage.getItem("searchProfiles");
-   return cached ? JSON.parse(cached) : [];
+   if(!cached || cached=="undefined")
+   {
+      return [];
+   }
+   return JSON.parse(cached);
   });
   const[opendomains,setopendomains]=useState(false);
   const[openskills,setopenskills]=useState(false);
     const[selectedskills,setselectedskills]=useState(()=>{
       const cached=sessionStorage.getItem("searchskills");
-      return cached ? JSON.parse(cached) : [];
+      if(!cached || cached=="undefined")
+   {
+      return [];
+   }
+   return JSON.parse(cached);
     });
     const[selecteddomains,setselecteddomains]=useState(()=>{
       const cached=sessionStorage.getItem("searchdomains");
-      return cached ? JSON.parse(cached) :[];
+     if(!cached || cached=="undefined")
+   {
+      return [];
+   }
+   return JSON.parse(cached);
     });
     const fetchProfiles=async()=>{
       try{
@@ -57,6 +69,9 @@ export default function SearchUsers(){
    {
       setprofiles([]);
       sessionStorage.removeItem("searchProfiles");
+       sessionStorage.removeItem("searchProfiles");
+      sessionStorage.removeItem("searchskills");
+      sessionStorage.removeItem("searchdomains");
       return;
    }  
    sessionStorage.setItem("searchskills",JSON.stringify(selectedskills));
@@ -80,7 +95,7 @@ export default function SearchUsers(){
                             <div className="flex flex-1 gap-2 justify-end">
                               
                               <div className="flex flex-row  gap-4">
-                                 <button><FaTrash onClick={()=>{setselecteddomains([]);fetchProfiles()}} className="text-red-500"/></button>
+                                 <button><FaTrash onClick={()=>setselecteddomains([])} className="text-red-500"/></button>
                                  <MdAdd onClick={()=>setopendomains(true)} className="w-7 h-7 text-green-500 hover:bg-green-200 rounded-full "/>
                               </div>
                                  {opendomains && <SelectDomain
