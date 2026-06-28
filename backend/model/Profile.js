@@ -115,7 +115,12 @@ const ProfileSchema = new mongoose.Schema({
             "Others",
         ],
         trim:true
-    }]
+    }],
+    friends:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
+        unique:true,
+    }],
 });
 ProfileSchema.index({domains:1});
 ProfileSchema.index({skills:1});
