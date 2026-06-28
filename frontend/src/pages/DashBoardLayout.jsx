@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Notificationsection from "../Components/Notifications";
 import {IoArrowBack} from "react-icons/io5"
 import { BellIcon } from "@heroicons/react/24/outline";
 export default function DashBoardLayout({ children }) {
@@ -10,6 +11,7 @@ export default function DashBoardLayout({ children }) {
   const[Notifications,setnotifications]=useState([]);
   const[error,seterror]=useState("");
   const[message,setmessage]=useState("");
+  const[notificationsection,setnotificationsection]=useState(false);
   const[darkmode,setdarkmode]=useState(false);
   const[about,setabout]=useState(true);
   useEffect(() => {
@@ -68,6 +70,9 @@ export default function DashBoardLayout({ children }) {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      {notificationsection && 
+      <Notificationsection
+      onClose={()=>setnotificationsection(false)}/>}
       {/* Sidebar Drawer */}
       <div
         className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
@@ -140,7 +145,7 @@ export default function DashBoardLayout({ children }) {
             
             <div className="flex gap-3 ">
               <button onClick={()=>setdarkmode(!darkmode)} className="bg-black flex sm:text-sm my-2  md:text-md mx-3 lg:text-lg  text-white  font-bold border border-black p-2 rounded-2xl">Dark Mode</button>
-              <button className="relative p-2 rounded-full hover:bg-gray-200 transition" onClick={()=>navigate("/Notifications")}>
+              <button className="relative p-2 rounded-full hover:bg-gray-200 transition" onClick={()=>setnotificationsection(true)}>
                 <BellIcon className="h-6 w-6 text-gray-700" />
                 {Notifications.length > 0 && (
                   <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full px-1.5 py-0.5 min-w-[1.25rem] text-center font-bold">
@@ -148,6 +153,7 @@ export default function DashBoardLayout({ children }) {
                   </span>
                 )}
               </button>
+              
               <button className="text-white border-2 bg-blue-500 font-bold px-4  rounded-lg hover:bg-blue-600 transition"
               onClick={()=>navigate("/allusers")}>
                 All USERS
