@@ -7,19 +7,13 @@ import { FaUser ,FaCode ,FaTrash ,FaUserPlus ,FaClock} from "react-icons/fa";
 import {MdDomain} from "react-icons/md"
 import { ChevronUp ,ChevronDown} from "lucide-react";
 import { MdAdd } from "react-icons/md";
+import { useAuth } from "../AuthContext";
 import SelectDomain from "../Components/Profile/SelectDomain";
 import Selectskills from "../Components/Profile/Selectskills";
 export default function SearchUsers(){
-  
   const navigate=useNavigate();
-  const[SentRequests,setSentRequests]=useState(()=>{
-     const cached=sessionStorage.getItem("sentRequests");
-     if(!cached || cached==="undefined")
-     {
-      return [];
-     }
-     return JSON.parse(cached);
-  })
+  const{user}=useAuth();
+  console.log("The logged in user : ",user._id);
   const[profiles,setprofiles]=useState(()=>{
    const cached=sessionStorage.getItem("searchProfiles");
    if(!cached || cached=="undefined")
@@ -27,6 +21,14 @@ export default function SearchUsers(){
       return [];
    }
    return JSON.parse(cached);
+  });
+  const[profilesender,setprofilesender]=useState(()=>{
+   const cache=sessionStorage.getItem("profilesender");
+   if(!cache || cache==="undefinded")
+   {
+      return {};
+   }
+   return JSON.parse(cache);
   });
   const[opendomains,setopendomains]=useState(false);
   const[openskills,setopenskills]=useState(false);
@@ -95,9 +97,10 @@ export default function SearchUsers(){
          }
       );
       alert(response?.data?.msg || "Friend Request sent successfully");
-        const updated=[...SentRequests,profileId];
-        setSentRequests(updated);
-       sessionStorage.setItem("sentRequests",JSON.stringify(updated));
+      const senderId=response?.data?.sender;
+      const updated={...profilesender,[profileId]:senderId};
+      sessionStorage.setItem("profilesender",JSON.stringify(updated));
+      setprofilesender((prev)=>({...prev,[profileId]:senderId}));
    }catch(error){
          if(error.response)
          {
@@ -187,11 +190,11 @@ export default function SearchUsers(){
                  <div key={profile._id} className="bg-white rounded-2xl p-8 flex flex-col items-center shadow-md gap-3 border-1 border-gray-100 cursor-pointer hover:border-violet-200 hover:shadow-md transition-all duration-200">
                   <div className="flex flex-row gap-2 w-full">
                       <div className="flex flex-1 justify-end">
-                     {SentRequests.includes(profile._id) ?(
-                        <FaClock className="text-gray-500 w-5 h-5" />
-                     ):(
-                        <FaUserPlus onClick={()=>sendfriendrequest(profile._id,profile.userId)} className="text-green-500 w-5 h-5"/>
-                     )}
+                      {profilesender[profile._id]==user?._id ?(
+                        <FaClock className="w-5 h-5 text-gray-500"/>
+                      ):(
+                        <FaUserPlus onClick={()=>sendfriendrequest(profile._id,profile?.userId)} className="w-5 h-5 text-green-500"/>
+                      )}
                       </div>
                   </div>
                      <img src={profile?.photo?.url} alt="user" className="w-12 h-12 rounded-full ring-gray-500 " />
