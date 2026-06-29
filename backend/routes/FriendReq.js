@@ -4,6 +4,6 @@ const {SendFriendRequest,fetchAllfriendRequests,acceptFriendRequest,declineFrien
 const {authmiddleware} =require("../middleware/authmiddleware")
 FriendRequestRouter.post("/send-request/:profileId/:receiverId",authmiddleware,SendFriendRequest);
 FriendRequestRouter.get("/get-all-requests",authmiddleware,fetchAllfriendRequests);
-FriendRequestRouter.post("/accept-request",authmiddleware,acceptFriendRequest);
-FriendRequestRouter.post("/decline-request",authmiddleware,declineFriendRequest);
+FriendRequestRouter.post("/accept-request/:requestId",authmiddleware,acceptFriendRequest);
+FriendRequestRouter.post("/decline-request/:requestId",authmiddleware,declineFriendRequest);
 module.exports=FriendRequestRouter;
