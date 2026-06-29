@@ -13,7 +13,7 @@ import Selectskills from "../Components/Profile/Selectskills";
 export default function SearchUsers(){
   const navigate=useNavigate();
   const{user}=useAuth();
-  console.log("The logged in user : ",user._id);
+  const userId=user?._id;
   const[profiles,setprofiles]=useState(()=>{
    const cached=sessionStorage.getItem("searchProfiles");
    if(!cached || cached=="undefined")
@@ -50,7 +50,7 @@ export default function SearchUsers(){
     });
     const fetchProfiles=async()=>{
       try{
-       const response=await axios.post("http://localhost:8000/api/Profile/get-profiles-by-skills",
+       const response=await axios.post(`http://localhost:8000/api/Profile/get-profiles-by-skills/${userId}`,
          {
             skills:selectedskills,
          },{
@@ -74,6 +74,7 @@ export default function SearchUsers(){
         }
       }
    }
+
   useEffect(()=>{
    if(selectedskills.length==0 && selecteddomains.length==0)
    {
@@ -86,7 +87,11 @@ export default function SearchUsers(){
    }  
    sessionStorage.setItem("searchskills",JSON.stringify(selectedskills));
    sessionStorage.setItem("searchdomains",JSON.stringify(selecteddomains));
-   fetchProfiles();
+   if(userId)
+   {
+      fetchProfiles();
+   }
+   
   },[selectedskills,selecteddomains]);
    
   const sendfriendrequest=async(profileId,receiverId)=>{
@@ -184,7 +189,7 @@ export default function SearchUsers(){
              </div>
          </aside>
          <main className="ml-96 flex-1 p-6">
-             {profiles?.length> 0 &&
+             {profiles?.length> 0 && 
               <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6"  >
                {profiles.map((profile)=>(
                  <div key={profile._id} className="bg-white rounded-2xl p-8 flex flex-col items-center shadow-md gap-3 border-1 border-gray-100 cursor-pointer hover:border-violet-200 hover:shadow-md transition-all duration-200">
