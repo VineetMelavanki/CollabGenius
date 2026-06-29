@@ -14,6 +14,15 @@ export default function SearchUsers(){
   const navigate=useNavigate();
   const{user}=useAuth();
   const userId=user?._id;
+  const[isrequest,setisrequest]=useState(()=>{
+   const cached=sessionStorage.getItem("verifyrequests");
+   if(!cached || cached==="undefined")
+   {
+      return {};
+   }
+   console.log("The verifications of profiles : ",JSON.parse(cached));
+   return JSON.parse(cached);
+  });
   const[profiles,setprofiles]=useState(()=>{
    const cached=sessionStorage.getItem("searchProfiles");
    if(!cached || cached=="undefined")
@@ -22,14 +31,7 @@ export default function SearchUsers(){
    }
    return JSON.parse(cached);
   });
-  const[profilesender,setprofilesender]=useState(()=>{
-   const cache=sessionStorage.getItem("profilesender");
-   if(!cache || cache==="undefinded")
-   {
-      return {};
-   }
-   return JSON.parse(cache);
-  });
+  
   const[opendomains,setopendomains]=useState(false);
   const[openskills,setopenskills]=useState(false);
     const[selectedskills,setselectedskills]=useState(()=>{
@@ -74,7 +76,36 @@ export default function SearchUsers(){
         }
       }
    }
-
+    useEffect(()=>{
+      if(profiles.length>0 && userId)
+      {
+         const findrequests=async()=>{
+            try{
+              const response=await axios.post("http://localhost:8000/api/FriendRequest/check-requests",{
+               profiles:profiles,
+               senderId:userId,
+              },{
+               withCredentials:true,
+              });
+             setisrequest(response.data.requests);
+             const isrequests=response.data.requests;
+             sessionStorage.setItem("verifyrequests",JSON.stringify(isrequests));
+          
+            }catch(error)
+            {
+               if(error.response)
+               {
+                  alert(error.response?.data?.msg || "Cannot verify requests");
+               }
+               else
+               {
+                  alert("Internal server error");
+               }
+            }
+         }
+         findrequests();
+      }
+    },[]);
   useEffect(()=>{
    if(selectedskills.length==0 && selecteddomains.length==0)
    {
@@ -102,10 +133,6 @@ export default function SearchUsers(){
          }
       );
       alert(response?.data?.msg || "Friend Request sent successfully");
-      const senderId=response?.data?.sender;
-      const updated={...profilesender,[profileId]:senderId};
-      sessionStorage.setItem("profilesender",JSON.stringify(updated));
-      setprofilesender((prev)=>({...prev,[profileId]:senderId}));
    }catch(error){
          if(error.response)
          {
@@ -195,11 +222,11 @@ export default function SearchUsers(){
                  <div key={profile._id} className="bg-white rounded-2xl p-8 flex flex-col items-center shadow-md gap-3 border-1 border-gray-100 cursor-pointer hover:border-violet-200 hover:shadow-md transition-all duration-200">
                   <div className="flex flex-row gap-2 w-full">
                       <div className="flex flex-1 justify-end">
-                      {profilesender[profile._id]==user?._id ?(
-                        <FaClock className="w-5 h-5 text-gray-500"/>
-                      ):(
-                        <FaUserPlus onClick={()=>sendfriendrequest(profile._id,profile?.userId)} className="w-5 h-5 text-green-500"/>
-                      )}
+                        {isrequest[profile._id]===true ? (
+                          <FaClock className="w-5 h-5 text-gray-500"/>
+                        ):(
+                          <FaUserPlus onClick={()=>sendfriendrequest(profile._id,profile.userId)} className="w-5 h-5 text-green-500"/>
+                        )}
                       </div>
                   </div>
                      <img src={profile?.photo?.url} alt="user" className="w-12 h-12 rounded-full ring-gray-500 " />
