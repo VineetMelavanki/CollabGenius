@@ -1,5 +1,10 @@
 const mongoose=require("mongoose");
 const FriendReqSchema=new mongoose.Schema({
+    profile:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Profile",
+        required:true,
+    },
     sender:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User",
@@ -14,6 +19,7 @@ const FriendReqSchema=new mongoose.Schema({
         type:String,
         required:true,
     },
+    
 });
 FriendReqSchema.index(
     { sender: 1, receiver: 1 },
