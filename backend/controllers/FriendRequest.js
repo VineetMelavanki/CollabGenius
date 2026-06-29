@@ -112,4 +112,33 @@ async function declineFriendRequest(req,res)
         return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
-module.exports={SendFriendRequest,fetchAllfriendRequests,acceptFriendRequest,declineFriendRequest};
+async function checkrequests(req,res)
+{
+    try{
+      const{profiles,senderId}=req.body;
+      if(profiles.length==0)
+      {
+        return res.status(200).json({msg:"No profile exists",success:true});
+      }
+      const request={};
+      await Promise.all(
+        profiles.map(async(profile)=>{
+            const requestexists=await FriendRequest.findOne({profile:profile,sender:senderId});
+            if(requestexists)
+            {
+            request[profile._id?.toString()]=true;
+            }else
+            {
+                request[profile._id?.toString()]=false;
+            }
+        })
+      )
+      return res.status(200).json({msg:"All requests regarding all profiles checked",requests:request,success:true});
+    }catch(error)
+    {
+      console.log(error);
+      return res.status(500).json({msg:"Internal server error",success:false});
+    }
+     
+}
+module.exports={SendFriendRequest,fetchAllfriendRequests,acceptFriendRequest,declineFriendRequest,checkrequests};
