@@ -18,6 +18,8 @@ export default function Notificationsection({onClose}){
       const[error3,seterror3]=useState("");
       const[error2,seterror2]=useState("");
       const[requests,setrequests]=useState([]);
+      const[friendreq,setfriendreq]=useState([]);
+      const[senderphotos,setsenderphotos]=useState({});
       const socketRef=useRef(null);
       const navigate=useNavigate();
       const removeassignment=async({receiver,task})=>{
@@ -216,6 +218,29 @@ if (response.data.success) {
             }
         }
       }
+      useEffect(()=>{
+        const fetchFriendReq=async()=>{
+          try{
+            const response=await axios.get("http://localhost:8000/api/FriendRequest/get-all-requests",{
+            withCredentials:true,
+          });
+          setfriendreq(response.data.Requests || []);
+          setsenderphotos(response.data.Senderphotos || {});
+          }catch(error)
+          {
+             if(error.response)
+             {
+              alert(error.response?.data?.msg || "Cannot fetch requests");
+             }
+             else
+             {
+              alert("Internal server error");
+             }
+          }
+          
+        }
+        fetchFriendReq();
+      },[]);
       return(
         <div className="fixed inset-0 z-50 flex justify-end">
             <div className="absolute inset-0 bg-black/40" onClick={()=>onClose()}/>
@@ -243,7 +268,17 @@ if (response.data.success) {
                             </div>
                        ))
                  )}
-                    
+                 {friendreq.length > 0 && (
+                  friendreq.map((request)=>(
+                       <div key={request._id} className="flex flex-row gap-3 w-full text-md">
+                      {senderphotos[request?.sender?._id] && (
+                        <img src={senderphotos[request.sender._id]} className="w-10 h-10 rounded-full" />
+                      )}
+                         <h1 className="text-gray-500"><span className="text-red-500">{request?.sender?.name}</span>{" "}{request.message}</h1>
+                        
+                    </div>
+                  ))
+                 )}
                  {assignments.length > 0 && (
                     <div className="flex flex-col border gap-3">
                      {assignments.map((assignment)=>(
