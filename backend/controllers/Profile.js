@@ -145,6 +145,7 @@ async function getprofilebyskills(req,res)
 {
   try{
      const {skills}=req.body;
+     const{userId}=req.params;
      if(skills.length==0)
      {
       return res.status(200).json({msg:"No inputs provided",success:true});
@@ -152,11 +153,12 @@ async function getprofilebyskills(req,res)
      const allProfiles=await Profile.find({
        skills:{$in :skills}
      });
+    const filteredprofiles=allProfiles.filter((profile)=>(profile?.userId).toString()!==userId.toString());
      if(allProfiles.length==0)
      {
       return res.status(200).json({msg:"No profiles found",Profiles:[],success:true});
      }
-     return res.status(200).json({msg:"Profiles fetched successsfully",Profiles:allProfiles,success:true});
+     return res.status(200).json({msg:"Profiles fetched successsfully",Profiles:filteredprofiles,success:true});
      }catch(error)
      {
       return res.status(500).json({msg:"Internal server error",success:false});
