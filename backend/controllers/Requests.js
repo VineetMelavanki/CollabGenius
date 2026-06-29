@@ -43,7 +43,7 @@ async function getallRequests(req,res)
         .populate("projectId","title");
         if(Requests.length===0)
         {
-            return res.status(404).json({msg:"No request found",success:false});
+            return res.status(200).json({msg:"No request found",success:false});
         }
         return res.status(200).json({msg:"All requests found",allrequest:Requests,success:true});
     }catch(error)
