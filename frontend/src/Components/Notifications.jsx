@@ -234,6 +234,7 @@ if (response.data.success) {
              }
              else
              {
+              console.log(error);
               alert("Internal server error");
              }
           }
@@ -241,6 +242,45 @@ if (response.data.success) {
         }
         fetchFriendReq();
       },[]);
+      const handleacceptfriendreq=async(requestId)=>{
+        try{
+          const response=await axios.post(`http://localhost:8000/api/FriendRequest/accept-request/${requestId}`,{},{
+            withCredentials:true,
+          });
+          setfriendreq((prev)=>prev.filter((r)=>(r._id || r).toString()!==requestId.toString()));
+          alert(response?.data?.msg || "Friend request accepted");
+        }catch(error)
+        {
+            if(error?.response)
+            {
+              alert(error?.response?.data?.msg || 'Cannot accept friend request');
+            }
+            else
+            {
+              console.log("The error is : ",error);
+              alert("Internal server error");
+            }
+        }
+      }
+      const handlerejectfriendreq=async(requestId)=>{
+        try{
+         const response=await axios.post(`http://localhost:8000/api/FriendRequest/decline-request/${requestId}`,{},{
+          withCredentials:true,
+         });
+         setfriendreq((prev)=>prev.filter((r)=>(r._id || r).toString()!==requestId.toString()));
+         alert(response?.data?.msg||"Friend Request Rejected");
+        }catch(error)
+        {
+            if(error.response)
+            {
+              alert(error.response?.data?.msg || 'Cannot reject request');
+            }
+            else
+            {
+              alert("Internal server error");
+            }
+        }
+      }
       return(
         <div className="fixed inset-0 z-50 flex justify-end">
             <div className="absolute inset-0 bg-black/40" onClick={()=>onClose()}/>
@@ -275,7 +315,10 @@ if (response.data.success) {
                         <img src={senderphotos[request.sender._id]} className="w-10 h-10 rounded-full" />
                       )}
                          <h1 className="text-gray-500"><span className="text-red-500">{request?.sender?.name}</span>{" "}{request.message}</h1>
-                        
+                        <div className="flex flex-1 gap-2">
+                          <XSquare onClick={()=>handlerejectfriendreq(request._id)} className="w-9 h-9 text-red-500"/>
+                          <FiCheckSquare onClick={()=>handleacceptfriendreq(request._id)} className="w-9 h-9 text-green-500"/>
+                        </div>
                     </div>
                   ))
                  )}
