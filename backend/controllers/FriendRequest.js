@@ -22,11 +22,12 @@ async function SendFriendRequest(req,res)
         return res.status(409).json({msg:"Friend request already sent",sucess:false});
       }
       const newRequest=await FriendRequest.create({
+        profile:profileId,
         sender:req.user.id,
         receiver:receiverId,
         message:"has sent you a friend request",
       });
-      return res.status(201).json({msg:"Friend Request Sent successfully",Request:newRequest,success:true});
+      return res.status(201).json({msg:"Friend Request Sent successfully",Request:newRequest,sender:req.user.id,success:true});
     }catch(error)
     {
         return res.status(500).json({msg:"Internal server error",success:false});
