@@ -91,6 +91,7 @@ async function acceptFriendRequest(req,res)
         return res.status(200).json({msg:"Request accepted successfully",success:true});
     }catch(error)
     {
+        console.log("The error is : ",error);
         return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
@@ -102,21 +103,12 @@ async function declineFriendRequest(req,res)
         if(!friendRequestexists)
         {
             return res.status(404).json({msg:"No friend request exists",success:false});
-        }
-        const senderId=friendRequestexists.sender;
-        const receiverProfile=await Profile.findOne({userId:req.user.id});
-        const senderprofile=await Profile.findOne({userId:senderId});
-        if(!senderprofile)
-        {
-            return res.status(404).json({msg:"Sender does not exists",success:false});
-        }
-        const isFriend=receiverProfile.friends.some(
-            friend=>friend._id.toString()==senderId.toString(),
-        );
+        }   
         await FriendRequest.findByIdAndDelete(requestId);
         return res.status(200).json({msg:"Request declined successfully",success:true});
     }catch(error)
     {
+        console.log("The error is : ",error);
         return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
