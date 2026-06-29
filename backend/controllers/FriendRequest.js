@@ -13,6 +13,10 @@ async function SendFriendRequest(req,res)
       {
         return res.status(404).json({msg:"Profile does not exists",success:false});
       }
+      if(receiverId.toString()===req.user.id.toString())
+      {
+        return res.status(409).json({msg:"User cannot send friend request to himself"});
+      }
       const existingrequest=await FriendRequest.findOne({
         sender:req.user.id,
         receiver:receiverId,
@@ -21,6 +25,7 @@ async function SendFriendRequest(req,res)
       {
         return res.status(409).json({msg:"Friend request already sent",sucess:false});
       }
+
       const newRequest=await FriendRequest.create({
         profile:profileId,
         sender:req.user.id,
@@ -36,12 +41,19 @@ async function SendFriendRequest(req,res)
 async function fetchAllfriendRequests(req,res)
 {
     try{
-       const allrequests=await FriendRequest.find({receiver:req.user.id}).populate("sender","name email").populate("receiver","name email");
-       if(allrequests.length==0)
+       const allrequests=await FriendRequest.find({receiver:req.user.id}).populate("sender","name email").populate("receiver","name email").populate("profile","photo");
+       const profilephotos={};
+       await Promise.all(
+        allrequests.map(async(request)=>{
+            const senderProfile=await Profile.findOne({userId:request.sender._id}).select("photo");
+            profilephotos[request.sender._id.toString()]=senderProfile?.photo?.url;
+        })
+       );
+       if(allrequests.length===0)
        {
         return res.status(200).json({msg:"No requests found",success:true});
        }
-       return res.status(200).json({msg:"ALL friend Requests fetched successfully",Requests:allrequests,success:true});
+       return res.status(200).json({msg:"ALL friend Requests fetched successfully",Requests:allrequests,Senderphotos:profilephotos,success:true});
     }catch(error)
     {
         return res.status(500).json({msg:"Internal server error",success:true});
