@@ -10,5 +10,5 @@ ProfileRouter.get("/view-profile/:id",authmiddleware,ViewprofileById);
 ProfileRouter.post("/edit-profile",authmiddleware,uploads.none(),EditProfile);
 ProfileRouter.get("/get-skills",authmiddleware,getskills);
 ProfileRouter.get("/get-domains",authmiddleware,getdomain);
-ProfileRouter.post("/get-profiles-by-skills",authmiddleware,getprofilebyskills);
+ProfileRouter.post("/get-profiles-by-skills/:userId",authmiddleware,getprofilebyskills);
 module.exports=ProfileRouter;
