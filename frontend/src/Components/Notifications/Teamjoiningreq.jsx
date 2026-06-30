@@ -1,6 +1,8 @@
 import React from "react";
 import { useState,useEffect } from "react";
 import axios from "axios";
+import { FiCheckSquare } from "react-icons/fi";
+import { XSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 export default function TeamJoiningreq(){
     const[requests,setrequests]=useState([]);
@@ -74,21 +76,19 @@ export default function TeamJoiningreq(){
       return(
         <div>
              {requests.length> 0 && (
-                  <div className="flex flex-col gap-3">
-                    {requests.map((request)=>(
-                      <div className="flex items-start rounded-2xl bg-gray-100 shadow-xl hover:shadow-md justify-start p-4" key={request._id}>
-                         <div className="flex flex-row justify-center items-center gap-3">
-                            <p className="lg:text-xl sm:text-lg font-mono "><span onClick={()=>navigate(`/view-profile/${request.sender._id}`)} className="text-red-500 hover:underline mx-2">{request.sender.name}</span>{request.message}<span className="text-lg text-green-500 hover:underline font-sans mx-3"onClick={()=>navigate(`/get-project/${request.projectId._id}`)}>{request.projectId.title}</span></p>
-                            <div className="flex flex-1 justify-end">
-                               <div className="flex flex-row gap-3">
-                                  <button onClick={()=>acceptTeamrequest(request.sender._id,request.projectId._id,request._id)} className="text-lg text-white bg-green-500 p-4 font-bold rounded-2xl hover:bg-green-600">Accept</button>
-                                  <button onClick={()=>declineTeamrequest(request.sender._id,request.projectId._id,request._id)} className="text-lg text-white bg-red-500 p-4 font-bold rounded-2xl hover:bg-red-600">Decline</button>
-                               </div>
-                            </div>
+                    requests.map((request)=>(
+                       <div className="flex flex-col bg-purple-50">
+                        
+                         <div className="flex flex-row gap-3 w-full p-2" key={request._id} >
+                              <p className="text-black text-md font-mono "><span onClick={()=>navigate(`/view-profile/${request.sender._id}`)} className="text-red-500 hover:underline mx-2">{request.sender.name}</span>{request.message}<span className="text-md text-green-500 hover:underline font-sans mx-3"onClick={()=>navigate(`/get-project/${request.projectId._id}`)}>{request.projectId.title}</span></p>
+                              <div className="flex flex-1 flex-row justify-end my-2 gap-2">
+                                <FiCheckSquare bo onClick={()=>acceptTeamrequest(request.sender._id,request.projectId._id,request._id)} className="text-green-500 w-8 h-8"/>
+                                <XSquare onClick={()=>declineTeamrequest(request.sender._id,request.projectId._id,request._id)} className="text-red-500 w-8 h-8 mx-2"/>
+                              </div>
+                         
                          </div>
-                      </div>
-                    ))}
-                  </div>
+                       </div>
+                    ))
                  )}
         </div>
       )

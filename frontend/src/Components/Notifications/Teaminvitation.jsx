@@ -90,13 +90,13 @@ if (response.data.success) {
         <div>
              {notifications.length> 0 && (
                     notifications.map((notification)=>(
-                            <div  key={notification._id} className="flex flex-row gap-3 w-full ">
+                            <div  key={notification._id} className="flex flex-row gap-3 w-full p-2 bg-blue-100">
                                 <h1 className="text-black text-md font-mono">
                                   {notification.message}
                                 </h1>
-                             <div className="flex flex-1 flex-row justify-end gap-4">
-                               <FiCheckSquare onClick={()=>acceptrequest(notification?.project)} className="w-6 h-6 text-green-500 "/>
-                               <XSquare onClick={()=>declinereq(notification?.project)} className="text-red-500"/>
+                             <div className="flex flex-1 flex-row justify-end my-2 gap-2">
+                               <FiCheckSquare onClick={()=>acceptrequest(notification.project._id)} className="w-8 h-8 text-green-500 "/>
+                               <XSquare onClick={()=>declinereq(notification.project._id)} className="text-red-500 w-8 h-8 mx-2"/>
                              </div>
                             </div>
                        ))

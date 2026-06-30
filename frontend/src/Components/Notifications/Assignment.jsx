@@ -4,6 +4,8 @@ import { useState,useEffect ,useRef} from "react";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import { useAuth } from "../../AuthContext";
+import { FiCheckSquare } from "react-icons/fi";
+import { XSquare } from "lucide-react";
 export default function Teamassignment(){
     const {user}=useAuth();
     const navigate=useNavigate();
@@ -51,18 +53,19 @@ export default function Teamassignment(){
       return(
         <div >
           {assignments.length > 0 && (
-                    <div className="flex flex-col border gap-3">
-                     {assignments.map((assignment)=>(
-                        <div className="flex  items-start rounded-2xl bg-gray-100 shadow-xl hover:shadow-md justify-start  p-4" key={assignment._id}>
-                         <div className="flex flex-row justify-center items-center  gap-3">
-                          <h1 className="text-xl"><span onClick={()=>navigate(`/view-profile/${assignment.sender._id}`)} className="text-red-500 hover:underline">{assignment.sender.name}</span> has task for you : </h1>
-                          <p className="text-blue-500 text-xl font-mono">"{assignment.task}"</p>
-                          <button  onClick={()=>navigate(`/get-project/${assignment.projectId?._id}`)} className="mx-4 text-white bg-green-500 font-bold p-3 text-md rounded-xl hover:bg-green-600">REVIEW</button>
-                          <button onClick={()=>removeassignment({receiver:assignment.receiver._id,task:assignment.task})} className="rounded-2xl p-3 px-5 border text-white bg-red-500 font-bold hover:bg-red-600">OKAY</button>
+                   
+                     assignments.map((assignment)=>(
+                        
+                         <div className="flex flex-row justify-center items-center   gap-3">
+                          <h1 className="text-md"><span onClick={()=>navigate(`/view-profile/${assignment.sender._id}`)} className="text-red-500 hover:underline">{assignment.sender.name}</span> has task for you : {assignment.task}</h1>
+                          
+                          <FiCheckSquare  onClick={()=>navigate(`/get-project/${assignment.projectId?._id}`)} className="w-9 h-9 text-green-500"/>
+                          <XSquare onClick={()=>removeassignment({receiver:assignment.receiver._id,task:assignment.task})} className="w-9 h-9 text-red-500" />
+                       
                          </div>
-                        </div>
-                     ))}
-                    </div>
+                        
+                     ))
+                   
                  )}
         </div>
       )
