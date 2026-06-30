@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Notificationsection from "../Components/Notifications";
+import Notificationsection from "./Notifications";
 import {IoArrowBack} from "react-icons/io5"
 import { BellIcon } from "@heroicons/react/24/outline";
 export default function DashBoardLayout({ children }) {
