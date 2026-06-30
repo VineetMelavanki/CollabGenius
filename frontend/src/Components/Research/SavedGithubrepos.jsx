@@ -15,7 +15,7 @@ export default function SavedGithubRepos({projectId,workId,onClose,Leader}){
      const response=await axios.get(`http://localhost:8000/api/research/saved-github-repos/${projectId}/${workId}`,{
       withCredentials:true,
      });
-     setSaveRepos(response.data.Repos);
+     setSaveRepos(response.data.Repos || []);
     }catch(error)
     {
         if(error.response)
@@ -113,7 +113,8 @@ export default function SavedGithubRepos({projectId,workId,onClose,Leader}){
                         
                       </div>
                      {!arrowdown && SavedRepos.length>0 && (
-                          <div className="grid grid-cols-1 gap-3 ">
+                      SavedRepos.length==0 ?(<h1 className="text-lg text-red-400 font-sans">No repositories saved</h1>) :(
+                        <div className="grid grid-cols-1 gap-3 ">
                             {SavedRepos.map((repo)=>(
                               <div key={repo._id} className="flex flex-col  bg-white p-6 rounded-xl shadow-lg ">
                                 <div className="flex flex-row gap-3">
@@ -168,6 +169,7 @@ export default function SavedGithubRepos({projectId,workId,onClose,Leader}){
                               </div>
                             ))}
                           </div>
+                      )  
                         )}
                   </div>
               </div>

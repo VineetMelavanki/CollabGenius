@@ -30,18 +30,13 @@ export default function Notificationsection({onClose}){
                      <button onClick={()=>{setactivetab("all")}} className={tabClass("all")} >All</button>
                      <button onClick={()=>{setactivetab("User-requests")}} className={tabClass("User-requests")}>User-requests</button>
                      <button onClick={()=>{setactivetab("Team-invites")}} className={tabClass("Team-invites")}  >Team-invites</button>
-                     <button onClick={()=>{setactivetab("Assigned-tasks")}} className={tabClass("Assigned-tasks")} >Assigned-tasks</button>
+                     <button onClick={()=>{setactivetab("friend-requests")}} className={tabClass("friend-requests")} >friend-requests</button>
                     </div>
                     <div className="w-full h-px bg-gray-300 " /> 
                 
           {(activetab==="User-requests" || activetab=="all") &&  (<TeamJoiningreq/> ) }    
            {(activetab==="Team-invites" || activetab=="all") && (<Teaminvitation/>) }  
-           {(activetab==="Assigned-tasks" || activetab=="all") && (<Teamassignment/>)}   
-          
-                 
-                
-                 
-                
+           {(activetab==="friend-requests" || activetab=="all") && (<FriendRequest/>)}    
             </div>
       </div>
       )

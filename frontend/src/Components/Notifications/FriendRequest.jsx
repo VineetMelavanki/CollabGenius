@@ -76,7 +76,7 @@ export default function FriendRequest(){
         <div>
             {friendreq.length > 0 && (
                   friendreq.map((request)=>(
-                       <div key={request._id} className="flex flex-row gap-3 w-full text-md">
+                       <div key={request._id} className="flex flex-row gap-3 w-full  p-2 stext-md bg-green-100">
                       {senderphotos[request?.sender?._id] && (
                         <img src={senderphotos[request.sender._id]} className="w-10 h-10 rounded-full" />
                       )}
