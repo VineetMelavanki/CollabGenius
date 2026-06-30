@@ -3,7 +3,7 @@ import { useState,useEffect } from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom"
 import { FaSearch } from "react-icons/fa";
-import { FaUser ,FaCode ,FaTrash ,FaUserPlus ,FaClock} from "react-icons/fa";
+import { FaUser ,FaCode ,FaTrash ,FaUserPlus ,FaClock,FaUserFriends} from "react-icons/fa";
 import {MdDomain} from "react-icons/md"
 import { ChevronUp ,ChevronDown} from "lucide-react";
 import { MdAdd } from "react-icons/md";
@@ -21,6 +21,14 @@ export default function SearchUsers(){
       return {};
    }
    console.log("The verifications of profiles : ",JSON.parse(cached));
+   return JSON.parse(cached);
+  });
+  const[isfriend,setisfriend]=useState(()=>{
+   const cached=sessionStorage.getItem("friends");
+   if(!cached || cached==="undefined")
+   {
+      return {};
+   }
    return JSON.parse(cached);
   });
   const[profiles,setprofiles]=useState(()=>{
@@ -88,9 +96,11 @@ export default function SearchUsers(){
                withCredentials:true,
               });
              setisrequest(response.data.requests);
+             setisfriend(response.data.isfriend);
+             const friends=response.data.isfriend;
              const isrequests=response.data.requests;
              sessionStorage.setItem("verifyrequests",JSON.stringify(isrequests));
-          
+             sessionStorage.setItem("friends",JSON.stringify(friends));
             }catch(error)
             {
                if(error.response)
@@ -105,7 +115,7 @@ export default function SearchUsers(){
          }
          findrequests();
       }
-    },[]);
+    },[profiles,userId]);
   useEffect(()=>{
    if(selectedskills.length==0 && selecteddomains.length==0)
    {
@@ -222,10 +232,14 @@ export default function SearchUsers(){
                  <div key={profile._id} className="bg-white rounded-2xl p-8 flex flex-col items-center shadow-md gap-3 border-1 border-gray-100 cursor-pointer hover:border-violet-200 hover:shadow-md transition-all duration-200">
                   <div className="flex flex-row gap-2 w-full">
                       <div className="flex flex-1 justify-end">
-                        {isrequest[profile._id]===true ? (
-                          <FaClock className="w-5 h-5 text-gray-500"/>
+                        {isrequest[profile._id]?(
+                           <FaClock className="w-5 h-5 text-gray-500"/>
                         ):(
-                          <FaUserPlus onClick={()=>sendfriendrequest(profile._id,profile.userId)} className="w-5 h-5 text-green-500"/>
+                           isfriend[profile._id] ?(
+                              <FaUserFriends className="w-5 h-5 text-pink-500"/>
+                           ):(
+                              <FaUserPlus className="w-5 h-5 text-green-500" onClick={()=>sendfriendrequest(profile._id,profile?.userId)}/>
+                           )
                         )}
                       </div>
                   </div>
