@@ -25,6 +25,9 @@ async function acceptrequest(req,res)
    try{
       const {projectId}=req.params;
       const userId=req.user.id;
+      console.log("req.params:", req.params);
+console.log("projectId:", projectId);
+console.log("typeof projectId:", typeof projectId);
       const notification=await Notifications.findOne({
          receiver:userId,
          project:projectId,
