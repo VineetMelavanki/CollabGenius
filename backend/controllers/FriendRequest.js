@@ -15,7 +15,15 @@ async function SendFriendRequest(req,res)
       }
       if(receiverId.toString()===req.user.id.toString())
       {
-        return res.status(409).json({msg:"User cannot send friend request to himself"});
+        return res.status(409).json({msg:"User cannot send friend request to yourself"});
+      }
+      const senderId=req.user.id;
+      const isfriend=Profileexists.friends.some(
+        friend=>friend._id.toString()===senderId.toString(),
+      );
+      if(isfriend)
+      {
+        return res.status(409).json({msg:"User is already a friend with you",success:false});
       }
       const existingrequest=await FriendRequest.findOne({
         sender:req.user.id,
@@ -76,7 +84,7 @@ async function acceptFriendRequest(req,res)
             return res.status(404).json({msg:"Sender does not exists",success:false});
         }
         const isFriend=receiverProfile.friends.some(
-            friend=>friend._id.toString()==senderId.toString(),
+            friend=>friend.toString()==senderId.toString(),
         );
         if(isFriend)
         {
@@ -121,9 +129,14 @@ async function checkrequests(req,res)
         return res.status(200).json({msg:"No profile exists",success:true});
       }
       const request={};
+      const friendmap={};
       await Promise.all(
         profiles.map(async(profile)=>{
-            const requestexists=await FriendRequest.findOne({profile:profile,sender:senderId});
+            const requestexists=await FriendRequest.findOne({profile:profile._id,sender:senderId});
+            const isfriend=await profile.friends.some(
+                friend=>friend.toString()===senderId.toString(),
+            );
+             friendmap[profile._id]=isfriend;
             if(requestexists)
             {
             request[profile._id?.toString()]=true;
@@ -133,7 +146,7 @@ async function checkrequests(req,res)
             }
         })
       )
-      return res.status(200).json({msg:"All requests regarding all profiles checked",requests:request,success:true});
+      return res.status(200).json({msg:"All requests regarding all profiles checked",requests:request,isfriend:friendmap,success:true});
     }catch(error)
     {
       console.log(error);
