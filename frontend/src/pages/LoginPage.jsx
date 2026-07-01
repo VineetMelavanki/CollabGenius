@@ -50,7 +50,7 @@ export default function Login() {
       const data=response.data;
       setmessage("Google Login Successfull");
       setTimeout(() => {
-        navigate("/dashboard");
+        navigate("/HomeScreen");
       }, 1000);
     }catch(error)
     {

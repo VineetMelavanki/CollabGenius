@@ -3,8 +3,9 @@ import Homepage from './pages/Homepage';
 import Login from './pages/LoginPage';
 import Register from "./pages/Register";
 import ViewProfile from './pages/ViewProfile';
-import Dashboard from './pages/Dashboard';
+import SideBar from "./pages/Dashboard"
 import Research from './pages/Research';
+import Homescreen from './pages/Homescreen';
 import CreateProfile from './pages/CreateProfile';
 import About from './pages/About';
 import Navbar from './pages/navbar';
@@ -28,7 +29,9 @@ return (
       <Register/>}/>
     <Route path="/View-Profile" element={
       <DashBoardLayout>
+        <SideBar>
       <ViewProfile/>
+      </SideBar>
       </DashBoardLayout>
       }/>
       <Route path='/About' element={
@@ -36,38 +39,53 @@ return (
           <About/>
           </Navbar>
       }/>
+      <Route path='/HomeScreen' element={
+        <DashBoardLayout>
+          <SideBar>
+            <Homescreen/>
+            </SideBar>
+          </DashBoardLayout>
+      }/>
     <Route path='/Create-Profile' element={
       <DashBoardLayout>
+        
       <CreateProfile/>
       </DashBoardLayout>
       }/>
      <Route path='/Create-Project' element={
       <DashBoardLayout>
+        <SideBar>          
         <CreateProject/>
+        </SideBar>
       </DashBoardLayout>
      }/>
-      <Route path='/dashboard' element={
-        <DashBoardLayout>
-          <Dashboard/>
-        </DashBoardLayout>}/>
+      
         <Route path='/getallprojects' element={
           <DashBoardLayout>
+            <SideBar>
             <Allprojects/>
+            </SideBar>
           </DashBoardLayout>
         }/>
         <Route path='/get-project/:projectId' element={
           <DashBoardLayout>
+            <SideBar>
             <Projectdetails/>
+            </SideBar>
           </DashBoardLayout>
         }/>
         <Route path='/your-projects' element={
           <DashBoardLayout>
+            <SideBar>
             <Getyourprojects/>
+            </SideBar>
           </DashBoardLayout>
         }/>
         <Route path='/view-profile/:id' element={
           <DashBoardLayout>
+            <SideBar>
             <ViewIndiProfile/>
+           </SideBar>
             </DashBoardLayout>
         }
         />
@@ -78,7 +96,9 @@ return (
         }/>
         <Route path='/Research/:projectId/:workId' element={
           <DashBoardLayout>
+              <SideBar>
               <Research/>
+              </SideBar>
           </DashBoardLayout>
            
         }/>
