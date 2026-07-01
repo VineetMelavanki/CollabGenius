@@ -137,19 +137,19 @@ async function getme(req,res)
        const token=req.cookies.token;
        if(!token)
        {
-        return res.status(404).json({msg:"No authentication",success:false});
+        return res.status(200).json({msg:"No authentication",user:null,success:false});
        }
        const decoded=jwt.verify(token,process.env.JWT_SECRET);
        const user=await User.findById(decoded.id).select("-password");
        if(!user)
        {
-        return res.status(404).json({msg:"User does not exists",success:false});
+        return res.status(200).json({msg:"User does not exists",user:null,success:false});
        }
        return res.status(200).json({msg:"User authenticated successfully",user,success:true});
     }catch(error)
     {
         console.log(error);
-        return res.status(500).json({msg:"Internal server error",success:false});
+        return res.status(200).json({msg:"Internal server error",user:null,success:false});
     }
 }
 
