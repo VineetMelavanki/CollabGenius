@@ -5,7 +5,7 @@ function Navbar({children}) {
 
   return (
     <div className="flex-h-screen bg-gray-200 flex-col gap-3">
-      <nav className="flex justify-between items-center px-8 py-4  bg-white shadow" dark >
+      <nav className="flex justify-between items-center px-8 py-4  bg-white shadow">
 
       <h1 className="text-2xl font-bold text-blue-600">
         Collab-Genius

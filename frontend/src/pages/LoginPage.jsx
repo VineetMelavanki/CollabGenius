@@ -95,9 +95,10 @@ return (
           onChange={handlechange}
           placeholder="Enter your password"
           className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-500" />
-          <button type="submit" className="bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 transition mb-2">
+          <button type="submit" className="bg-purple-600 text-white p-3 rounded-lg hover:bg-purple-700 transition s">
             Sign in to account
           </button>
+
         <div className="flex flex-row gap-3">
           <GoogleLogin
           onSuccess={handleGoogleSuccess}
@@ -112,7 +113,7 @@ return (
             </button>
           </div>
         </form>
-
+        <h1 className="text-center">Don't have an account?<span onClick={()=>navigate("/register")} className="text-blue-500 hover:underline"> Sign up</span></h1>
        {error &&<p className="text-red-500 text-2xl font-bold text-center">{error}</p>}
        {message && <p className="text-green-500  text-2xl font-bold text-center">{message}</p>}
       </div>

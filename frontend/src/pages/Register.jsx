@@ -75,7 +75,7 @@ export default function Register() {
                 Create Account
                </button>
               </form>
-              
+              <h1 className="text-center">Already have an account?<span onClick={()=>navigate("/login")} className="text-blue-500 hover:underline"> Sign in</span></h1>
                 {error &&<p className="text-red-500 text-2xl font-bold text-center">{error}</p>}
        {message && <p className="text-green-500  text-2xl font-bold text-center">{message}</p>}
             </div>
