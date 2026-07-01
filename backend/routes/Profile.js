@@ -1,6 +1,6 @@
 const express=require('express');
 const ProfileRouter=express.Router();
-const {CreateProfile,ViewProfile,getmyprofile,ViewprofileById,EditProfile,getprofilebyskills,getskills,getdomain}=require("../controllers/Profile");
+const {CreateProfile,ViewProfile,getmyprofile,ViewprofileById,EditProfile,getprofilebyskills,getskills,getdomain,getReviewedProfiles}=require("../controllers/Profile");
 const {authmiddleware}=require("../middleware/authmiddleware")
 const {uploads} =require("../middleware/upload")
 ProfileRouter.post("/Create-Profile",authmiddleware,uploads.single("photo"),CreateProfile);
@@ -11,4 +11,5 @@ ProfileRouter.post("/edit-profile",authmiddleware,uploads.none(),EditProfile);
 ProfileRouter.get("/get-skills",authmiddleware,getskills);
 ProfileRouter.get("/get-domains",authmiddleware,getdomain);
 ProfileRouter.post("/get-profiles-by-skills/:userId",authmiddleware,getprofilebyskills);
+ProfileRouter.get("/review-profiles",getReviewedProfiles);
 module.exports=ProfileRouter;
