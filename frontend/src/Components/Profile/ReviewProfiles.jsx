@@ -1,7 +1,9 @@
 import React from "react";
 import { useState,useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 export default function ReviewProfiles(){
+    const navigate=useNavigate();
     const[profiles,setprofiles]=useState([]);
     useEffect(()=>{
         const fetchReviewedProfiles=async()=>{
@@ -21,9 +23,9 @@ export default function ReviewProfiles(){
     return(
        <div>
         {profiles?.length> 0 && 
-                      <div className="grid sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-3 gap-6"  >
+                      <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"  >
                        {profiles.map((profile)=>(
-                         <div key={profile._id} className="bg-white rounded-2xl p-8 flex flex-col items-center shadow-md gap-3 border-1 border-gray-100 cursor-pointer hover:border-violet-200 hover:shadow-lg  transition-all duration-200">
+                         <div onClick={()=>navigate("/login")} key={profile._id} className="bg-white rounded-2xl p-8 flex flex-col items-center shadow-md gap-3 border-1 border-gray-100 cursor-pointer hover:border-violet-200 hover:shadow-lg  transition-all duration-200">
                           
                              <img src={profile?.photo?.url} alt="user" className="w-12 h-12 rounded-full ring-gray-500 blur-sm" />
                              <div className="text-center">
