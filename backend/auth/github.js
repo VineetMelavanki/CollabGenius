@@ -68,7 +68,7 @@ async function GithubCallback(req,res)
         sameSite:"lax",
         maxAge: 7 * 24 * 60 * 60 * 1000
     });
-    return res.redirect("http://localhost:5173/dashboard");
+    return res.redirect("http://localhost:5173/HomeScreen");
     }catch(error)
     {
         console.log("Error : ",error);
