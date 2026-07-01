@@ -164,5 +164,18 @@ async function getprofilebyskills(req,res)
       return res.status(500).json({msg:"Internal server error",success:false});
      }
 }
-
-module.exports={CreateProfile,ViewProfile,getmyprofile,ViewprofileById,EditProfile,getprofilebyskills,getskills,getdomain};
+async function getReviewedProfiles(req,res){
+  try{
+      const Profiles=await Profile.find({}).limit(8).select("name skills domains photo");
+      if(Profiles.length==0)
+      {
+        return res.status(200).json({msg:"No profiles found",ReviewedProfiles:[],success:true});
+      }
+      return res.status(200).json({msg:"All profiles fetched successfully",ReviewedProfiles:Profiles,success:true});
+  }catch(error)
+  {
+    console.log("The error is : ",error);
+    return res.status(500).json({msg:"Internal server error",success:false});
+  }
+}
+module.exports={CreateProfile,ViewProfile,getmyprofile,ViewprofileById,EditProfile,getprofilebyskills,getskills,getdomain,getReviewedProfiles};
