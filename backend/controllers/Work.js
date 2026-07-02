@@ -1,5 +1,6 @@
 const Work=require("../model/Work");
 const Project=require("../model/project");
+const User=require("../model/User");
 async function CreateWork(req,res)
 {
     try{
@@ -24,6 +25,7 @@ async function CreateWork(req,res)
     }
     const newWork=await Work.create({
         name,
+        members:[ownerId],
         owner:ownerId,
         project:projectId,
     });
@@ -95,5 +97,33 @@ async function deletework(req,res)
         return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
-
-module.exports={CreateWork,getWork,deletework,getWorkById};
+async function getworkbyMember(req,res)
+{
+    try{
+       const{userId}=req.params;
+       const userexist=await User.findById(userId);
+       if(!userexist)
+       {
+        return res.status(404).json({msg:"User does not exists",success:false});
+       }
+       const allworks={};
+       const allprojects=[];
+       const projects=await Project.find({members:userId}).populate("title");
+       await Promise.all(
+        projects.map(async(project)=>{
+        const works=await Work.find({project:project._id}).populate("name");
+        if(works.length>0)
+        {
+          allworks[project._id]=works;
+          allprojects.push(project._id);
+        }
+       })
+       );
+       return res.status(200).json({msg:"All works fetched sucessfully",allworks:allworks,allprojects:allprojects,success:true});
+    }catch(error)
+    {
+        console.log("The error is : ",error);
+        return res.status(500).json({msg:"Internal server error",success:false});
+    }
+}
+module.exports={CreateWork,getWork,deletework,getWorkById,getworkbyMember};
