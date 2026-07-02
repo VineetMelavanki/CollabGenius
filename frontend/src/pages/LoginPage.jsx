@@ -28,7 +28,7 @@ export default function Login() {
       const data = await response.json();
             if (response.ok) {
         setmessage(data.msg || "Login Successfully");
-        setTimeout(() => navigate("/dashboard"), 1000);
+        setTimeout(() => navigate("/HomeScreen"), 1000);
       } else {
         seterror(data.msg || "Login failed");
       }
