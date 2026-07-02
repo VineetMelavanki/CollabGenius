@@ -37,7 +37,7 @@ async function Getallprojects(req,res)
     try{
         const allproject= await Project.find({});
         
-        return res.status(200).json({success : true , msg : allproject.length ? "projects fetched successfully" : "Projects not found",projects: allproject});
+        return res.status(200).json({success : true , msg : allproject.length ? "projects fetched successfully" : "Projects not found",projects: allproject,length:allproject.length});
     }catch(error)
     {
         console.log(error);
