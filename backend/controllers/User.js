@@ -124,7 +124,7 @@ async function getallusers(req,res)
 {
     try{
         const getall=await User.find({});
-        return res.status(200).json({msg :getall.length ? "Users exists" : "No user exists",user : getall, success : true});
+        return res.status(200).json({msg :getall.length ? "Users exists" : "No user exists",user : getall,length:getall.length, success : true});
     }catch(error)
     {
         console.log(error);
