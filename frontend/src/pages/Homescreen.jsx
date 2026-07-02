@@ -1,6 +1,98 @@
+import { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext"
+import { FaUserFriends } from "react-icons/fa";
+import { FaClock } from "react-icons/fa";
+import { FolderIcon } from "@heroicons/react/24/outline";
+import axios from "axios";
 export default function Homescreen(){
-   const {user}=useAuth();
+   const {user, loading}=useAuth();
+   const[users,setusers]=useState(0);
+   const[projects,setprojects]=useState([]);
+   const[researchs,setresearchs]=useState({});
+   
+   const[Teams,setTeams]=useState(0);
+   useEffect(()=>{
+    const fetchallprojects=async()=>{
+      try{
+       const response=await axios.get("http://localhost:8000/api/Project/getallprojects",{
+        withCredentials:true,
+       });
+       setTeams(response.data?.length);
+
+    }catch(error)
+    {
+      if(error.response)
+      {
+        alert(error.response?.data?.msg || "Cannot fetch profiles");
+      }
+      else
+      {
+        alert("Internal server error");
+      }
+    }
+    }
+    fetchallprojects();
+   },[Teams]);
+   useEffect(()=>{
+    const fetchallusers=async()=>{
+      try{
+         const response=await axios.get("http://localhost:8000/api/User/allusers",{
+        withCredentials:true,
+      });
+      setusers(response.data?.length);
+     
+      }catch(error)
+      {
+          if(error.response)
+          {
+            alert(error.response?.data?.msg || "Cannot fetch users");
+          }
+          else
+          {
+            alert("Internal server error");
+          }
+      }
+    }
+    fetchallusers();
+   },[users]);
+
+   useEffect(()=>{
+    if (!user?._id) return;
+
+    const fetchallresearch=async()=>{
+      try{
+        console.log("The user's id is : ",user?._id);
+         const response=await axios.get(`http://localhost:8000/api/Work/get-work-by-member/${user._id}`,{
+          withCredentials:true,
+         });
+         setprojects(response?.data?.allprojects);
+         setresearchs(response.data?.allworks);
+         console.log("All research data:",response.data?.allworks);
+         console.log("All projects : ",response?.data?.allprojects);
+      }catch(error)
+      {
+        if(error.response)
+        {
+          alert(error.response?.data?.msg || "Cannot fetch researchs");
+        }
+        else
+        {
+          console.log("The error is : ",error);
+          alert("Internal server errors");
+        }
+      }
+    }
+    fetchallresearch();
+   },[user?._id]);
+
+   if (loading) {
+      return <div className="min-h-screen flex items-center justify-center">Loading your profile...</div>;
+   }
+
+   if (!user) {
+      return <div className="min-h-screen flex items-center justify-center">Please log in to continue.</div>;
+   }
+
     return(
         <div className="min-h-screen w-full">
           <div className="flex flex-col gap-2 w-full border p-2">
@@ -36,7 +128,66 @@ export default function Homescreen(){
                     </div>
                 </div>
               </div>
-              
+              <div className="min-w-full border grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 p-4 ">
+                <div className="bg-white border w-auto p-2 rounded-xl shadow-md  ">
+                  <div className="flex flex-row gap-2">
+                    <FolderIcon className="text-purple-500 bg-purple-200 w-10 h-10 rounded-xl"/>
+                    <div className="flex flex-col">
+                      <h1 className="text-gray-400">Teams</h1>
+                        <h1 className="text-xl font-bold">{Teams}</h1>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-white border w-auto p-2 rounded-xl shadow-md">
+                  <div className="flex flex-row gap-2">
+                     <FaUserFriends className="text-green-500 w-10 h-10"/>
+                     <div className="flex flex-col">
+                        <h1 className="text-gray-400">Collaborators</h1>
+                        <h1 className="text-xl font-bold">{users}</h1>
+                     </div>
+                  </div>
+                </div>
+              </div>
+              <div className="min-w-full border grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-2 gap-3">
+                 <div className="bg-white border w-auto p-4 rounded-xl shadow-md ">
+                   <div className="flex flex-col gap-3 ">
+                     <div className="flex flex-row gap-2">
+                       <h1 className="sm:text-sm lg:text-lg text-black font-bold">Continue Working</h1>
+                        
+                     </div>
+                     <div className="flex flex-col  gap-2">
+                          {projects.length > 0 && (
+                            projects.map((project)=>(
+                             researchs[project]?.map((research)=>(
+                              <div key={research._id} className="bg-white shadow-md rounded-xl  flex flex-row gap-2 p-2">
+                                   <h1 className="text-blue-500 text-md font-bold">{research?.name}</h1>
+                                   <div className="flex flex-1 justify-end ">
+                                      <h1 className="text-black text-md mx-2">View</h1>
+                                   </div>
+                              </div>
+                             ))
+                            ))
+                          )}
+                        </div>
+                   </div>
+                 </div>
+                 <div className="bg-white border w-auto p-4 rounded-xl shadow-md ">
+                    <div className="flex flex-col gap-3">
+                       <div className="flex flex-row gap-2">
+                        <FaClock className="w-5 h-5 my-1 text-blue-500"/>
+                          <h1 className="sm:text-sm lg:text-lg text-black font-bold">Recent Activity</h1>
+                       </div>
+                    </div>
+                  </div>
+                  <div className="bg-white border w-auto p-4 rounded-xl shadow-md ">
+                    <div className="flex flex-col gap-3">
+                       <div className="flex flex-row gap-2">
+                      
+                          <h1 className="sm:text-sm lg:text-lg text-black font-bold">AI Research feed</h1>
+                       </div>
+                    </div>
+                  </div>
+              </div>
           </div>
         </div>
     )
