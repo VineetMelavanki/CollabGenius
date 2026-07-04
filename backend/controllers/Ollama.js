@@ -47,7 +47,8 @@ Return ONLY valid JSON in this exact format:
 
 {
   "skills": [],
-  "domains": []
+  "domains": [],
+  "reasoning" :"give me a one line explaiantion of why you recommended this",
 }
 
 Do not include users.
@@ -62,7 +63,7 @@ Do not explain anything.
             domains:{$in:filters.domains},
             skills:{$in:filters.skills},
         }).populate("name photo");
-        return res.status(200).json({msg:"Results fetched successfully",Profiles:Profiles,success:true});
+        return res.status(200).json({msg:"Results fetched successfully",Profiles:Profiles,reasoning:filters.reasoning,success:true});
     }catch(error)
     {
         console.log("The error is : ",error);
