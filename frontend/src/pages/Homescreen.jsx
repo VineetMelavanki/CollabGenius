@@ -28,8 +28,7 @@ export default function Homescreen(){
         withCredentials:true,
        });
       setanswer(response.data?.Profiles);
-      console.log("The answer are : ",response.data?.Profiles);
-
+      setprompt("");
     }catch(error)
     { 
        if(error.response)

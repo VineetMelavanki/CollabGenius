@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaRobot } from "react-icons/fa";
 export default function OllamaDashboard({onClose,prompt,answer}){
       const navigate=useNavigate();
+      
     return(
         <div className="fixed inset-0 z-50 flex justify-end">
            <div className="absolute inset-0 bg-black/40" onClick={()=>onClose()}/>
@@ -13,14 +14,36 @@ export default function OllamaDashboard({onClose,prompt,answer}){
                     <FaRobot className="w-5 h-5 text-red-500"/>
                      <h1 className="text-purple-500 font-sans text-lg">Ask me anything</h1>
                   </div>
-                  <div className=" flex items-end p-3 rounded-xl justify-end text-end w-full ">
-                   <h1 className="text-black bg-gray-200 p-4">{prompt}</h1>
-                  </div>
-                {answer &&<div className="flex flex-col gap-3">
+              {prompt.length> 0 && <div className=" flex items-end p-3 rounded-xl justify-end text-end w-full ">
+               <h1 className="text-black bg-gray-200 p-4">{prompt}</h1>
+                  </div> }
+               {answer.length==0 &&  <div className="flex items-center gap-3">
+  <span className="text-2xl animate-pulse">✨</span>
+
+  <span
+    className="
+      text-lg
+      font-semibold
+      bg-gradient-to-r
+      from-slate-400
+      via-white
+      to-slate-400
+      bg-[length:200%_100%]
+      bg-clip-text
+      text-transparent
+      animate-[shine_2s_linear_infinite]
+    "
+  >
+    Generating recommendations...
+  </span>
+</div>}  
+                {answer.length > 0 && <div className="flex flex-col gap-3">
+                  
                     <h1 className="text text-lg text-gray-500">The recommended profiles are</h1>
                     <div className=" grid grid-cols-2 gap-2">
                        {answer.map((ans)=>(
                         <div key={ans} className="bg-white rounded-2xl p-8 flex flex-col items-center shadow-md gap-3 border-1 border-gray-100 cursor-pointer hover:border-violet-200 hover:shadow-md transition-all duration-200">
+                          <h1 className="text-blue-500">Reasoning :{answer?.reasoning}</h1>
                         <img src={ans?.photo?.url} alt="user" className="w-12 h-12 rounded-full ring-gray-500 " />
                      <div className="text-center">
                          <p className=" mt-2 text-sm font-bold text-gray-900">{ans.name}.</p>
