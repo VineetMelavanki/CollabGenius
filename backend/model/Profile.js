@@ -1,4 +1,5 @@
-const mongoose=require("mongoose");
+import mongoose from "mongoose";
+
 const ProfileSchema = new mongoose.Schema({
     userId:{
         type:mongoose.Schema.Types.ObjectId,
@@ -126,5 +127,5 @@ ProfileSchema.index({domains:1});
 ProfileSchema.index({skills:1});
 ProfileSchema.index({skillevel:1});
 ProfileSchema.index({domains:1,skillevel:1});
-const Profile=mongoose.model("Profile",ProfileSchema);
-module.exports=Profile;
+const Profile = mongoose.model("Profile", ProfileSchema);
+export default Profile;

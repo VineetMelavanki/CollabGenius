@@ -1,4 +1,3 @@
-
 import {generateembeddings} from "../ingestionpipeline/embeddingGenerator"
 import client from "../chromadb/chromadb";
 export const vectoruploads=async()=>{

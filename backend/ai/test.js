@@ -1,13 +1,13 @@
-import client from "./chromadb/chromadb.js";
+const client = require("./chromadb/chromadb.js");
 
-async function test(){
-    try{
-      const heartbeat=await client.heartbeat();
-      console.log("connected");
-      console.log(heartbeat);
-    }catch(error)
-    {
+async function test() {
+    try {
+        const heartbeat = await client.heartbeat();
+        console.log("connected");
+        console.log(heartbeat);
+    } catch (error) {
         console.log(error);
     }
 }
+
 test();
