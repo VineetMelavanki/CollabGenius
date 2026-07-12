@@ -15,10 +15,12 @@ export default function Homescreen(){
    const[openaisearch,setopenaisearch]=useState(false);
    const[Teams,setTeams]=useState(0);
    const[prompt,setprompt]=useState("");
+   const[dupliprompt,setdupliprompt]=useState("");
    const[addteam,setaddteam]=useState(false);
-   const[answer,setanswer]=useState([]);
+   const[answer,setanswer]=useState(null);
    const handlechange=(e)=>{
     setprompt(e.target.value);
+    setdupliprompt(e.target.value);
    }
    const handlesubmit=async(e)=>{
     e.preventDefault();
@@ -29,7 +31,9 @@ export default function Homescreen(){
        },{
         withCredentials:true,
        });
-      setanswer(response.data?.Profiles);
+      setanswer(response.data?.finalresults);
+
+      console.log("The final results are : ",response.data?.finalresults);
       setprompt("");
     }catch(error)
     { 
@@ -131,7 +135,8 @@ export default function Homescreen(){
           {openaisearch && <OllamaDashboard
           onClose={()=>setopenaisearch(false)}
           prompt={prompt}
-          answer={answer}/>
+          answer={answer}
+          dupliprompt={dupliprompt}/>
           }
           {addteam && <CreateTeam
           onClose={()=>setaddteam(false)}/>}

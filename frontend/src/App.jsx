@@ -9,7 +9,6 @@ import Homescreen from './pages/Homescreen';
 import CreateProfile from './pages/CreateProfile';
 import About from './pages/About';
 import Navbar from './pages/navbar';
-import CreateProject from './pages/CreateProject';
 import DashBoardLayout from './pages/DashBoardLayout';
 import Allprojects from './pages/allprojects';
 import Projectdetails from './pages/Projectdetails';
@@ -52,13 +51,6 @@ return (
       <CreateProfile/>
       </DashBoardLayout>
       }/>
-     <Route path='/Create-Project' element={
-      <DashBoardLayout>
-        <SideBar>          
-        <CreateProject/>
-        </SideBar>
-      </DashBoardLayout>
-     }/>
       
         <Route path='/getallprojects' element={
           <DashBoardLayout>
