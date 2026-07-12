@@ -1,18 +1,12 @@
 const client = require("./chromadb");
 
 async function getcollection() {
+    // Try to get collection first, create if not exists
     try {
-        return await client.getCollection({
-            name: "CollabGenius",
-        });
-    } catch (e) {
-        // If collection doesn't exist, create it with explicit empty embedding function
-        return await client.createCollection({
-            name: "CollabGenius",
-            embeddingFunction: {
-                generate: () => [] // Dummy function since we provide our own embeddings
-            }
-        });
+        return await client.getCollection({ name: "CollabGenius" });
+    } catch (error) {
+        // Collection doesn't exist, create it without specifying embedding function (we provide our own)
+        return await client.createCollection({ name: "CollabGenius" });
     }
 }
 

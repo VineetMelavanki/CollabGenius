@@ -15,25 +15,31 @@ async function Retrivalpipeline(req, res) {
         
         const processedQuery = await queryProcessor(prompt);
         const vectors = await embeddedquery(processedQuery);
-        console.log(vectors);
 
         const collection = await getcollection();
         const results = await collection.query({
             queryEmbeddings: [vectors],
+            include:["documents","metadatas"],
             nResults: 5,
         });
         
-        console.log("The results are : ", results);
         // ChromaDB returns documents as an array of arrays [[doc1, doc2...]]
         const docs = results.documents?.[0] || [];
-        const context = await buildcontext(docs.map(pageContent => ({ pageContent })));
+        const metadatas=results.metadatas?.[0] ||[];
+        const context = await buildcontext(
+            docs.map((pageContent,index)=>({
+                pageContent,
+                metadata:metadatas[index],
+            })),
+        );
         const Prompt = await CreatePrompt(processedQuery, context);
-
+         console.log("Prompt created successfully : ",Prompt);
         const finalresults = await askollama(Prompt);
-
-        return res.status(200).json({ msg: "Results fetched successsfully", finalresults: finalresults, success: true });
+        console.log("The final results are : ",finalresults);
+        const parsedResults=JSON.parse(finalresults);
+        return res.status(200).json({ msg: "Results fetched successfully", finalresults:parsedResults, success: true });
     } catch (error) {
-        console.log("Error in retrieval pipeline: ", error);
+        console.error("Error in retrieval pipeline: ", error);
         return res.status(500).json({ msg: "Internal server error", success: false });
     }
 }

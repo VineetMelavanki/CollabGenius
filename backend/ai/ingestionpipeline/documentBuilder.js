@@ -16,7 +16,7 @@ async function documentbuider() {
                 skillevel:${profile.skillevel}`,
                 metadata: {
                     id: profile._id.toString(),
-                    userId: profile.userId,
+                    userId: profile.userId.toString(), // Convert ObjectId to string
                     type: "profile",
                 }
             });
@@ -29,7 +29,7 @@ async function documentbuider() {
                 description:${project.description}`,
                 metadata: {
                      id: project._id.toString(),
-                     ownerId: project.ownerId.toString(),
+                     ownerId: project.ownerId.toString(), // Convert ObjectId to string
                      type: "project"
                 }
             });

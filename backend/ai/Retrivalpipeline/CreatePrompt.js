@@ -1,21 +1,42 @@
 async function CreatePrompt(query, context) {
-    return `
+return `
+You are a research collaboration assistant.
 
-You are an AI assistant.
+Given the context, find relevant projects and users.
 
-Answer ONLY using the provided context.
+Return all matching projects and users.
 
 Context:
 
 ${context}
 
+
 Question:
 
 ${query}
 
-If the answer is not in context,
-say "No information found."
 
+Return ONLY JSON:
+
+{
+ "projects":[
+   {
+    "id":"",
+    "title":"",
+    "description":""
+   }
+ ],
+ "users":[
+   {
+    "id":"",
+    "name":"",
+    "skills":[],
+    "bio":""
+   }
+ ]
+}
+
+If nothing matches return empty arrays.
 `;
 }
 

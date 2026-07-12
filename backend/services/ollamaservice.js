@@ -5,6 +5,7 @@ async function askollama(prompt) {
         model: "llama3.1:8b",
         prompt: prompt,
         stream: false,
+        format:"json",
     });
 
     return response.data.response;
