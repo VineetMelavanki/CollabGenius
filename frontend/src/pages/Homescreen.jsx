@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "../AuthContext"
 import { FaUserFriends } from "react-icons/fa";
 import { FaClock } from "react-icons/fa";
+import CreateTeam from "../Components/Team/CreateTeam"
 import { FolderIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
 import OllamaDashboard from "../Components/AIdashboard/Ollamadashboard";
@@ -14,6 +15,7 @@ export default function Homescreen(){
    const[openaisearch,setopenaisearch]=useState(false);
    const[Teams,setTeams]=useState(0);
    const[prompt,setprompt]=useState("");
+   const[addteam,setaddteam]=useState(false);
    const[answer,setanswer]=useState([]);
    const handlechange=(e)=>{
     setprompt(e.target.value);
@@ -131,11 +133,13 @@ export default function Homescreen(){
           prompt={prompt}
           answer={answer}/>
           }
+          {addteam && <CreateTeam
+          onClose={()=>setaddteam(false)}/>}
           <div className="flex flex-col gap-2 w-full border p-2">
              <div className="flex sm:flex-col lg:flex-row gap-2 border  p-2">
                <div className="flex flex-col border sm:w-full lg:w-1/2">
                  <div className="flex flex-row gap-2 ">
-                   <h1 className="text-3xl font-bold">WELCOME BACK, <span className="text-purple-500">{user?.name}</span> !</h1>
+                   <h1 className="text-2xl font-bold">WELCOME BACK, <span className="text-purple-500">{user?.name}</span> !</h1>
                    <div className="flex flex-1 justify-end p-2">
                      <CpuChipIcon onClick={()=>setopenaisearch(true)} className="w-8 h-8 hover:text-red-500"/>
                    </div>
@@ -172,13 +176,17 @@ export default function Homescreen(){
                     </div>
                 </div>
               </div>
-              <div className="min-w-full border grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 p-4 ">
+              <div className="min-w-full border grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2 p-4  ">
                 <div className="bg-white border w-auto p-2 rounded-xl shadow-md  ">
-                  <div className="flex flex-row gap-2">
-                    <FolderIcon className="text-purple-500 bg-purple-200 w-10 h-10 rounded-xl"/>
-                    <div className="flex flex-col">
+                  <div className="flex flex-row gap-2 ">
+                    <FolderIcon className="text-purple-500 bg-purple-200 w-10 h-10 "/>
+                    
+                    <div className="flex flex-col ">
                       <h1 className="text-gray-400">Teams</h1>
                         <h1 className="text-xl font-bold">{Teams}</h1>
+                    </div>
+                    <div className="flex flex-1 justify-end  items-start mx-2">
+                       <button onClick={()=>setaddteam(true)} className="text-white bg-red-500 font-bold px-2 sm:text-xs md:text-md xl:text-lg hover:bg-red-600">Add</button>
                     </div>
                   </div>
                 </div>

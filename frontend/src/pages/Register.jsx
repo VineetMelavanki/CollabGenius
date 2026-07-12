@@ -27,7 +27,7 @@ export default function Register() {
         { withCredentials: true }
       );
       setmessage(response.data.msg || "Registered Successfully");
-      setTimeout(() => navigate("/dashboard"), 1500);
+      setTimeout(() => navigate("/login"), 1500);
     } catch (error) {
       if (error.response) {
         seterror(error.response.data.msg || "Registration failed");

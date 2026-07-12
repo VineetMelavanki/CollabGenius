@@ -83,11 +83,11 @@ export default function Allprojects()
   return (
   <div className="min-h-full w-full p-6">
 
-    <div className="flex flex-row gap-3">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800 my-4">
+    <div className="flex flex-row sm:max-w-sm md:max-w-lg lg:max-w-full border gap-3">
+      <h1 className="text-2xl font-bold mb-6 sm:text-sm md:text-md lg:text-lg text-gray-800 my-4">
         All Projects
       </h1>
-      <form className="flex flex-row p-2 gap-4 mb-6" onSubmit={handleSubmit} >
+      <form className="flex flex-row p-2 gap-4 mb-6 sm:text-sm" onSubmit={handleSubmit} >
         <input
         type="text"
         value={formdata.title}
@@ -97,7 +97,7 @@ export default function Allprojects()
         className="flex text-lg p-2 rounded-xl border border-blue-400"
         />
         <button className="text-red p-3 border rounded-xl text-white bg-green-500 hover:bg-green-600 font-bold" type="submit">Search</button>
-         <button onClick={clearformdata} className="text-lg text-white bg-red-500 hover:border-red-600 rounded-lg px-5 py-2 font-bold">
+         <button  onClick={clearformdata} className=" sm:text-sm lg:text-lg text-white bg-red-500 hover:border-red-600 rounded-lg px-5 py-2 font-bold">
         Clear
       </button>
       </form>
@@ -109,13 +109,13 @@ export default function Allprojects()
       <p className="text-gray-500">No projects found</p>
     ) : (
 
-      <div className="grid gap-6 grid-cols-1 md:grid-cols-2  lg:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2  lg:grid-cols-3">
 
         {projects.map((project) => (
  
           <div
             key={project._id}
-            className="bg-white p-6 rounded-xl shadow hover:shadow-lg transition"
+            className="bg-white p-6 rounded-xl sm:max-w-sm shadow hover:shadow-lg transition"
           >
             <h2 className="text-xl font-semibold text-gray-800">
               {project.title}
