@@ -1,14 +1,16 @@
-import { OllamaEmbeddings } from "@langchain/ollama";
+const { OllamaEmbeddings } = require("@langchain/ollama");
 
 const embeddings = new OllamaEmbeddings({
     model: "nomic-embed-text",
     baseUrl: "http://localhost:11434",
 });
 
-export async function embeddocuments(texts) {
+async function embeddocuments(texts) {
     return embeddings.embedDocuments(texts);
 }
 
-export async function embedquery(query) {
+async function embedquery(query) {
     return embeddings.embedQuery(query);
 }
+
+module.exports = { embeddocuments, embedquery };

@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const ProfileSchema = new mongoose.Schema({
     userId:{
@@ -128,4 +128,4 @@ ProfileSchema.index({skills:1});
 ProfileSchema.index({skillevel:1});
 ProfileSchema.index({domains:1,skillevel:1});
 const Profile = mongoose.model("Profile", ProfileSchema);
-export default Profile;
+module.exports = Profile;

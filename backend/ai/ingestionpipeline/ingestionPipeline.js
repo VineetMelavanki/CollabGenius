@@ -1,14 +1,14 @@
-import { vectoruploads } from "./vectorupLoader";
-export const ingestionpipeline=async()=>{
-    try{
-       console.log("Ingesting data intot vectordb");
+const { vectoruploads } = require("./vectorupLoader");
 
-       await vectoruploads();
-
-       console.log("Ingestion pipeline completed successfully");
-    }catch(error)
-    {
-       console.log("Cannot complete ingestion pipeline",error);
-       throw error;
+async function ingestionpipeline() {
+    try {
+        console.log("Ingesting data intot vectordb");
+        await vectoruploads();
+        console.log("Ingestion pipeline completed successfully");
+    } catch (error) {
+        console.log("Cannot complete ingestion pipeline", error);
+        throw error;
     }
 }
+
+module.exports = { ingestionpipeline };

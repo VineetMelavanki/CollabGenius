@@ -1,30 +1,32 @@
-import {generateembeddings} from "../ingestionpipeline/embeddingGenerator"
-import client from "../chromadb/chromadb";
-export const vectoruploads=async()=>{
+const { generateembeddings } = require("../ingestionpipeline/embeddingGenerator");
+const { getcollection } = require("../chromadb/getcollection");
 
-    try{
-       const {documents,vectors}=await generateembeddings();
-    const ids=documents.map(doc=>doc.metadata.id);
+async function vectoruploads() {
+    try {
+        const { documents, vectors } = await generateembeddings();
+        
+        if (documents.length === 0) {
+            console.log("No documents found to embed");
+            return;
+        }
+        
+        const ids = documents.map(doc => doc.metadata.id);
+        const texts = documents.map(doc => doc.pageContent);
+        const metadatas = documents.map(doc => doc.metadata);
 
-    const texts=documents.map(doc=>doc.pageContent);
+        const collection = await getcollection();
+        await collection.add({
+            ids,
+            embeddings: vectors,
+            documents: texts,
+            metadatas,
+        });
 
-    const metadatas=documents.map(doc=>doc.metadata);
-
-    const collection=await client.getOrCreateCollection({
-        name:"collabgenius",
-    });
-
-    await collection.add({
-        ids,
-        embeddings:vectors,
-        documents:texts,
-        metadatas,
-    });
-
-    console.log("Vectors uplaoded successfully");
-    }catch(error)
-    {
-       console.log("Error uploading vectors",error);
-       throw error;
+        console.log("Vectors uploaded successfully:", documents.length, "documents embedded");
+    } catch (error) {
+        console.log("Error uploading vectors", error);
+        throw error;
     }
 }
+
+module.exports = { vectoruploads };

@@ -1,7 +1,6 @@
 {
   "name": "collabgenius",
   "version": "1.0.0",
-  "type": "module",
   "main": "index.js",
   "scripts": {
     "start": "node index"
@@ -10,6 +9,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@langchain/ollama": "^0.1.2",
+    "@langchain/core": "^0.3.26",
     "axios": "^1.16.0",
     "bcrypt": "^6.0.0",
     "chromadb": "^3.5.0",

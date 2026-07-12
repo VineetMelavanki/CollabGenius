@@ -1,13 +1,19 @@
-const client = require("./chromadb/chromadb.js");
+const connectmongodb = require("../connection/user.js");
+const { ingestionpipeline } = require("./ingestionpipeline/ingestionPipeline.js");
 
-async function test() {
+async function runIngestion() {
     try {
-        const heartbeat = await client.heartbeat();
-        console.log("connected");
-        console.log(heartbeat);
+        console.log("Connecting to MongoDB...");
+        await connectmongodb();
+        console.log("Connected to MongoDB");
+        console.log("Starting ingestion pipeline...");
+        await ingestionpipeline();
+        console.log("Ingestion pipeline completed!");
+        process.exit(0);
     } catch (error) {
-        console.log(error);
+        console.error("Error running ingestion pipeline:", error);
+        process.exit(1);
     }
 }
 
-test();
+runIngestion();

@@ -1,8 +1,9 @@
-import { ChromaClient } from "chromadb";
+const { ChromaClient } = require("chromadb");
 
-const client=new ChromaClient({
-    host:"localhost",
-    port:8001,
-    ssl:false,
+const client = new ChromaClient({
+    host: "localhost",
+    port: 8001,
+    ssl: false,
 });
-export default client;
+
+module.exports = client;
