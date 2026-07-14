@@ -5,9 +5,11 @@ import { FaClock } from "react-icons/fa";
 import CreateTeam from "../Components/Team/CreateTeam"
 import { FolderIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import OllamaDashboard from "../Components/AIdashboard/Ollamadashboard";
 import {CpuChipIcon} from "@heroicons/react/24/outline";
 export default function Homescreen(){
+  const navigate=useNavigate();
    const {user, loading}=useAuth();
    const[users,setusers]=useState(0);
    const[projects,setprojects]=useState([]);
@@ -15,7 +17,7 @@ export default function Homescreen(){
    const[openaisearch,setopenaisearch]=useState(false);
    const[Teams,setTeams]=useState(0);
    const[prompt,setprompt]=useState("");
-   const[dupliprompt,setdupliprompt]=useState("");
+   const[dupliprompt,setdupliprompt]=useState(null);
    const[addteam,setaddteam]=useState(false);
    const[answer,setanswer]=useState(null);
    const handlechange=(e)=>{
@@ -219,7 +221,7 @@ export default function Homescreen(){
                               <div key={research._id} className="bg-white shadow-md rounded-xl  flex flex-row gap-2 p-2">
                                    <h1 className="text-blue-500 text-md font-bold">{research?.name}</h1>
                                    <div className="flex flex-1 justify-end ">
-                                      <h1 className="text-black text-md mx-2">View</h1>
+                                      <button onClick={()=>navigate(`/Research/${project}/${research._id}`)} className="text-black text-md mx-2">View</button>
                                    </div>
                               </div>
                              ))
