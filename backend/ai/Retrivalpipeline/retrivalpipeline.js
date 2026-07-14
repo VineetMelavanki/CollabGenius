@@ -15,7 +15,7 @@ async function Retrivalpipeline(req, res) {
         
         const processedQuery = await queryProcessor(prompt);
         const vectors = await embeddedquery(processedQuery);
-
+         console.log("Embedded query succesfully");
         const collection = await getcollection();
         const results = await collection.query({
             queryEmbeddings: [vectors],
@@ -32,6 +32,7 @@ async function Retrivalpipeline(req, res) {
                 metadata:metadatas[index],
             })),
         );
+        console.log("The context is : ",context);
         const Prompt = await CreatePrompt(processedQuery, context);
          console.log("Prompt created successfully : ",Prompt);
         const finalresults = await askollama(Prompt);
