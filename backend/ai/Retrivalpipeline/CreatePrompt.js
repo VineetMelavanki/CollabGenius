@@ -19,7 +19,7 @@ ${query}
 Return ONLY JSON:
 
 {
- "projects":[
+ "teams":[
    {
     "id":"",
     "title":"",
@@ -33,7 +33,14 @@ Return ONLY JSON:
     "skills":[],
     "bio":""
    }
- ]
+ ],
+ "projects":[
+ {
+   "id":"",
+   "name":"",
+   "owner":"",
+   project:"",
+ }]
 }
 
 If nothing matches return empty arrays.
