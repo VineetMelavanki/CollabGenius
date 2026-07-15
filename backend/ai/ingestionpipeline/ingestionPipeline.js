@@ -2,7 +2,7 @@ const { vectoruploads } = require("./vectorupLoader");
 
 async function ingestionpipeline() {
     try {
-        console.log("Ingesting data intot vectordb");
+        console.log("Ingesting data into vectordb");
         await vectoruploads();
         console.log("Ingestion pipeline completed successfully");
     } catch (error) {
