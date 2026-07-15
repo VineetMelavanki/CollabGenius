@@ -1,12 +1,12 @@
 const { fetchProfiles } = require("../ingestionpipeline/fetchProfiles");
 const { Document } = require("@langchain/core/documents");
 const { fetchProjects } = require("../ingestionpipeline/fetchProjects");
-
+const {fetchResearch}=require("../ingestionpipeline/FetchWork");
 async function documentbuider() {
     try {
         const Profiles = await fetchProfiles();
         const Projects = await fetchProjects();
-        
+        const researchs=await fetchResearch();
         const profiledocuments = Profiles.map((profile) => {
             return new Document({
                 pageContent: `
@@ -34,8 +34,19 @@ async function documentbuider() {
                 }
             });
         });
-
-        return [...profiledocuments, ...projectdocuments];
+        
+        const Researchdocuments=researchs.map((research)=>{
+            return new Document({
+                pageContent:`
+                name:${research.name}`,
+                metadata:{
+                    id:research._id.toString(),
+                    owner:research.owner.toString(),
+                    project:research.project.toString(),
+                }
+            });
+        });
+        return [...profiledocuments, ...projectdocuments,...Researchdocuments];
     } catch (error) {
        console.log('Error creating documents', error);
        throw error;
