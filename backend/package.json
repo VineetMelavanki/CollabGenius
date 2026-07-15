@@ -9,8 +9,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@langchain/ollama": "^0.1.2",
+    "@faker-js/faker": "^10.5.0",
     "@langchain/core": "^0.3.26",
+    "@langchain/ollama": "^0.1.2",
     "axios": "^1.16.0",
     "bcrypt": "^6.0.0",
     "chromadb": "^3.5.0",
