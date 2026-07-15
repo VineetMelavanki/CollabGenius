@@ -10,4 +10,13 @@ async function getcollection() {
     }
 }
 
-module.exports = { getcollection };
+async function deletecollection(){
+    try{
+        return await client.deleteCollection({name:"CollabGenius"});
+    }catch(error)
+    {
+        console.log("The error is : ",error);
+        throw error;
+    }
+}
+module.exports = { getcollection ,deletecollection};
