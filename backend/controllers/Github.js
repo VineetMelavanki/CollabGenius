@@ -24,7 +24,7 @@ async function CreateRepo(req,res)
 {
    try{
       const{name,description,private:isPrivate}=req.body;
-      const{projectId,workId}=req.params;
+      const{TeamId,workId}=req.params;
 
       if(!name || !description)
       {
@@ -58,7 +58,7 @@ async function CreateRepo(req,res)
       const githubRepo=response.data;
       const newGithubRepo=await GithubRepo.create({
          name:name,
-         projectId:projectId,
+         TeamId:TeamId,
          workId:workId,
          description:description,
          createdby:req.user.id,
@@ -78,12 +78,12 @@ async function CreateRepo(req,res)
 async function GetAllRepo(req,res)
 {
    try{
-    const{projectId,workId}=req.params;
-    const GithubRepos=await GithubRepo.find({projectId:projectId,workId:workId});
+    const{TeamId,workId}=req.params;
+    const GithubRepos=await GithubRepo.find({TeamId:TeamId,workId:workId});
 
     if(!GithubRepo)
     {
-      return res.status(404).json({msg:"No github repo for this project",success:false});
+      return res.status(404).json({msg:"No github repo for this Team",success:false});
     }
     const user=await User.findById(req.user.id);
     if(!user)

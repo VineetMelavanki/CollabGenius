@@ -1,19 +1,19 @@
 const Request=require("../model/Request");
 const User=require("../model/User");
-const Project=require("../model/project");
+const Team=require("../model/Team");
 
 async function sendRequest(req,res)
 {
     try{
-        const{projectId}=req.params;
+        const{TeamId}=req.params;
         const user=await User.findById(req.user.id);
-       const project=await Project.findById(projectId).populate("ownerId","name email");
-       if(!project)
+       const Team=await Team.findById(TeamId).populate("ownerId","name email");
+       if(!Team)
         {
             return res.status(404).json({msg:"Team does not exists",success:false});
         }
-       const receiver=project.ownerId._id;
-       const isMember=project.members.some((member)=>{
+       const receiver=Team.ownerId._id;
+       const isMember=Team.members.some((member)=>{
         return member.toString()===user._id.toString();
        });
        if(isMember)
@@ -23,7 +23,7 @@ async function sendRequest(req,res)
        const newRequest=await Request.create({
         sender:user._id,
         receiver:receiver,
-        projectId:projectId,
+        TeamId:TeamId,
         message:"has requested to join your team"
        });
        return res.status(200).json({msg:"Request sent successfully",request:newRequest,success:true});
@@ -40,7 +40,7 @@ async function getallRequests(req,res)
         const Requests=await Request.find({receiver:user}).
         populate("sender","name email")
         .populate("receiver","name email")
-        .populate("projectId","title");
+        .populate("TeamId","title");
         if(Requests.length===0)
         {
             return res.status(200).json({msg:"No request found",success:false});
@@ -55,7 +55,7 @@ async function getallRequests(req,res)
 async function acceptRequest(req,res)
 {
     try{
-        const{senderId,projectId}=req.params;
+        const{senderId,TeamId}=req.params;
         const user=await User.findById(senderId);
         if(!user)
         {
@@ -63,24 +63,24 @@ async function acceptRequest(req,res)
         }
         const request=await Request.findOne({
             sender:senderId,
-            projectId:projectId,
+            TeamId:TeamId,
         });
         if(!request)
         {
             return res.status(404).json({msg:"Request not found",success:false});
         }
-        const project=await Project.findById(projectId);
-        if(!project)
+        const Team=await Team.findById(TeamId);
+        if(!Team)
         {
-            return res.status(404).json({msg:"Project does not exists",success:false});
+            return res.status(404).json({msg:"Team does not exists",success:false});
         }
-         const isMember=project.members.some(
+         const isMember=Team.members.some(
             member=>member._id.toString()===user._id.toString(),
          );
          if(!isMember)
          {
-            project.members.push(user._id);
-            await project.save();
+            Team.members.push(user._id);
+            await Team.save();
          }
          await Request.findByIdAndDelete(request._id);
          return res.status(200).json({msg:"Request accepted",success:true});
@@ -92,11 +92,11 @@ async function acceptRequest(req,res)
 async function declineRequest(req,res)
 {
     try{
-        const{senderId,projectId}=req.params;
+        const{senderId,TeamId}=req.params;
         const user=await User.findById(senderId);
         const request=await Request.findOne({
             sender:senderId,
-            projectId:projectId,
+            TeamId:TeamId,
         });
         if(!request)
         {

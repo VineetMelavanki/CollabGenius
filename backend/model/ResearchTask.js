@@ -9,9 +9,9 @@ const ResearchTaskSchema=new mongoose.Schema({
         ref:"Work",
         required:true,
     },
-    projectId:{
+    TeamId:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Project",
+        ref:"Team",
         required:true,
     },
     relatedrepos:[{

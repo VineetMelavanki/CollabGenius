@@ -44,6 +44,7 @@ Return ONLY JSON:
 }
 
 If nothing matches return empty arrays.
+And dont create duplicate answers 
 `;
 }
 

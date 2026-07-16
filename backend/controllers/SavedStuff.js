@@ -1,25 +1,25 @@
 const SavedRepo=require("../model/SavedRepo");
 const SavedDocs=require("../model/SaveDocs");
 const User=require("../model/User");
-const Project = require("../model/project");
+const Team = require("../model/Team");
 async function SaveGithubRepo(req,res)
 {
     try{
-        const{projectId,workId}=req.params;
+        const{TeamId,workId}=req.params;
        const{name,html_url}=req.body;
        if(!name || !html_url)
        {
         return res.status(400).json({msg:"All repository information needed",success:false});
        }
       
-       const nameexists=await SavedRepo.findOne({name:name,projectId});
+       const nameexists=await SavedRepo.findOne({name:name,TeamId});
        if(nameexists)
        {
         return res.status(409).json({msg:"Repository is already saved",success:false});
        }
        const NewSavedRepo=await SavedRepo.create({
         name:name,
-        projectId:projectId,
+        TeamId:TeamId,
         workId:workId,
         repourl:html_url,
         savedby:req.user.id,
@@ -33,9 +33,9 @@ async function SaveGithubRepo(req,res)
 async function fetchAllsavedRepos(req,res)
 {
     try{
-     const{projectId,workId}=req.params;
+     const{TeamId,workId}=req.params;
 
-     const GithubRepos=await SavedRepo.find({projectId:projectId,workId:workId}).populate("savedby","name email");
+     const GithubRepos=await SavedRepo.find({TeamId:TeamId,workId:workId}).populate("savedby","name email");
 
      if(GithubRepos.length===0)
      {
@@ -51,19 +51,19 @@ async function fetchAllsavedRepos(req,res)
 async function DeletesavedRepos(req,res)
 {
     try{
-        const{repoId,projectId,workId}=req.params;
+        const{repoId,TeamId,workId}=req.params;
         const user=await User.findById(req.user.id);
         const GithubRepo=await SavedRepo.findById(repoId);
         if(!GithubRepo)
         {
             return res.status(404).json({msg:"Github repo does not exists",success:false});
         }
-        const projectexists=await Project.findById(projectId);
-        if(!projectexists)
+        const Teamexists=await Team.findById(TeamId);
+        if(!Teamexists)
         {
-            return res.status(404).json({msg:"Project does not exists",success:false});
+            return res.status(404).json({msg:"Team does not exists",success:false});
         }
-        const ownerId=projectexists?.ownerId;
+        const ownerId=Teamexists?.ownerId;
         if(user._id.toString()!== ownerId.toString())
             {
                 return res.status(401).json({msg:"Only Team Leaders can delete the saved Repositories",success:false});

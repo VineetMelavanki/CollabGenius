@@ -1,5 +1,5 @@
 const Assignment = require("../model/Assignment");
-const Project=require("../model/project");
+const Team=require("../model/Team");
 const socketmiddleware=require("../middleware/socketmiddleware")
 const User=require("../model/User");
 
@@ -9,16 +9,16 @@ const assignmentsocket=(io)=>{
         console.log("User connected : ",socket.id);
         socket.on('join-notify-room',async({receiver})=>{
             try{
-               const Projectexists=await Project.findOne({members:socket.user.id});
-        if(!Projectexists)
+               const Teamexists=await Team.findOne({members:socket.user.id});
+        if(!Teamexists)
         {
-            socket.emit("error",{msg:"No project found"});
+            socket.emit("error",{msg:"No Team found"});
             return;
         }
-        socket.join(Projectexists._id.toString());
+        socket.join(Teamexists._id.toString());
         socket.join(socket.user.id);
-        socket.data.projectId=Projectexists.id;
-        const isMember=Projectexists.members.some(
+        socket.data.TeamId=Teamexists.id;
+        const isMember=Teamexists.members.some(
             (id)=>id.toString()===socket.user.id,
         );
         if(!isMember)
@@ -29,7 +29,7 @@ const assignmentsocket=(io)=>{
         const Assignment_history=await Assignment.find({receiver:socket.user.id})
         .populate("sender","name email")
         .populate("receiver","name email")
-        .populate("projectId","_id title");
+        .populate("TeamId","_id title");
         socket.emit("All-assignments",Assignment_history);
             }catch(error)
             {
@@ -39,10 +39,10 @@ const assignmentsocket=(io)=>{
     });
     socket.on("assign-task",async({task,receiver})=>{
         try{
-          const projectId=socket?.data?.projectId;
-        if(!projectId)
+          const TeamId=socket?.data?.TeamId;
+        if(!TeamId)
         {
-            socket.emit("error",{msg:"No project found"});
+            socket.emit("error",{msg:"No Team found"});
             return ;
         }
         const receiverexists=await User.findById(receiver);
@@ -58,14 +58,14 @@ const assignmentsocket=(io)=>{
         const newAssignment=await Assignment.create({
             sender:socket.user.id,
             receiver:receiverexists.id,
-            projectId:projectId,
+            TeamId:TeamId,
             task,
             status:"pending",
         });
         const PopulatedAssignment=await Assignment.findById(newAssignment._id)
         .populate("receiver","name email")
         .populate("sender","name email")
-        .populate("projectId","_id title");
+        .populate("TeamId","_id title");
         io.to(receiverexists.id).emit("receive-assignment",PopulatedAssignment);
         }catch(error)
         {
@@ -88,7 +88,7 @@ const assignmentsocket=(io)=>{
         const UpdatedAssignmnt=await Assignment.find({receiver})
         .populate("sender","name email")
         .populate("receiver","name email")
-        .populate("projectId","_id title");
+        .populate("TeamId","_id title");
 
         io.to(receiver).emit("All-assignments",UpdatedAssignmnt);
         }catch(error)

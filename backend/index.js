@@ -28,7 +28,7 @@ const io=new Server(server,{
 const AuthRoutes=require("./routes/Auth");
 const ResearchRoutes=require("./routes/research");
 const connectmongodb= require("./connection/user");
-const Projectroutes= require("./routes/Project");
+const Teamroutes= require("./routes/Team");
 const Profileroutes=require("./routes/Profile");
 const Workroutes=require("./routes/Work");
 const NotificationRoutes=require("./routes/Notifications");
@@ -41,7 +41,7 @@ const assignmentsocket=require("./sockets/Assignmentsocket");
 const FriendRequestRoutes=require("./routes/FriendReq");
 const AiserviceRoutes=require("./routes/Aiservices");
 app.use("/api/User",Userroutes);
-app.use("/api/Project",Projectroutes);
+app.use("/api/Team",Teamroutes);
 app.use("/api/Profile",Profileroutes);
 app.use("/api/My",NotificationRoutes);
 app.use("/api/Work",Workroutes);

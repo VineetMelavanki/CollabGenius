@@ -3,6 +3,6 @@ const {getrequests,acceptrequest,declinereq}=require("../controllers/Notificatio
 const { authmiddleware } = require("../middleware/authmiddleware");
 const NotificationRouter=new express.Router();
 NotificationRouter.get("/Notifications",authmiddleware,getrequests);
-NotificationRouter.post("/accept-request/:projectId",authmiddleware,acceptrequest);
-NotificationRouter.post("/decline-request/:projectId",authmiddleware,declinereq);
+NotificationRouter.post("/accept-request/:TeamId",authmiddleware,acceptrequest);
+NotificationRouter.post("/decline-request/:TeamId",authmiddleware,declinereq);
 module.exports=NotificationRouter;

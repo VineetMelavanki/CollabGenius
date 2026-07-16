@@ -1,35 +1,35 @@
 const Work=require("../model/Work");
-const Project=require("../model/project");
+const Team=require("../model/Team");
 const User=require("../model/User");
 async function CreateWork(req,res)
 {
     try{
-    const{projectId}=req.params;
+    const{TeamId}=req.params;
     const {name}=req.body;
     if(!name)
     {
-        return res.status(409).json({msg:"Please enter the project name",success:false});
+        return res.status(409).json({msg:"Please enter the Team name",success:false});
     }
    
     const ownerId=req.user.id;
-    if(!projectId)
+    if(!TeamId)
     {
-        return res.status(404).json({msg:"No project found",success:false});
+        return res.status(404).json({msg:"No Team found",success:false});
     }
-    const isOwner=await Project.findOne({
-        _id:projectId,
+    const isOwner=await Team.findOne({
+        _id:TeamId,
         ownerId:ownerId});
     if(!isOwner)
     {
-        return res.status(400).json({msg:"Only owner can create project",success:false});
+        return res.status(400).json({msg:"Only owner can create Team",success:false});
     }
     const newWork=await Work.create({
         name,
         members:[ownerId],
         owner:ownerId,
-        project:projectId,
+        Team:TeamId,
     });
-    return res.status(201).json({msg:"Project created successfully",Project:newWork,success:true});
+    return res.status(201).json({msg:"Team created successfully",Team:newWork,success:true});
     }catch(error)
     {
        return res.status(500).json({msg:"Internal server error ",success:false});
@@ -38,18 +38,18 @@ async function CreateWork(req,res)
 async function getWork(req,res)
 {
     try{
-       const {projectId}=req.params;
-    if(!projectId)
+       const {TeamId}=req.params;
+    if(!TeamId)
     {
         return res.status(404).json({msg:"Team does not exists",success:false});
     }
-    const works=await Work.find({project:projectId})
+    const works=await Work.find({Team:TeamId})
    
     if(works.length===0)
     {
-        return res.status(400).json({msg:"No project found",project:[],success:false});
+        return res.status(400).json({msg:"No Team found",Team:[],success:false});
     }
-    return res.status(200).json({msg:"All projects fetched",Project:works,success:true});
+    return res.status(200).json({msg:"All Teams fetched",Team:works,success:true});
     }catch(error)
     {
        return res.status(500).json({msg:"Internal server error",success:false});
@@ -63,9 +63,9 @@ async function getWorkById(req,res)
 
      if(!workexists)
      {
-        return res.status(404).json({msg:"No project by this name exists",success:false});
+        return res.status(404).json({msg:"No Team by this name exists",success:false});
      }
-     return res.status(200).json({msg:"Project fetched successfully",Project:workexists,success:true});
+     return res.status(200).json({msg:"Team fetched successfully",Team:workexists,success:true});
     }catch(error)
     {
        return res.status(500).json({msg:"Internal server error",success:false});
@@ -74,24 +74,24 @@ async function getWorkById(req,res)
 async function deletework(req,res)
 {
     try{
-     const{projectId,workId}=req.params;
-     if(!projectId)
+     const{TeamId,workId}=req.params;
+     if(!TeamId)
      {
         return res.status(404).json({msg:"Team not found",success:false});
      }
      if(!workId)
      {
-        return res.status(404).json({msg:"Project  not found"});
+        return res.status(404).json({msg:"Team  not found"});
      }
      const deleted=await Work.findOneAndDelete({
         _id:workId,
-        project:projectId,
+        Team:TeamId,
      })
      if(!deleted)
      {
-        return res.status(400).json({msg:"Project cannot be deleted",success:false});
+        return res.status(400).json({msg:"Team cannot be deleted",success:false});
      }
-     return res.status(200).json({msg:"Project deleted successfully",success:true});
+     return res.status(200).json({msg:"Team deleted successfully",success:true});
     }catch(error)
     {
         return res.status(500).json({msg:"Internal server error",success:false});
@@ -107,19 +107,19 @@ async function getworkbyMember(req,res)
         return res.status(404).json({msg:"User does not exists",success:false});
        }
        const allworks={};
-       const allprojects=[];
-       const projects=await Project.find({members:userId}).populate("title");
+       const allTeams=[];
+       const Teams=await Team.find({members:userId}).populate("title");
        await Promise.all(
-        projects.map(async(project)=>{
-        const works=await Work.find({project:project._id}).populate("name");
+        Teams.map(async(Team)=>{
+        const works=await Work.find({Team:Team._id}).populate("name");
         if(works.length>0)
         {
-          allworks[project._id]=works;
-          allprojects.push(project._id);
+          allworks[Team._id]=works;
+          allTeams.push(Team._id);
         }
        })
        );
-       return res.status(200).json({msg:"All works fetched sucessfully",allworks:allworks,allprojects:allprojects,success:true});
+       return res.status(200).json({msg:"All works fetched sucessfully",allworks:allworks,allTeams:allTeams,success:true});
     }catch(error)
     {
         console.log("The error is : ",error);

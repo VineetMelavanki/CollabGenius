@@ -10,9 +10,9 @@ const RequestSchema=new mongoose.Schema({
         ref:"User",
         required:true,
     },
-    projectId:{
+    TeamId:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Project",
+        ref:"team",
         required:true,
     },
     message:{

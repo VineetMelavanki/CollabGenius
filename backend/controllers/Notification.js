@@ -1,5 +1,5 @@
 const {Notifications}=require("../model/Notifications");
-const project=require("../model/project");
+const Team=require("../model/Team");
 const User=require("../model/User");
 async function getrequests(req,res)
 {
@@ -7,7 +7,7 @@ async function getrequests(req,res)
       const userId=req.user.id; 
       const Notification=await Notifications.find({receiver:userId})
       .populate("sender","name email")
-      .populate("project","title ownerId");
+      .populate("Team","title ownerId");
       if(Notification.length===0)
       {
          return res.status(200).json({msg:"No notifications received",Notify:[],success:true});
@@ -23,34 +23,34 @@ async function getrequests(req,res)
 async function acceptrequest(req,res)
 {
    try{
-      const {projectId}=req.params;
+      const {TeamId}=req.params;
       const userId=req.user.id;
       console.log("req.params:", req.params);
-console.log("projectId:", projectId);
-console.log("typeof projectId:", typeof projectId);
+console.log("TeamId:", TeamId);
+console.log("typeof TeamId:", typeof TeamId);
       const notification=await Notifications.findOne({
          receiver:userId,
-         project:projectId,
+         Team:TeamId,
       });
       if(!notification)
       {
          return res.status(404).json({msg:"Notification not found",success:false});
       }
-      const projectexists=await project.findById(projectId);
-      if(!projectexists)
+      const Teamexists=await Team.findById(TeamId);
+      if(!Teamexists)
       {
-         return res.status(404).json({msg:"Project not found",success:false});
+         return res.status(404).json({msg:"Team not found",success:false});
       }
 
-      // Add user to the project members array if not already present
-      if (!projectexists.members.includes(userId)) {
-         projectexists.members.push(userId);
-         await projectexists.save();
+      // Add user to the Team members array if not already present
+      if (!Teamexists.members.includes(userId)) {
+         Teamexists.members.push(userId);
+         await Teamexists.save();
       }
       
       await Notifications.findByIdAndDelete(notification._id);
       
-      return res.status(200).json({msg:"Successfully joined the team",project:projectexists,success:true});
+      return res.status(200).json({msg:"Successfully joined the team",Team:Teamexists,success:true});
    }catch(error)
    {
          console.log(error);
@@ -60,21 +60,21 @@ console.log("typeof projectId:", typeof projectId);
 async function declinereq(req,res)
 {
    try{
-    const {projectId}=req.params;
+    const {TeamId}=req.params;
    const userId=req.user.id;
    const notification=await Notifications.findOne({
       receiver:userId,
-      project:projectId,
+      Team:TeamId,
      
    });
    if(!notification)
    {
       return res.status(404).json({msg:"No notification found",success:false});
    }
-   const projectexists=await project.findById(projectId);
-   if(!projectexists)
+   const Teamexists=await Team.findById(TeamId);
+   if(!Teamexists)
    {
-      return res.status(404).json({msg:"Project not found",success:false});
+      return res.status(404).json({msg:"Team not found",success:false});
    }
    await Notifications.findByIdAndDelete(notification._id);
 

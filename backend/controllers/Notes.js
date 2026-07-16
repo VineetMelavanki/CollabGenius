@@ -1,5 +1,5 @@
 const RepoNotes=require("../model/RepoNotes");
-const Project=require("../model/project");
+const Team=require("../model/Team");
 const Work=require("../model/Work");
 const SavedRepo=require("../model/SavedRepo");
 async function CreateGithubRepoNotes(req,res)

@@ -1,5 +1,5 @@
 const Work=require("../model/Work");
-const Project=require("../model/project");
+const Team=require("../model/Team");
 const User=require("../model/User");
 const ResearchTask=require("../model/ResearchTask");
 const SavedRepo=require("../model/SavedRepo");
@@ -7,19 +7,19 @@ const Profile = require("../model/Profile");
 async function CreateTask(req,res)
 {
     try{
-      const{projectId,workId}=req.params;
+      const{TeamId,workId}=req.params;
       const{description}=req.body;
       if(!description)
       {
         return res.status(409).json({msg:"Please enter the task",success:false});
       }
       const user=await User.findById(req.user.id);
-      const Projectexists=await Project.findById(projectId);
-      if(!Projectexists)
+      const Teamexists=await Team.findById(TeamId);
+      if(!Teamexists)
       {
-        return res.status(404).json({msg:"Project does not exists",success:false});
+        return res.status(404).json({msg:"Team does not exists",success:false});
       }
-      const Leader=Projectexists.ownerId;
+      const Leader=Teamexists.ownerId;
       if(user._id.toString()!==Leader.toString())
       {
         return res.status(401).json({msg:"Only team leaders can create task",success:false});
@@ -27,7 +27,7 @@ async function CreateTask(req,res)
         const newTask=await ResearchTask.create({
             description:description,
             workId:workId,
-            projectId:projectId,
+            TeamId:TeamId,
             createdby:req.user.id,
         });
       
@@ -41,18 +41,18 @@ async function CreateTask(req,res)
 async function GetallTasks(req,res)
 {
     try{
-        const{workId,projectId}=req.params;
-        const Projectexists=await Project.findById(projectId);
-        if(!Projectexists)
+        const{workId,TeamId}=req.params;
+        const Teamexists=await Team.findById(TeamId);
+        if(!Teamexists)
         {
-            return res.status(404).json({msg:"No project exists",success:false});
+            return res.status(404).json({msg:"No Team exists",success:false});
         }
         const workexists=await Work.findById(workId);
         if(!workexists)
         {
             return res.status(404).json({msg:"No research exists",success:false});
         }
-        const Tasks=await ResearchTask.find({projectId,workId}).populate("relatedrepos","name repourl")
+        const Tasks=await ResearchTask.find({TeamId,workId}).populate("relatedrepos","name repourl")
         .populate("assignedto","name email");
         if(Tasks.length==0)
         {
@@ -87,9 +87,9 @@ async function DeleteTask(req,res)
     try{
       console.log("Delete route hit");
   console.log(req.params);
-      const {TaskId,projectId,workId}=req.params;
-      const Projectexists=await Project.findById(projectId);
-      if(!Projectexists)
+      const {TaskId,TeamId,workId}=req.params;
+      const Teamexists=await Team.findById(TeamId);
+      if(!Teamexists)
       {
         return res.status(404).json({msg:"Team does not exists",success:false});
       }
@@ -114,7 +114,7 @@ async function DeleteTask(req,res)
 async function AddSavedRepositories(req,res)
 {
      try{
-        const{projectId,workId,TaskId,repoId}=req.params;
+        const{TeamId,workId,TaskId,repoId}=req.params;
         
         
         const taskexists=await ResearchTask.findById(TaskId);
@@ -138,11 +138,11 @@ async function AddSavedRepositories(req,res)
 async function assignTask(req,res)
 {
   try{
-       const{projectId,workId,TaskId,memberId}=req.params;
-       const projectexists=await Project.findById(projectId);
-       if(!projectexists)
+       const{TeamId,workId,TaskId,memberId}=req.params;
+       const Teamexists=await Team.findById(TeamId);
+       if(!Teamexists)
        {
-        return res.status(404).json({msg:"Project does not exists",success:false});
+        return res.status(404).json({msg:"Team does not exists",success:false});
        }
        const workexists=await Work.findById(workId);
        if(!workexists)
@@ -154,12 +154,12 @@ async function assignTask(req,res)
        {
         return res.status(404).json({msg:"Task does not exist",success:false});
        }
-       const isMember=projectexists.members.some(
+       const isMember=Teamexists.members.some(
         member=>member._id.toString()==memberId,
        );
        if(!isMember)
        {
-        return res.status(400).json({msg:"User is not a member of this project"});
+        return res.status(400).json({msg:"User is not a member of this Team"});
        }
 
        const profile=await Profile.findOne({

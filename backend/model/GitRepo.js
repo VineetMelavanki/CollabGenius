@@ -5,9 +5,9 @@ const GithubRepoSchema=new mongoose.Schema({
         required:true,
         unique:true
     },
-    projectId:{
+    TeamId:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Project",
+        ref:"Team",
         required:true
     },
     workId:{

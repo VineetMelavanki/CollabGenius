@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const projectSchema = new mongoose.Schema({
+const TeamSchema = new mongoose.Schema({
     title :
     {
         type : String,
@@ -28,5 +28,5 @@ const projectSchema = new mongoose.Schema({
     timestamps:true,
 }
 );
-const Project = mongoose.model("Project", projectSchema);
-module.exports = Project;
+const Team= mongoose.model("Team", TeamSchema);
+module.exports = Team;

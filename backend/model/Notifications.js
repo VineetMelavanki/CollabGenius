@@ -20,9 +20,9 @@ const NotificationSchema=new mongoose.Schema({
         enum:["accepted","pending","declined"],
         default:"pending",
     },
-    project:{
+    Team:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Project",
+        ref:"Team",
         required:true,
     },
     createdAt:{

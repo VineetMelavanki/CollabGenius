@@ -10,9 +10,9 @@ const WorkSchema=new mongoose.Schema({
         required:true,
     },
     
-    project:{
+    Team:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:'Project',
+        ref:'Team',
         required:true,
     },
 },{timestamps:true});
