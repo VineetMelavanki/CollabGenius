@@ -59,7 +59,7 @@ export default function Teamassignment(){
                          <div className="flex flex-row justify-center items-center   gap-3">
                           <h1 className="text-md"><span onClick={()=>navigate(`/view-profile/${assignment.sender._id}`)} className="text-red-500 hover:underline">{assignment.sender.name}</span> has task for you : {assignment.task}</h1>
                           
-                          <FiCheckSquare  onClick={()=>navigate(`/get-project/${assignment.projectId?._id}`)} className="w-9 h-9 text-green-500"/>
+                          <FiCheckSquare  onClick={()=>navigate(`/get-Team/${assignment.TeamId?._id}`)} className="w-9 h-9 text-green-500"/>
                           <XSquare onClick={()=>removeassignment({receiver:assignment.receiver._id,task:assignment.task})} className="w-9 h-9 text-red-500" />
                        
                          </div>

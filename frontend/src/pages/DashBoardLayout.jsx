@@ -159,7 +159,7 @@ export default function DashBoardLayout({ children }) {
                 All USERS
               </button>
               <button className="text-white bg-blue-500 border-2 border-gray-300 font-bold px-4 py-2 rounded-lg hover:bg-blue-600 transition"
-              onClick={()=>navigate("/your-projects")}>
+              onClick={()=>navigate("/your-Teams")}>
                 Your Team
               </button>
             

@@ -44,8 +44,8 @@ export default function OllamaDashboard({onClose,prompt,answer,dupliprompt}){
                       <div className="grid grid-cols-3 p-2 gap-2 border-2">
                         {answer.projects.map((project)=>(
                           <div key={project.id} className="flex flex-col shadow-2xl hover:shadow-xl border p-2 gap-2">
-                             <h1 className="text-blue-400 font-bold">{project?.title}</h1>
-                             <button className="text-white bg-green-500 font-bold" onClick={()=>navigate(`/get-project/${project.id}`)}>View</button>
+                             <h1 className="text-blue-400 font-bold">{project?.name}</h1>
+                             <button className="text-white bg-green-500 font-bold" onClick={()=>navigate(`/get-project/${project?.project._id}`)}>View</button>
                           </div>
                         ))}
                       </div>

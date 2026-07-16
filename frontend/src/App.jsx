@@ -10,9 +10,9 @@ import CreateProfile from './pages/CreateProfile';
 import About from './pages/About';
 import Navbar from './pages/navbar';
 import DashBoardLayout from './pages/DashBoardLayout';
-import Allprojects from './pages/allprojects';
-import Projectdetails from './pages/Projectdetails';
-import Getyourprojects from './pages/getyourprojects';
+import AllTeams from './pages/allTeams';
+import Teamdetails from './pages/Teamdetails';
+import GetyourTeams from './pages/getyourTeams';
 import Allusers from './pages/Getallusers';
 import ViewIndiProfile from './pages/ViewIndiProfile';
 import SearchUsers from './pages/SearchUsers';
@@ -52,24 +52,24 @@ return (
       </DashBoardLayout>
       }/>
       
-        <Route path='/getallprojects' element={
+        <Route path='/getallTeams' element={
           <DashBoardLayout>
             <SideBar>
-            <Allprojects/>
+            <AllTeams/>
             </SideBar>
           </DashBoardLayout>
         }/>
-        <Route path='/get-project/:projectId' element={
+        <Route path='/get-Team/:TeamId' element={
           <DashBoardLayout>
             <SideBar>
-            <Projectdetails/>
+            <Teamdetails/>
             </SideBar>
           </DashBoardLayout>
         }/>
-        <Route path='/your-projects' element={
+        <Route path='/your-Teams' element={
           <DashBoardLayout>
             <SideBar>
-            <Getyourprojects/>
+            <GetyourTeams/>
             </SideBar>
           </DashBoardLayout>
         }/>
@@ -86,7 +86,7 @@ return (
             <Allusers/>
             </DashBoardLayout>
         }/>
-        <Route path='/Research/:projectId/:workId' element={
+        <Route path='/Research/:TeamId/:workId' element={
           <DashBoardLayout>
               <SideBar>
               <Research/>

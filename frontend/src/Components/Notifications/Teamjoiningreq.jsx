@@ -27,9 +27,9 @@ export default function TeamJoiningreq(){
       getallRequests();
      },[])
 
-     const acceptTeamrequest=async(senderId,projectId,requestId)=>{
+     const acceptTeamrequest=async(senderId,TeamId,requestId)=>{
             try{
-              const response=await axios.post(`http://localhost:8000/api/Request/accept-request/${projectId}/${senderId}`,{},
+              const response=await axios.post(`http://localhost:8000/api/Request/accept-request/${TeamId}/${senderId}`,{},
                 {
                   withCredentials:true,
                 }
@@ -51,9 +51,9 @@ export default function TeamJoiningreq(){
             }
       }
 
-      const declineTeamrequest=async(senderId,projectId,requestId)=>{
+      const declineTeamrequest=async(senderId,TeamId,requestId)=>{
         try{
-            const response=await axios.post(`http://localhost:8000/api/Request/decline-request/${projectId}/${senderId}`,{},
+            const response=await axios.post(`http://localhost:8000/api/Request/decline-request/${TeamId}/${senderId}`,{},
               {
                 withCredentials:true,
               }
@@ -80,10 +80,10 @@ export default function TeamJoiningreq(){
                        <div className="flex flex-col bg-purple-50">
                         
                          <div className="flex flex-row gap-3 w-full p-2" key={request._id} >
-                              <p className="text-black text-md font-mono "><span onClick={()=>navigate(`/view-profile/${request.sender._id}`)} className="text-red-500 hover:underline mx-2">{request.sender.name}</span>{request.message}<span className="text-md text-green-500 hover:underline font-sans mx-3"onClick={()=>navigate(`/get-project/${request.projectId._id}`)}>{request.projectId.title}</span></p>
+                              <p className="text-black text-md font-mono "><span onClick={()=>navigate(`/view-profile/${request.sender._id}`)} className="text-red-500 hover:underline mx-2">{request.sender.name}</span>{request.message}<span className="text-md text-green-500 hover:underline font-sans mx-3"onClick={()=>navigate(`/get-Team/${request.TeamId._id}`)}>{request.TeamId.title}</span></p>
                               <div className="flex flex-1 flex-row justify-end my-2 gap-2">
-                                <FiCheckSquare bo onClick={()=>acceptTeamrequest(request.sender._id,request.projectId._id,request._id)} className="text-green-500 w-8 h-8"/>
-                                <XSquare onClick={()=>declineTeamrequest(request.sender._id,request.projectId._id,request._id)} className="text-red-500 w-8 h-8 mx-2"/>
+                                <FiCheckSquare bo onClick={()=>acceptTeamrequest(request.sender._id,request.TeamId._id,request._id)} className="text-green-500 w-8 h-8"/>
+                                <XSquare onClick={()=>declineTeamrequest(request.sender._id,request.TeamId._id,request._id)} className="text-red-500 w-8 h-8 mx-2"/>
                               </div>
                          
                          </div>

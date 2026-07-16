@@ -4,8 +4,8 @@ import { useState, useEffect,useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaTrash, FaUserPlus, FaPencilAlt, FaArrowLeft, FaUsers, FaEnvelope, FaCrown } from "react-icons/fa";
 import{io} from "socket.io-client";
-export default function Projectdetails() {
-  const { projectId } = useParams();
+export default function Teamdetails() {
+  const { TeamId } = useParams();
   const navigate = useNavigate();
   const [error, seterror] = useState("");
   const [message, setmessage] = useState("");
@@ -13,15 +13,15 @@ export default function Projectdetails() {
   const [owner, setowner] = useState(null);
   const[Messages,setMessages]=useState([]);
   const [ownerId, setownerId] = useState(null);
-  const [project, setproject] = useState(null);
+  const [Team, setTeam] = useState(null);
   const [user, setuser] = useState(null);
   const[usechat,setusechat]=useState(false);
   const[popwork,setpopwork]=useState(false);
   const[works,setworks]=useState([]);
   const[listmsg,setlistmsg]=useState("");
   const[listerror,setlisterror]=useState("");
-  const[projectdeletemsg,setprojectdeletemsg]=useState("");
-  const[projectdeleteerror,setprojectdeleteerror]=useState("");
+  const[Teamdeletemsg,setTeamdeletemsg]=useState("");
+  const[Teamdeleteerror,setTeamdeleteerror]=useState("");
   const[workerror,setworkerror]=useState("");
    const[isMember,setisMember]=useState(null);
    const[error3,seterror3]=useState("");
@@ -44,17 +44,17 @@ export default function Projectdetails() {
   const socketRef=useRef(null);
   const fetchWorks = async () => {
   const response = await axios.get(
-    `http://localhost:8000/api/Work/get-works/${projectId}`,
+    `http://localhost:8000/api/Work/get-works/${TeamId}`,
     {
       withCredentials: true
     }
   );
-  setworks(response.data.Project);
+  setworks(response.data.Team);
 };
 useEffect(()=>{
   const getallmembers=async()=>{
     try{
-      const response=await axios.get(`http://localhost:8000/api/Project/all-members/${projectId}`,{
+      const response=await axios.get(`http://localhost:8000/api/Team/all-members/${TeamId}`,{
         withCredentials:true,
       });
       console.log("All members : ",response.data.members);
@@ -73,11 +73,11 @@ useEffect(()=>{
     }
   }
   getallmembers();
-},[projectId]);
+},[TeamId]);
     useEffect(()=>{
       const checkisMember=async()=>{
         try{
-         const response=await axios.get(`http://localhost:8000/api/Project/is-Member/${projectId}`,
+         const response=await axios.get(`http://localhost:8000/api/Team/is-Member/${TeamId}`,
           {
             withCredentials:true,
           }
@@ -87,7 +87,7 @@ useEffect(()=>{
         {
           if(error.response)
           {
-            seterror(error?.response?.data?.msg || "You are not a member of this project");
+            seterror(error?.response?.data?.msg || "You are not a member of this Team");
           }
           else
           {
@@ -96,22 +96,22 @@ useEffect(()=>{
         }
       }
       checkisMember();
-  },[projectId]);
+  },[TeamId]);
   useEffect(()=>{
-     const getallProjects=async()=>{
+     const getallTeams=async()=>{
       try{
-        const response=await axios.get(`http://localhost:8000/api/Work/get-works/${projectId}`,
+        const response=await axios.get(`http://localhost:8000/api/Work/get-works/${TeamId}`,
           {
             withCredentials: true
           }
         );
-       setworks(response.data.Project);
-      setlistmsg(response.data.msg || "ALL Projects fetched successfully")
+       setworks(response.data.Team);
+      setlistmsg(response.data.msg || "ALL Teams fetched successfully")
       }catch(error)
       {
           if(error.response)
           {
-            setlisterror(error?.response?.data?.msg || "No project Created");
+            setlisterror(error?.response?.data?.msg || "No Team Created");
           }
           else
           {
@@ -119,8 +119,8 @@ useEffect(()=>{
           }
       }
      }
-     getallProjects();
-  },[projectId]);
+     getallTeams();
+  },[TeamId]);
   useEffect(()=>{
     const socket=io("http://localhost:8000",
       {
@@ -130,7 +130,7 @@ useEffect(()=>{
     socketRef.current=socket;
     socket.on("connect",()=>{
       console.log("User connected : ",socket.id)
-      socket.emit("join-room",{projectId})
+      socket.emit("join-room",{TeamId})
     });
     
     socket.on("receive-message",(msg)=>{
@@ -142,7 +142,7 @@ useEffect(()=>{
     return()=>{
       socket.disconnect();
     }
-  },[projectId]);
+  },[TeamId]);
   const handlechangetask=(e)=>{
     settaskformdata((prev)=>({...prev,[e.target.name]:e.target.value}));
   }
@@ -172,13 +172,13 @@ useEffect(()=>{
     setworkerror("");
     setworkmsg("");
     try{
-     const response=await axios.post(`http://localhost:8000/api/Work/create-work/${projectId}`,workformdata,
+     const response=await axios.post(`http://localhost:8000/api/Work/create-work/${TeamId}`,workformdata,
       {
         withCredentials: true
       }
      );
-    setworkmsg(response.data.msg || "Project Created successfully");
-    setworks((prev)=>[...prev,response.data.Project]);
+    setworkmsg(response.data.msg || "Team Created successfully");
+    setworks((prev)=>[...prev,response.data.Team]);
     setworkformdata({name : ""});
     setworkmsg("");
     fetchWorks();
@@ -187,7 +187,7 @@ useEffect(()=>{
     {
        if(error.response)
        {
-         setworkerror(error.response?.data?.msg || "Cannot create Project");
+         setworkerror(error.response?.data?.msg || "Cannot create Team");
        }
        else
        {
@@ -200,7 +200,7 @@ useEffect(()=>{
     setmessage("");
     try {
       const response = await axios.delete(
-        `http://localhost:8000/api/Project/remove-member/${projectId}/${memberId}`,
+        `http://localhost:8000/api/Team/remove-member/${TeamId}/${memberId}`,
         { withCredentials: true }
       );
       setmembers((prev) => prev.filter((m) => (m._id || m).toString() !== memberId.toString()));
@@ -217,17 +217,17 @@ useEffect(()=>{
     setmessage("");
     try {
       const response = await axios.post(
-        `http://localhost:8000/api/Project/Add-members/${projectId}`,
+        `http://localhost:8000/api/Team/Add-members/${TeamId}`,
         formdata,
         { withCredentials: true }
       );
       setmessage(response?.data?.msg || "Added member successfully");
       if (response.data.success) {
         const refreshed = await axios.get(
-          `http://localhost:8000/api/Project/get-project/${projectId}`,
+          `http://localhost:8000/api/Team/get-Team/${TeamId}`,
           { withCredentials: true }
         );
-        setmembers(refreshed.data.projectdata.members || []);
+        setmembers(refreshed.data.Teamdata.members || []);
       }
       setformdata({ email: "" });
       setshowaddmodel(false);
@@ -240,29 +240,29 @@ useEffect(()=>{
     setformdata((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const deleteproject = async () => {
-    if (!window.confirm("Are you sure you want to delete this project? This cannot be undone.")) return;
+  const deleteTeam = async () => {
+    if (!window.confirm("Are you sure you want to delete this Team? This cannot be undone.")) return;
     seterror("");
     setmessage("");
     try {
       const response = await axios.delete(
-        `http://localhost:8000/api/Project/delete/${projectId}`,
+        `http://localhost:8000/api/Team/delete/${TeamId}`,
         { withCredentials: true }
       );
-      setmessage(response.data?.msg || "Project deleted successfully");
-      setTimeout(() => navigate("/getallprojects"), 1500);
+      setmessage(response.data?.msg || "Team deleted successfully");
+      setTimeout(() => navigate("/getallTeams"), 1500);
     } catch (err) {
-      seterror(err.response?.data?.msg || "Cannot delete project");
+      seterror(err.response?.data?.msg || "Cannot delete Team");
     }
   };
- const deleteaproject=async(workId)=>{
+ const deleteaTeam=async(workId)=>{
     try{
-     const response=await axios.delete(`http://localhost:8000/api/Work/delete-work/${projectId}/${workId}`,
+     const response=await axios.delete(`http://localhost:8000/api/Work/delete-work/${TeamId}/${workId}`,
       {
         withCredentials: true
       }
      );
-     setprojectdeletemsg(response.data.msg || 'Project deleted successfully');
+     setTeamdeletemsg(response.data.msg || 'Team deleted successfully');
      if(response.data.success)
      {
      fetchWorks();
@@ -271,22 +271,22 @@ useEffect(()=>{
     {
         if(error.response)
         {
-          setprojectdeleteerror(error.response?.data?.msg || "Project cannot be deleted");
+          setTeamdeleteerror(error.response?.data?.msg || "Team cannot be deleted");
         }
         else{
-          setprojectdeleteerror("Internal server error");
+          setTeamdeleteerror("Internal server error");
         }
     }
  }
 
   useEffect(() => {
-    const displayproject = async () => {
+    const displayTeam = async () => {
       setloading(true);
       seterror("");
       setmessage("");
       try {
         const response = await axios.get(
-          `http://localhost:8000/api/Project/get-project/${projectId}`,
+          `http://localhost:8000/api/Team/get-Team/${TeamId}`,
           { withCredentials: true }
         );
         const response1 = await axios.get("http://localhost:8000/api/Profile/View-Profile", {
@@ -295,45 +295,45 @@ useEffect(()=>{
         const ProfileData = response1.data.Profile;
         const currentUser = ProfileData.userId;
         setuser(currentUser);
-        const projectData = response.data.projectdata;
-        setproject(projectData);
+        const TeamData = response.data.Teamdata;
+        setTeam(TeamData);
         
        
         const oid =
-          typeof projectData.ownerId === "object"
-            ? projectData.ownerId._id
-            : projectData.ownerId;
+          typeof TeamData.ownerId === "object"
+            ? TeamData.ownerId._id
+            : TeamData.ownerId;
         setownerId(oid);
         const ownerIdVal =
-          typeof projectData.ownerId === "object"
-            ? projectData.ownerId._id || projectData.ownerId
-            : projectData.ownerId;
+          typeof TeamData.ownerId === "object"
+            ? TeamData.ownerId._id || TeamData.ownerId
+            : TeamData.ownerId;
         setowner(
           ownerIdVal &&
             (ownerIdVal.toString() === currentUser?.toString() || ownerIdVal === currentUser)
         );
       } catch (err) {
-        seterror(err.response?.data?.msg || "Cannot fetch project");
+        seterror(err.response?.data?.msg || "Cannot fetch Team");
       } finally {
         setloading(false);
       }
     };
-    displayproject();
-  }, [projectId]);
+    displayTeam();
+  }, [TeamId]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading project...</p>
+          <p className="mt-4 text-gray-600">Loading Team...</p>
         </div>
       </div>
     );
   }
  const handlejoinrequest=async()=>{
   try{
-      const response=await axios.post(`http://localhost:8000/api/Request/send-request/${projectId}`,{},
+      const response=await axios.post(`http://localhost:8000/api/Request/send-request/${TeamId}`,{},
         {
           withCredentials:true,
         }
@@ -371,26 +371,26 @@ useEffect(()=>{
           </div>
         )}
 
-        {project && (
+        {Team && (
           <div className="space-y-6">
-            {/* Project header card */}
+            {/* Team header card */}
             <div className="bg-white rounded-2xl shadow-md p-6 md:p-8">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 pb-6 border-b border-gray-200">
                 <div>
                   <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
-                    {project.title}
+                    {Team.title}
                   </h1>
                   <div className="flex items-center gap-3 mt-2">
                     <span
                       className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        project.status === "active"
+                        Team.status === "active"
                           ? "bg-green-100 text-green-800"
-                          : project.status === "archived"
+                          : Team.status === "archived"
                           ? "bg-yellow-100 text-yellow-800"
                           : "bg-gray-100 text-gray-800"
                       }`}
                     >
-                      {project.status?.toUpperCase()}
+                      {Team.status?.toUpperCase()}
                     </span>
                     <span className="flex items-center gap-1 text-gray-500 text-sm">
                       <FaUsers className="w-4 h-4" />
@@ -410,7 +410,7 @@ useEffect(()=>{
                  Create Project
                 </button>
                     <button
-                      onClick={deleteproject}
+                      onClick={deleteTeam}
                       className="flex  items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition text-sm font-medium"
                     >
                       <FaTrash className="w-4 h-4" />
@@ -420,21 +420,21 @@ useEffect(()=>{
                 )}
               </div>
 
-              {/* Project info */}
+              {/* Team info */}
               <div className="space-y-3">
                 <div className="flex items-center gap-2">
                   <span className="text-gray-500 text-sm font-medium w-24">Owner</span>
                   <span className="flex items-center gap-1 text-gray-900">
                     <FaCrown className="w-4 h-4 text-amber-500" />
-                    {typeof project.ownerId === "object"
-                      ? project.ownerId.name || project.ownerId.email || "Leader"
+                    {typeof Team.ownerId === "object"
+                      ? Team.ownerId.name || Team.ownerId.email || "Leader"
                       : "Leader"}
                   </span>
                 </div>
-                {project.description && (
+                {Team.description && (
                   <div>
                     <span className="text-gray-500 text-sm font-medium block mb-1">Description</span>
-                    <p className="text-gray-700">{project.description}</p>
+                    <p className="text-gray-700">{Team.description}</p>
                   </div>
                 )}
               </div>
@@ -553,11 +553,11 @@ useEffect(()=>{
        <div className="bg-white rounded-2xl shadow-md p-6 md:p-8 mt-6">
         
          {isMember && works.length===0 ? (
-          <h1 className="text-lg text-red-500 font-bold">No Project exists</h1>
+          <h1 className="text-lg text-red-500 font-bold">No Team exists</h1>
          ):(
           <div className="grid grid-cols-1 gap-3">
-            <h1 className="flex items-start justify-start font-bold text-black">Projects</h1>
-            {!isMember && <h1 className="text-lg text-red-400">Only team members can access the projects</h1>}
+            <h1 className="flex items-start justify-start font-bold text-black">Teams</h1>
+            {!isMember && <h1 className="text-lg text-red-400">Only team members can access the Teams</h1>}
           {isMember && works.map((work,index)=>(
             <div key={work._id} className="bg-gray-50 flex flex-row gap-3 p-4 rounded-2xl shadow-lg hover:shadow-md">
               <div className="flex flex-1 flex-row gap-2">
@@ -565,8 +565,8 @@ useEffect(()=>{
                   <h1 className="text-blue-400 font-bold p-2 text-xl">{work.name}</h1>
               </div>
                 <div className="flex flex-row gap-5">
-                  <button onClick={()=>navigate(`/Research/${projectId}/${work._id}`)} className="text-white bg-green-400 hover:bg-green-500 font-bold p-2 rounded-xl">Research</button>
-                  <button onClick={()=>deleteaproject(work._id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition">
+                  <button onClick={()=>navigate(`/Research/${TeamId}/${work._id}`)} className="text-white bg-green-400 hover:bg-green-500 font-bold p-2 rounded-xl">Research</button>
+                  <button onClick={()=>deleteaTeam(work._id)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition">
                    <FaTrash className="w-4 h-4" />
                   </button>
                 </div>
@@ -605,21 +605,21 @@ useEffect(()=>{
             </div>
           </div>
         )}
-        {/*Project creation section */}
+        {/*Team creation section */}
         {popwork && (
           <div className="fixed inset-0 bg-black/50 flex  items-center justify-center z-50 p-4">
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
               {workerror && <p className="text-lg font-bold text-red-500 mb-2">{workerror}</p>}
               {workmsg && <p className="text-lg font-bold text-green-500 mb-2">{workmsg}</p>}
-               <h2 className="text-xl font-bold text-gray-900 mb-4">Create Project</h2>
+               <h2 className="text-xl font-bold text-gray-900 mb-4">Create Team</h2>
                <form onSubmit={SubmitWork} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Project
+                    Team
                   </label>
                   <input type="text"
                   name="name"
-                  placeholder="Enter Project name"
+                  placeholder="Enter Team name"
                   value={workformdata.name}
                   onChange={handleChangeinWork}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2" required/>

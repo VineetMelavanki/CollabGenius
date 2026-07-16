@@ -12,10 +12,9 @@ export default function Homescreen(){
   const navigate=useNavigate();
    const {user, loading}=useAuth();
    const[users,setusers]=useState(0);
-   const[projects,setprojects]=useState([]);
+   const[Teams,setTeams]=useState([]);
    const[researchs,setresearchs]=useState({});
    const[openaisearch,setopenaisearch]=useState(false);
-   const[Teams,setTeams]=useState(0);
    const[prompt,setprompt]=useState("");
    const[dupliprompt,setdupliprompt]=useState(null);
    const[addteam,setaddteam]=useState(false);
@@ -51,9 +50,9 @@ export default function Homescreen(){
     }
    }
    useEffect(()=>{
-    const fetchallprojects=async()=>{
+    const fetchallTeams=async()=>{
       try{
-       const response=await axios.get("http://localhost:8000/api/Project/getallprojects",{
+       const response=await axios.get("http://localhost:8000/api/Team/getallTeams",{
         withCredentials:true,
        });
        setTeams(response.data?.length);
@@ -70,7 +69,7 @@ export default function Homescreen(){
       }
     }
     }
-    fetchallprojects();
+    fetchallTeams();
    },[Teams]);
    useEffect(()=>{
     const fetchallusers=async()=>{
@@ -104,10 +103,10 @@ export default function Homescreen(){
          const response=await axios.get(`http://localhost:8000/api/Work/get-work-by-member/${user._id}`,{
           withCredentials:true,
          });
-         setprojects(response?.data?.allprojects);
+         setTeams(response?.data?.allTeams);
          setresearchs(response.data?.allworks);
          console.log("All research data:",response.data?.allworks);
-         console.log("All projects : ",response?.data?.allprojects);
+         console.log("All Teams : ",response?.data?.allTeams);
       }catch(error)
       {
         if(error.response)
@@ -160,7 +159,7 @@ export default function Homescreen(){
                       <input type="text"
                       value={prompt}
                       onChange={handlechange}
-                      placeholder="Describe your ideas , project or what you need"
+                      placeholder="Describe your ideas , Team or what you need"
                         className="flex-1 w-full h-12 px-4 rounded-xl border border-gray-300 outline-none focus:ring-2 focus:ring-purple-500"/>
 
                           <button type="submit" onClick={()=>setopenaisearch(true)}
@@ -215,13 +214,13 @@ export default function Homescreen(){
                         
                      </div>
                      <div className="flex flex-col  gap-2">
-                          {projects.length > 0 && (
-                            projects.map((project)=>(
-                             researchs[project]?.map((research)=>(
+                          {Teams.length > 0 && (
+                            Teams.map((Team)=>(
+                             researchs[Team]?.map((research)=>(
                               <div key={research._id} className="bg-white shadow-md rounded-xl  flex flex-row gap-2 p-2">
                                    <h1 className="text-blue-500 text-md font-bold">{research?.name}</h1>
                                    <div className="flex flex-1 justify-end ">
-                                      <button onClick={()=>navigate(`/Research/${project}/${research._id}`)} className="text-black text-md mx-2">View</button>
+                                      <button onClick={()=>navigate(`/Research/${Team}/${research._id}`)} className="text-black text-md mx-2">View</button>
                                    </div>
                               </div>
                              ))

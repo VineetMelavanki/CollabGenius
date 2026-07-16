@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 import { useState ,useEffect } from "react";
 import { PlusIcon } from "lucide-react";
-export default function CreatedRepos({projectId,workId,Leader}){
+export default function CreatedRepos({TeamId,workId,Leader}){
     const[repolist,setrepolist]=useState([]);
     const[gitinfo,setgetinfo]=useState({
          name:"",
@@ -17,7 +17,7 @@ export default function CreatedRepos({projectId,workId,Leader}){
         seterror("");
         setmsg("");
         try{
-          const response=await axios.get(`http://localhost:8000/api/User/github/get-repo/${projectId}/${workId}`,
+          const response=await axios.get(`http://localhost:8000/api/User/github/get-repo/${TeamId}/${workId}`,
             {
               withCredentials:true,
             }
@@ -37,13 +37,13 @@ export default function CreatedRepos({projectId,workId,Leader}){
         }
      }
      getallRepo();
-  },[workId,projectId])
+  },[workId,TeamId])
   const handlereposubmit=async(e)=>{
     e.preventDefault();
     seterror("");
     setmsg("");
     try{
-        const response=await axios.post(`http://localhost:8000/api/User/github/create-repo/${projectId}/${workId}`,gitinfo,
+        const response=await axios.post(`http://localhost:8000/api/User/github/create-repo/${TeamId}/${workId}`,gitinfo,
           {
             withCredentials:true,
           }

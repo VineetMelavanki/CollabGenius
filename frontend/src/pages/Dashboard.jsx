@@ -62,7 +62,7 @@ export default function SideBar({children}) {
             </button>
 
             <button
-            onClick={()=>{navigate("/getallprojects");setactivetab("all-projects")}}
+            onClick={()=>{navigate("/getallTeams");setactivetab("all-projects")}}
             className={tabclass("all-projects")}>
               Teams
             </button>

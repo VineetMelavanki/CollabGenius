@@ -14,7 +14,7 @@ const sources=[
         logo:arxivlogo,
     },
 ];
-export default function ResearchSearchBar({projectId,workId,onClose}){
+export default function ResearchSearchBar({TeamId,workId,onClose}){
     const[selectedResources,setselectedResources]=useState(sources[0]);
  
   const [showResources,setshowResources] = useState(false);
@@ -92,7 +92,7 @@ export default function ResearchSearchBar({projectId,workId,onClose}){
   }
      const saveGithubRepo=async(repo)=>{
     try{
-         const response=await axios.post(`http://localhost:8000/api/research/save-github-repo/${projectId}/${workId}`,
+         const response=await axios.post(`http://localhost:8000/api/research/save-github-repo/${TeamId}/${workId}`,
           {
             name:repo.name,
             html_url:repo.html_url,

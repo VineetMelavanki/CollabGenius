@@ -6,7 +6,7 @@ import { ChevronDown,ChevronUp } from "lucide-react";
 import { FaTrash } from "react-icons/fa";
 import nulllogo from "../../assets/logos/null.png"
 import { FaPencilAlt } from "react-icons/fa";
-export default function TaskManagement({projectId,workId,Leader,openSavedRepo}){
+export default function TaskManagement({TeamId,workId,Leader,openSavedRepo}){
     const navigate=useNavigate();
     const[allmembers,setallmembers]=useState([]);
     const[choosesavedrepo,setchoosesavedrepo]=useState(false);
@@ -23,7 +23,7 @@ export default function TaskManagement({projectId,workId,Leader,openSavedRepo}){
     useEffect(()=>{
     const fetchTasks=async()=>{
        try{
-          const response=await axios.get(`http://localhost:8000/api/ResearchTask/get-all-tasks/${projectId}/${workId}`,{
+          const response=await axios.get(`http://localhost:8000/api/ResearchTask/get-all-tasks/${TeamId}/${workId}`,{
             withCredentials:true,
           });
           setResearchTasks(response.data.Tasks ||[]);
@@ -40,12 +40,12 @@ export default function TaskManagement({projectId,workId,Leader,openSavedRepo}){
        }
     }
     fetchTasks();
-  },[projectId, workId]);
+  },[TeamId, workId]);
 
     const handletaskSubmit=async(e)=>{
     e.preventDefault();
     try{
-       const response=await axios.post(`http://localhost:8000/api/ResearchTask/create-task/${projectId}/${workId}`,ResearchTaskformdata,
+       const response=await axios.post(`http://localhost:8000/api/ResearchTask/create-task/${TeamId}/${workId}`,ResearchTaskformdata,
         {
           withCredentials:true,
         }
@@ -68,7 +68,7 @@ export default function TaskManagement({projectId,workId,Leader,openSavedRepo}){
   const handledeletetask=async(TaskId)=>{
    
     try{
-        const response=await axios.delete(`http://localhost:8000/api/ResearchTask/delete-task/${projectId}/${workId}/${TaskId}`,{
+        const response=await axios.delete(`http://localhost:8000/api/ResearchTask/delete-task/${TeamId}/${workId}/${TaskId}`,{
           withCredentials:true,
         });
          setResearchTasks((prev)=>prev.filter((r)=>(r._id || r).toString()!==TaskId.toString()));
@@ -90,7 +90,7 @@ export default function TaskManagement({projectId,workId,Leader,openSavedRepo}){
      try{
       console.log("Task Id : ",TaskId);
       console.log("Repo Id : ",repoId);
-      const response=await axios.post(`http://localhost:8000/api/ResearchTask/add-related-repos/${projectId}/${workId}/${TaskId}/${repoId}`,{},{
+      const response=await axios.post(`http://localhost:8000/api/ResearchTask/add-related-repos/${TeamId}/${workId}/${TaskId}/${repoId}`,{},{
         withCredentials:true,
       });
       alert(response?.data?.msg || "Related Repositories added");
@@ -108,7 +108,7 @@ export default function TaskManagement({projectId,workId,Leader,openSavedRepo}){
 
   const getallmembers=async()=>{
     try{
-        const response=await axios.get(`http://localhost:8000/api/Project/all-members/${projectId}`,{
+        const response=await axios.get(`http://localhost:8000/api/Team/all-members/${TeamId}`,{
           withCredentials:true,
         });
         setallmembers(response.data.members);
@@ -128,7 +128,7 @@ export default function TaskManagement({projectId,workId,Leader,openSavedRepo}){
   
   const assigntask=async(TaskId,memberId)=>{
     try{
-      const response=await axios.post(`http://localhost:8000/api/ResearchTask/assign-task/${projectId}/${workId}/${TaskId}/${memberId}`,{},
+      const response=await axios.post(`http://localhost:8000/api/ResearchTask/assign-task/${TeamId}/${workId}/${TaskId}/${memberId}`,{},
         {
           withCredentials:true
         }
@@ -149,7 +149,7 @@ export default function TaskManagement({projectId,workId,Leader,openSavedRepo}){
 
   const fetchsavedgithubrepos=async()=>{
       try{
-       const response=await axios.get(`http://localhost:8000/api/research/saved-github-repos/${projectId}/${workId}`,{
+       const response=await axios.get(`http://localhost:8000/api/research/saved-github-repos/${TeamId}/${workId}`,{
         withCredentials:true,
        });
        setSaveRepos(response.data.Repos);
@@ -171,7 +171,7 @@ export default function TaskManagement({projectId,workId,Leader,openSavedRepo}){
           <div className="flex flex-col gap-4 rounded-[20px] border border-slate-200/70 bg-white/80 p-4 shadow-sm sm:p-5">
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-purple-600">Project workflow</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-purple-600">Team workflow</p>
                 <h1 className="text-xl font-semibold text-slate-800">Task management</h1>
               </div>
               {Leader && (

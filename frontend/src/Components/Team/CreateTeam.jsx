@@ -18,20 +18,20 @@ export default function CreateTeam({onClose}){
     setmsg("");
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/Project/Create-Project",
+        "http://localhost:8000/api/Team/Create-Team",
         formdata,
         {
           withCredentials: true
         }
       );
-      setmsg(response.data.msg || "Project Created Successfully");
+      setmsg(response.data.msg || "Team Created Successfully");
       setTimeout(()=>{
-          navigate("/your-projects");
+          navigate("/your-Teams");
       },2000)
       
     } catch (error) {
       if (error.response) {
-        seterror(error.response.data.msg || "Cannot create Project");
+        seterror(error.response.data.msg || "Cannot create Team");
       } else {
         seterror("Internal server error");
       }
@@ -46,7 +46,7 @@ export default function CreateTeam({onClose}){
                 Create Team
                 </h1>
                 <h2 className="font-light text-lg text-gray-500 text-center">
-                  Creating project helps you recruit team-mates
+                  Creating Team helps you recruit team-mates
                   </h2>
                   <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <input

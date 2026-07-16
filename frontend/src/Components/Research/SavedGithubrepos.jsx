@@ -4,7 +4,7 @@ import { useState } from "react";
 import { NotebookPen ,UserRound ,ChevronUp,ChevronDown} from "lucide-react";
 import { FolderOpenIcon } from "lucide-react";
 import { FaTrash } from "react-icons/fa";
-export default function SavedGithubRepos({projectId,workId,onClose,Leader}){
+export default function SavedGithubRepos({TeamId,workId,onClose,Leader}){
     const[githubnoteslists,setgithubnoteslist]=useState({});
     
     const[arrowdown,setarrowdown]=useState(true);
@@ -12,7 +12,7 @@ export default function SavedGithubRepos({projectId,workId,onClose,Leader}){
       const[SavedRepos,setSaveRepos]=useState([]);
      const fetchsavedgithubrepos=async()=>{
     try{
-     const response=await axios.get(`http://localhost:8000/api/research/saved-github-repos/${projectId}/${workId}`,{
+     const response=await axios.get(`http://localhost:8000/api/research/saved-github-repos/${TeamId}/${workId}`,{
       withCredentials:true,
      });
      setSaveRepos(response.data.Repos || []);
@@ -30,7 +30,7 @@ export default function SavedGithubRepos({projectId,workId,onClose,Leader}){
   }
   const deletesavedRepo=async(repoId)=>{
     try{
-      const response=await axios.delete(`http://localhost:8000/api/research/delete-github-repo/${projectId}/${workId}/${repoId}`,{
+      const response=await axios.delete(`http://localhost:8000/api/research/delete-github-repo/${TeamId}/${workId}/${repoId}`,{
         withCredentials:true,
       });
       setSaveRepos((prev)=>prev.filter((r)=>(r._id || r).toString()!==repoId.toString()));

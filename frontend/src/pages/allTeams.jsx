@@ -3,12 +3,12 @@ import { useState } from "react";
 import axios from "axios"
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-export default function Allprojects()
+export default function AllTeams()
 {
   const navigate=useNavigate();
     const[message,setmessage]=useState("");
     const[error,seterror]=useState("");
-    const[projects,setprojects]=useState([]);
+    const[Teams,setTeams]=useState([]);
     const[formdata,setformdata]=useState({
       title:"",
     });
@@ -26,14 +26,14 @@ export default function Allprojects()
       setmessage("");
 
       try{
-         const response=await axios.get("http://localhost:8000/api/Project/get-project-by-title",
+         const response=await axios.get("http://localhost:8000/api/Team/get-Team-by-title",
           {
             params:{title:formdata.title},
             withCredentials: true
           }
          );
          console.log("The title is :", console.log(formdata.title));
-         setprojects(response.data.projectdata);
+         setTeams(response.data.projectdata);
          setmessage(response.data.msg || "Project fetched successfully");
       }catch(error)
       {
@@ -47,23 +47,23 @@ export default function Allprojects()
            }
       }
     }
-     const getallprojects= async ()=>{
+     const getallTeams= async ()=>{
             setmessage("");
             seterror("");
             try{
-                const response=await axios.get("http://localhost:8000/api/Project/getallprojects",
+                const response=await axios.get("http://localhost:8000/api/Team/getallTeams",
                     {
                         withCredentials: true
                     }
                 );
                 console.log(message);
-                 setprojects(response.data.projects);
-                 setmessage(response.data.msg || "All projects fetched successfully");
+                 setTeams(response.data.Teams);
+                 setmessage(response.data.msg || "All Teams fetched successfully");
             }catch(error)
            {
             if(error.response)
             {
-                seterror(error.response?.data?.msg || "Unable to fetch projects");
+                seterror(error.response?.data?.msg || "Unable to fetch Teams");
             }
             else
             {
@@ -72,12 +72,12 @@ export default function Allprojects()
            }
         };
     useEffect(()=>{
-        getallprojects();
+        getallTeams();
     },[]);
     useEffect(()=>{
       if(formdata.title==="")
       {
-        getallprojects();
+        getallTeams();
       }
     },[formdata.title]);
   return (
@@ -85,7 +85,7 @@ export default function Allprojects()
 
     <div className="flex flex-row sm:max-w-sm md:max-w-lg lg:max-w-full border gap-3">
       <h1 className="text-2xl font-bold mb-6 sm:text-sm md:text-md lg:text-lg text-gray-800 my-4">
-        All Projects
+        All Teams
       </h1>
       <form className="flex flex-row p-2 gap-4 mb-6 sm:text-sm" onSubmit={handleSubmit} >
         <input
@@ -105,28 +105,28 @@ export default function Allprojects()
     </div>
     
     {error && <p className="text-red-500 mb-4 ">{error}</p>}
-    {projects.length === 0 ? (
-      <p className="text-gray-500">No projects found</p>
+    {Teams.length === 0 ? (
+      <p className="text-gray-500">No Teams found</p>
     ) : (
 
       <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2  lg:grid-cols-3">
 
-        {projects.map((project) => (
+        {Teams.map((team) => (
  
           <div
-            key={project._id}
+            key={team._id}
             className="bg-white p-6 rounded-xl sm:max-w-sm shadow hover:shadow-lg transition"
           >
             <h2 className="text-xl font-semibold text-gray-800">
-              {project.title}
+              {team.title}
             </h2>
 
             <p className="text-gray-500 mt-2 text-sm">
-              {project.description || "No description"}
+              {team.description || "No description"}
             </p>
 
             <button className="mt-4 text-purple-600 font-medium hover:underline"
-            onClick={()=>navigate(`/get-project/${project._id}`)}>
+            onClick={()=>navigate(`/get-Team/${team._id}`)}>
               View Team →
             </button>
           </div>

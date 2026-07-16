@@ -32,10 +32,10 @@ export default function Teaminvitation(){
         getallnotifications();
       },[]);
        //decline team invitation
-      const declinereq=async(projectId)=>{
+      const declinereq=async(TeamId)=>{
   
         try{
-            const response=await axios.post(`http://localhost:8000/api/My/decline-request/${projectId}`,{},
+            const response=await axios.post(`http://localhost:8000/api/My/decline-request/${TeamId}`,{},
                 {
                     withCredentials: true
                 }
@@ -57,13 +57,13 @@ export default function Teaminvitation(){
         }
       }
       // accept team invitation
-      const acceptrequest=async(projectId)=>{
-        console.log("project passed : ",projectId);
+      const acceptrequest=async(TeamId)=>{
+        console.log("Team passed : ",TeamId);
         console.log("Current notifications : ",notifications);
           
            try{
               const response = await axios.post(
-      `http://localhost:8000/api/My/accept-request/${projectId}`,
+      `http://localhost:8000/api/My/accept-request/${TeamId}`,
       {},
       {
         withCredentials: true
@@ -95,8 +95,8 @@ if (response.data.success) {
                                   {notification.message}
                                 </h1>
                              <div className="flex flex-1 flex-row justify-end my-2 gap-2">
-                               <FiCheckSquare onClick={()=>acceptrequest(notification.project._id)} className="w-8 h-8 text-green-500 "/>
-                               <XSquare onClick={()=>declinereq(notification.project._id)} className="text-red-500 w-8 h-8 mx-2"/>
+                               <FiCheckSquare onClick={()=>acceptrequest(notification.Team._id)} className="w-8 h-8 text-green-500 "/>
+                               <XSquare onClick={()=>declinereq(notification.Team._id)} className="text-red-500 w-8 h-8 mx-2"/>
                              </div>
                             </div>
                        ))

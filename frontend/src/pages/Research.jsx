@@ -11,8 +11,8 @@ import TaskManagement from "../Components/Research/Taskmanagement"
 import{FaTrash,FaPencilAlt,FaUser} from "react-icons/fa"
 
 export default function Research() {
-  const { workId, projectId } = useParams();
-  const [projectName, setprojectName] = useState(null);
+  const { workId, TeamId } = useParams();
+  const [TeamName, setTeamName] = useState(null);
   const[Leader,setLeader]=useState(null);
 
   const[foldersection,setfoldersection]=useState(false);
@@ -20,7 +20,7 @@ export default function Research() {
   useEffect(()=>{
     const verifyowner=async()=>{
          try{
-            const response=await axios.get(`http://localhost:8000/api/Project/verify-Leader/${projectId}`,{
+            const response=await axios.get(`http://localhost:8000/api/Team/verify-Leader/${TeamId}`,{
               withCredentials:true,
             });
             setLeader(response.data.isLeader);
@@ -37,13 +37,13 @@ export default function Research() {
          }
     } 
     verifyowner();
-  },[workId,projectId])
+  },[workId,TeamId])
   
 
   const[researchhub,setresearchhub]=useState(false);
   useEffect(() => {
     
-    const getproject = async () => {
+    const getTeam = async () => {
       try {
         const response = await axios.get(
           `http://localhost:8000/api/Work/get-WORK/${workId}`,
@@ -51,16 +51,16 @@ export default function Research() {
             withCredentials: true
           }
         );
-        setprojectName(response.data.Project);
+        setTeamName(response.data.Team);
       } catch (error) {
         if (error.response) {
-          alert(error.response?.data?.msg || "Cannot get project details");
+          alert(error.response?.data?.msg || "Cannot get Team details");
         } else {
           alert("Internal server error");
         }
       }
     };
-    getproject();
+    getTeam();
   }, [workId]);
 
   return (
@@ -68,7 +68,7 @@ export default function Research() {
        
             {foldersection && !researchhub &&  (
               <SavedGithubRepos
-              projectId={projectId}
+              TeamId={TeamId}
               workId={workId}
               onClose={()=>setfoldersection(false)}
               Leader={Leader}/>
@@ -80,8 +80,8 @@ export default function Research() {
             <h1 className="text-2xl sm:text-md md:text-2xl lg:text-2xl text-white bg-blue-400 font-bold p-2 rounded-xl">Research Panel</h1>
         
            <div className="flex flex-row">
-              <h1 className="text-2xl sm:text-md md:text-2xl lg:text-2xl text-black   font-bold p-2 rounded-xl">Project Name:</h1>
-              <h1 className="text-2xl sm:text-md md:text-2xl lg:text-2xl text-green-500 font-bold p-2">{projectName?.name}</h1>
+              <h1 className="text-2xl sm:text-md md:text-2xl lg:text-2xl text-black   font-bold p-2 rounded-xl">Team Name:</h1>
+              <h1 className="text-2xl sm:text-md md:text-2xl lg:text-2xl text-green-500 font-bold p-2">{TeamName?.name}</h1>
               
            </div>
             
@@ -102,18 +102,18 @@ export default function Research() {
          </div>
          {researchhub && (
           <ResearchSearchBar
-          projectId={projectId}
+          TeamId={TeamId}
           workId={workId}
           onClose={()=>setresearchhub(false)}/>
          )}
         </div>
          <CreatedRepos
-         projectId={projectId}
+         TeamId={TeamId}
          workId={workId}
          Leader={Leader}
          />
          <TaskManagement
-         projectId={projectId}
+         TeamId={TeamId}
          workId={workId}
          Leader={Leader}
          openSavedRepo={()=>setfoldersection(true)}/>
