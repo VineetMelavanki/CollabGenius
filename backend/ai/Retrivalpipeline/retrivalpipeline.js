@@ -25,13 +25,9 @@ async function Retrivalpipeline(req, res) {
         
         // ChromaDB returns documents as an array of arrays [[doc1, doc2...]]
         const docs = results.documents?.[0] || [];
+        console.log(results.metadatas);
         const metadatas=results.metadatas?.[0] ||[];
-        const context = await buildcontext(
-            docs.map((pageContent,index)=>({
-                pageContent,
-                metadata:metadatas[index],
-            })),
-        );
+        const context = await buildcontext(docs,metadatas);
         console.log("The context is : ",context);
         const Prompt = await CreatePrompt(processedQuery, context);
          console.log("Prompt created successfully : ",Prompt);

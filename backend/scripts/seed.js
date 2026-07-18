@@ -5,7 +5,7 @@ const { faker } = require("@faker-js/faker");
 const connectmongodb=require("../connection/user");
 const User = require("../model/User");
 const Profile = require("../model/Profile");
-const Project=require("../model/project");
+const Team=require("../model/Team");
 const Work=require("../model/Work");
 
 const adjectives = [
@@ -25,7 +25,7 @@ const products = [
     "Resume Builder",
     "Research Hub",
     "Code Analyzer",
-    "Project Tracker"
+    "Team Tracker"
 ];
 // Skills
 const skills = [
@@ -92,8 +92,10 @@ async function seedDatabase() {
 
     console.log("Deleting old data...");
 
-    await User.deleteMany({});
-    await Profile.deleteMany({});
+await User.deleteMany({});
+await Profile.deleteMany({});
+await Team.deleteMany({});
+await Work.deleteMany({});
 
     console.log("Generating fake users...");
 
@@ -153,7 +155,7 @@ async function seedDatabase() {
 
         });
         
-        const project= await Project.create({
+        const team= await Team.create({
             title:faker.company.name(),
             description:faker.company.catchPhrase,
             ownerId:user._id,
@@ -165,7 +167,7 @@ async function seedDatabase() {
         faker.helpers.arrayElement(products)
     }`,
         owner:user._id,
-        project:project._id,
+        Team:team._id,
         });
         console.log(`Generated User ${i + 1}`);
     }

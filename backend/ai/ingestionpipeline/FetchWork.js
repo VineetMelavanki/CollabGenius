@@ -4,7 +4,7 @@ async function fetchResearch(){
        const allResearchProjects=await Work.find({},{
         name:1,
         owner:1,
-        project:1,
+        Team:1,
        }).lean();
 
 

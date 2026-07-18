@@ -1,8 +1,8 @@
-const Project = require("../../model/project");
+const Team = require("../../model/Team");
 
-async function fetchProjects() {
+async function fetchTeams() {
     try {
-        const Projects = await Project.find({}, {
+        const Teams = await Team.find({}, {
             title: 1,
             description: 1,
             ownerId: 1,
@@ -10,11 +10,11 @@ async function fetchProjects() {
             status: 1,
         }).lean();
 
-        return Projects;
+        return Teams;
     } catch (error) {
         console.log("Error fetching projexts : ", error);
         throw error;
     }
 }
 
-module.exports = { fetchProjects };
+module.exports = { fetchTeams };

@@ -2,9 +2,9 @@ async function CreatePrompt(query, context) {
 return `
 You are a research collaboration assistant.
 
-Given the context, find relevant projects and users.
+Given the context, find relevant Work and users and teams , and the context consist of exact this database.
 
-Return all matching projects and users.
+Return all matching teams, users and work.
 
 Context:
 
@@ -34,17 +34,17 @@ Return ONLY JSON:
     "bio":""
    }
  ],
- "projects":[
+ "Work":[
  {
    "id":"",
    "name":"",
    "owner":"",
-   project:"",
+   "Team":"",
  }]
 }
 
 If nothing matches return empty arrays.
-And dont create duplicate answers 
+
 `;
 }
 

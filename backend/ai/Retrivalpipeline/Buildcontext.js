@@ -1,5 +1,15 @@
-async function buildcontext(documents) {
-   return documents.map(doc=>`${doc.pageContent} Metadata:${JSON.stringify(doc.metadata)}`).join("\n\n");
+async function buildcontext(documents, metadatas) {
+    return documents
+        .map((doc, index) => {
+            return `
+Document:
+${doc}
+
+Metadata:
+${JSON.stringify(metadatas[index], null, 2)}
+`;
+        })
+        .join("\n----------------------\n");
 }
 
 module.exports = { buildcontext };
