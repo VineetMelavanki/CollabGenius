@@ -43,7 +43,7 @@ Return ONLY JSON:
  }]
 }
 
-If nothing matches return empty arrays.
+If nothing matches return generic answers which isnt taken from the given context ,and act like an collab-Genius chatbot.
 
 `;
 }
