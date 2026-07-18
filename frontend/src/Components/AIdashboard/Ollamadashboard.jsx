@@ -36,21 +36,144 @@ export default function OllamaDashboard({onClose,prompt,answer,dupliprompt}){
     Generating recommendations...
   </span>
 </div>}  
-               {answer && 
-               <h1>Teams</h1>}
-                {answer!==null && <div className="flex flex-col gap-4">
-                
-                    {answer?.projects?.length > 0 && (
-                      <div className="grid grid-cols-3 p-2 gap-2 border-2">
-                        {answer.projects.map((project)=>(
-                          <div key={project.id} className="flex flex-col shadow-2xl hover:shadow-xl border p-2 gap-2">
-                             <h1 className="text-blue-400 font-bold">{project?.name}</h1>
-                             <button className="text-white bg-green-500 font-bold" onClick={()=>navigate(`/get-project/${project?.project._id}`)}>View</button>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>}
+               {answer && (
+  <div className="flex flex-col gap-6 p-4">
+
+    {/* AI Summary */}
+    <div className="bg-purple-50 rounded-xl p-4 border">
+      <h2 className="font-bold text-purple-700 text-lg">
+        🤖 Collab AI
+      </h2>
+
+      <p className="text-gray-600 mt-2">
+        I found {answer.users.length} developers,
+        {" "}{answer.teams.length} teams and
+        {" "}{answer.Work.length} projects
+        matching your request.
+      </p>
+    </div>
+
+    {/* USERS */}
+    <div>
+
+      <h2 className="font-bold text-lg mb-3">
+        👤 Developers
+      </h2>
+
+      <div className="space-y-3">
+
+        {answer.users.map(user => (
+
+          <div
+            key={user.id}
+            className="border rounded-xl p-4 shadow-sm"
+          >
+
+            <h3 className="font-semibold">
+              {user.name}
+            </h3>
+
+            <p className="text-sm text-gray-500">
+              {user.skills.join(", ")}
+            </p>
+
+            <button
+              className="mt-3 bg-blue-500 text-white px-3 py-1 rounded"
+            >
+              View Profile
+            </button>
+
+          </div>
+
+        ))}
+
+      </div>
+
+    </div>
+
+    {/* TEAMS */}
+
+    <div>
+
+      <h2 className="font-bold text-lg mb-3">
+        👥 Teams
+      </h2>
+
+      <div className="space-y-3">
+
+        {answer.teams.map(team => (
+
+          <div
+            key={team.id}
+            className="border rounded-xl p-4 shadow-sm"
+          >
+
+            <h3 className="font-semibold">
+              {team.title}
+            </h3>
+
+            <p className="text-gray-500">
+              {team?.description}
+            </p>
+
+            <button
+              className="mt-3 bg-green-500 text-white px-3 py-1 rounded"
+            >
+              View Team
+            </button>
+
+          </div>
+
+        ))}
+
+      </div>
+
+    </div>
+
+    {/* PROJECTS */}
+
+    <div>
+
+      <h2 className="font-bold text-lg mb-3">
+        📂 Projects
+      </h2>
+
+      <div className="space-y-3">
+
+        {answer.Work.map(w=> (
+
+          <div
+            key={w.id}
+            className="border rounded-xl p-4 shadow-sm"
+          >
+
+            <h3 className="font-semibold">
+              {w.name}
+            </h3>
+
+            <p className="text-sm text-gray-500">
+              Owner: {w.owner}
+            </p>
+
+            <button
+              onClick={() =>
+                navigate(`/get-project/${w.id}`)
+              }
+              className="mt-3 bg-purple-500 text-white px-3 py-1 rounded"
+            >
+              Open Project
+            </button>
+
+          </div>
+
+        ))}
+
+      </div>
+
+    </div>
+
+  </div>
+)}
               </div>
               
            </div>
