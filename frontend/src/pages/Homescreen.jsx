@@ -32,7 +32,7 @@ export default function Homescreen(){
        },{
         withCredentials:true,
        });
-      setanswer(response.data?.finalresults);
+      setanswer(response.data?.finalresults || response?.data?.response);
 
       console.log("The final results are : ",response.data?.finalresults);
       setprompt("");
