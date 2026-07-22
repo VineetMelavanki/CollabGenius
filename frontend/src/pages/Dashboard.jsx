@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {FolderIcon} from "@heroicons/react/24/solid"
+import { Outlet } from "react-router-dom";
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 export default function SideBar({children}) {
   const navigate=useNavigate();
@@ -77,6 +78,7 @@ export default function SideBar({children}) {
        </aside>
        <div className="ml-60 flex-1 p-6">
           {children}
+     
        </div>
       </div>
       

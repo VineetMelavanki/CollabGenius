@@ -94,6 +94,13 @@ return (
           </DashBoardLayout>
            
         }/>
+        <Route path='/HomeScreen/chat/:chatId' element={
+  <DashBoardLayout>
+    <SideBar>
+     <Homescreen/>
+    </SideBar>
+  </DashBoardLayout>
+}/>
        <Route path='/auth/github/callback' element={<Login/>}/>
        <Route path='/Search-Users' element={
         <DashBoardLayout>

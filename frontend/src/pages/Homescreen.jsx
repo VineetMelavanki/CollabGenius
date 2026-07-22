@@ -5,6 +5,7 @@ import { FaClock } from "react-icons/fa";
 import CreateTeam from "../Components/Team/CreateTeam"
 import { FolderIcon } from "@heroicons/react/24/outline";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import OllamaDashboard from "../Components/AIdashboard/Ollamadashboard";
 import {CpuChipIcon} from "@heroicons/react/24/outline";
@@ -21,29 +22,33 @@ export default function Homescreen(){
    const[answer,setanswer]=useState(null);
    const handlechange=(e)=>{
     setprompt(e.target.value);
-    setdupliprompt(e.target.value);
    }
    const handlesubmit=async(e)=>{
     e.preventDefault();
   
     try{
-       const response=await axios.post("http://localhost:8000/api/ai/get-answers/",{
+       const response=await axios.post("http://localhost:8000/api/chat/create-chat",{
         prompt,
        },{
         withCredentials:true,
        });
-      setanswer(response.data?.finalresults || response?.data?.response);
-
-      console.log("The final results are : ",response.data?.finalresults);
-      setprompt("");
+       const chatId=response.data?.newChat?._id;
+       navigate(`/HomeScreen/chat/${chatId}`,{
+        state:{
+          prompt:prompt,
+        }
+       })
+       console.log("Chat created successfully",chatId);
     }catch(error)
     { 
        if(error.response)
        {
+        console.log("The error is : ",error.message());
         alert(error.response?.data?.msg || "Cannot fetch answers");
        }
        else
        {
+        console.log("Error logged");
         console.log("The error is : ",error);
         alert("Internal server error");
        }
@@ -134,10 +139,10 @@ export default function Homescreen(){
     return(
         <div className="min-h-screen w-full bg-gradient-to-br from-purple-50 via-purple-50 to-indigo-50">
           {openaisearch && <OllamaDashboard
-          onClose={()=>setopenaisearch(false)}
+          onClose={()=>{setopenaisearch(false);navigate("/HomeScreen")}}
           prompt={prompt}
           answer={answer}
-          dupliprompt={dupliprompt}/>
+          />
           }
           {addteam && <CreateTeam
           onClose={()=>setaddteam(false)}/>}
