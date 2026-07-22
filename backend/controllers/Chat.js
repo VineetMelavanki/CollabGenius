@@ -1,4 +1,5 @@
 const Chat=require("../model/Chat");
+const User = require("../model/User");
 async function CreateChat(req,res)
 {
      try{
@@ -43,4 +44,31 @@ async function getChatbyId(req,res)
         return res.status(500).json({msg:"Internal server error",success:false});
    }
 }
-module.exports={CreateChat,getChatbyId};
+
+async function getalluserchats(req,res)
+{
+   try{
+     const{userId}=req.params;
+     const userexists=await User.findById(userId);
+
+     if(!userexists)
+     {
+      return res.status(404).json({msg:"User not found",success:false});
+     }
+
+     const allchats=await Chat.find({userId:userId});
+
+     if(allchats.length==0)
+     {
+      return res.status(200).json({msg:"User have not created any chats",success:true});
+     }
+
+     return res.status(200).json({msg:"All chats fetched successfully",chats:allchats,success:true});
+   }catch(error)
+   {
+      console.log(error);
+
+      return res.status(500).json({msg:"Internal server error",success:false});
+   }
+}
+module.exports={CreateChat,getChatbyId,getalluserchats};
