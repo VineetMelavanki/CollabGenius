@@ -6,7 +6,7 @@ const { CreatePrompt } = require("./CreatePrompt");
 const { askollama } = require("../../services/ollamaservice");
 
 async function Retrivalpipeline(prompt) {
-
+     
     const processedQuery = await queryProcessor(prompt);
 
     const vectors = await embeddedquery(processedQuery);

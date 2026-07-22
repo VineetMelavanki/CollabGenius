@@ -7,13 +7,13 @@ async function sendRequest(req,res)
     try{
         const{TeamId}=req.params;
         const user=await User.findById(req.user.id);
-       const Team=await Team.findById(TeamId).populate("ownerId","name email");
-       if(!Team)
+       const team=await Team.findById(TeamId).populate("ownerId","name email");
+       if(!team)
         {
             return res.status(404).json({msg:"Team does not exists",success:false});
         }
-       const receiver=Team.ownerId._id;
-       const isMember=Team.members.some((member)=>{
+       const receiver=team.ownerId._id;
+       const isMember=team.members.some((member)=>{
         return member.toString()===user._id.toString();
        });
        if(isMember)

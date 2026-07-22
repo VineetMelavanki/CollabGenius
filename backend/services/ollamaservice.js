@@ -1,7 +1,7 @@
 const axios = require("axios");
 
 async function askollama(prompt) {
-    const response = await axios.post("http://localhost:11434/api/generate", {
+    const response = await axios.post(process.env.OLLAMA_URL, {
         model: "llama3.1:8b",
         prompt: prompt,
         stream: false,
