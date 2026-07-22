@@ -33,8 +33,17 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
            
            const userMessage=response.data?.userMessage;
            const botMessage=response.data?.botMessage;
-           
-           setAimessages((prev)=>[...prev,userMessage,botMessage]);
+           const intent=response.data?.intenttype;
+
+           const botMessagewithintent={
+            ...botMessage,
+            intenttype:intent,
+            content:
+            intent==="COLLABORATION_SEARCH"
+            ?JSON.parse(botMessage.content)
+            :botMessage.content
+           };
+           setAimessages((prev)=>[...prev,userMessage,botMessagewithintent]);
            setdashboardprompt({prompt:""});
         }catch(error)
         {
@@ -63,8 +72,17 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
             console.log("Backend response : ",response.data);
 
             const userMessage=response.data?.userMessage;
+            const intent=response.data?.intenttype;
             const botMessage=response.data?.botMessage;
-            setAimessages((prev)=>[...prev, userMessage, botMessage].filter(Boolean));
+            const botMessagewithintent={
+            ...botMessage,
+            intenttype:intent,
+            content:
+            intent==="COLLABORATION_SEARCH"
+            ?JSON.parse(botMessage.content)
+            :botMessage.content
+           };
+           setAimessages((prev)=>[...prev,userMessage,botMessagewithintent]);
             setdashboardprompt({prompt:""})
             }catch(error)
             {
@@ -123,7 +141,7 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
     return(
         <div className="fixed inset-0 z-50 flex justify-end">
           <div className="absolute inset-0 bg-black/40" onClick={()=>onClose()}/>
-           <div className="relative flex bg-white w-full max-w-2xl h-full shadow-2xl p-4">
+           <div className="relative flex bg-white w-full max-w-2xl shadow-2xl p-4">
             {!chatId && (
                <NoresNodup
               handlesubmitnew={handlesubmitnew}
@@ -131,7 +149,6 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
               dashboardprompt={dashboardprompt}/>
             )}
              
-            
             {chatId && Aimessages.length > 0 &&  (
               <div className="flex flex-col border mt-6 w-full h-full p-3 gap-2 ">
                <div className="flex-1 overflow-y-auto p-4 space-y-4 border-2">
@@ -143,7 +160,61 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
                     </div>
                    ):(
                     <div className="flex justify-start mx-4">
-                        <h1 className="bg-slate-100 text-slate-800 px-4 py-3 rounded-2xl">{message?.content}</h1>
+                                {message?.intenttype === "GREETING" && (
+
+          <h1 className="bg-slate-100 text-slate-800 px-4 py-3 rounded-2xl">
+            {message?.content}
+          </h1>
+
+        )}
+
+        {message?.intenttype === "COLLABORATION_SEARCH" && (
+            
+              <div className="bg-slate-100 text-slate-800 px-4 py-3 rounded-2xl">
+            <div className="justify-start max-w-20">
+             <h1 className="font-bold text-white text-center mb-2 rounded-xl bg-yellow-500">Teams</h1>
+            </div>
+            
+            {message?.content?.teams?.map((team) => (
+              <div key={team.id} className="mb-3 border p-2 rounded-xl bg-gray-200">
+                <div className="flex flex-row gap-2 mb-2">
+                  <h3 className="font-bold">
+                    {team.title}
+                  </h3>
+                  <div className="flex flex-1 gap-2 justify-end mx-2">
+                   <button className="text-blue-600" onClick={()=>navigate(`/get-Team/${team.id}`)}>View</button>
+                  </div>
+                </div>
+
+                <p>
+                  {team.description}
+                </p>
+              </div>
+            ))}
+
+            {message?.content?.users?.map((user) => (
+              <div key={user.id} className="mb-3">
+                <h3 className="font-bold">
+                  {user.name}
+                </h3>
+
+                <p>
+                  {user.skills?.join(", ")}
+                </p>
+              </div>
+            ))}
+
+            {message?.content?.Work?.map((work) => (
+              <div key={work.id} className="mb-3">
+                <h3 className="font-bold">
+                  {work.title}
+                </h3>
+              </div>
+            ))}
+
+          </div>
+
+        )}
                     </div>
                    )}
                   </div>
