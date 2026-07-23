@@ -48,7 +48,11 @@ async function getanswers(req,res)
             const botmessage=await Aimessage.create({
               chatId:chatId,
               role:"chat-bot",
-              content:JSON.stringify(assistanceResponse),
+              content:
+              typeof assistanceResponse==='string'
+              ?assistanceResponse 
+              :JSON.stringify(assistanceResponse),
+              intent:intenttype,
             });
             return res.status(201).json({msg:"All messages fetched successfully",userMessage:userMessage,botMessage:botmessage,intenttype:intenttype,success:true});
           }
