@@ -1,3 +1,4 @@
+const Aimessage = require("../model/AIMessages");
 const Chat=require("../model/Chat");
 const User = require("../model/User");
 async function CreateChat(req,res)
@@ -45,6 +46,31 @@ async function getChatbyId(req,res)
    }
 }
 
+async function getchatmessages(req,res)
+{
+   try{
+        const{chatId}=req.params;
+
+        const chatexists=await Chat.findById(chatId);
+
+        if(!chatexists)
+        {
+         return res.status(404).json({msg:"No such chat exists",success:false});
+        }
+        const chatmessages=await Aimessage.find({chatId:chatId}).sort({createdAt:1});
+
+        if(chatmessages.length==0)
+        {
+         return res.status(404).json({msg:"Chat has no messages",success:false});
+        }
+
+        return res.status(200).json({msg:"Chat messages fetched successfully",messages:chatmessages,success:true});
+   }catch(error)
+   {
+      console.log(error);
+      return res.status(500).json({msg:"Internal server error",success:false});
+   }
+}
 async function getalluserchats(req,res)
 {
    try{
@@ -71,4 +97,5 @@ async function getalluserchats(req,res)
       return res.status(500).json({msg:"Internal server error",success:false});
    }
 }
-module.exports={CreateChat,getChatbyId,getalluserchats};
+
+module.exports={CreateChat,getChatbyId,getalluserchats,getchatmessages};
