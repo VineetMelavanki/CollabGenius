@@ -1,7 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom"
 import NoresNodup from "./NoresNodup";
+import GetAllUserChats from "../AIchats/getalluserchats";
+import { PanelLeftIcon } from "lucide-react";
 import axios from "axios";
+import { XIcon } from "lucide-react";
+import { useAuth } from "../../AuthContext";
 export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
       const navigate=useNavigate();
       const location=useLocation();
@@ -10,11 +14,33 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
       const[dashboardprompt,setdashboardprompt]=useState({
         prompt: initialPromptProp || "",
       });
+      const {user}=useAuth();
+      const[open,setopen]=useState(false);
       const initialprompt=location.state?.prompt || initialPromptProp;
       const handlechange=async(e)=>{
         setdashboardprompt((prev)=>({...prev,[e.target.name]:e.target.value}));
       }
-    
+      const fetchChathistory=useCallback(async()=>{
+        try{
+         const response=await axios.get(`http://localhost:8000/api/Chat/get-chat-messages/${chatId}`,{
+          withCredentials:true,
+         });
+         console.log("The backend response is : ",response.data?.messages);
+         const chathistory=response.data?.messages;
+         console.log("The chathistory is : ",chathistory);
+         setAimessages(chathistory);
+        }catch(error)
+        {
+            if(error.response)
+            {
+              alert(error.response?.data?.msg || "Chat history cannot be fetched");
+            }
+            else
+            {
+              alert("Internal server errror");
+            }
+        }
+      },[chatId]);
       const handlefollowupSubmit=async(e)=>{
         e.preventDefault();
         const messagePrompt=dashboardprompt.prompt.trim();
@@ -37,7 +63,7 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
 
            const botMessagewithintent={
             ...botMessage,
-            intenttype:intent,
+            intent:intent,
             content:
             intent==="COLLABORATION_SEARCH"
             ?JSON.parse(botMessage.content)
@@ -76,7 +102,7 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
             const botMessage=response.data?.botMessage;
             const botMessagewithintent={
             ...botMessage,
-            intenttype:intent,
+            intent:intent,
             content:
             intent==="COLLABORATION_SEARCH"
             ?JSON.parse(botMessage.content)
@@ -99,11 +125,11 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
 
        
       useEffect(()=>{
-        if(!chatId || !initialprompt)
+        if(chatId && !initialprompt)
         {
-          return ;
+          fetchChathistory();
         }
-        else
+        if(chatId && initialprompt)
         {
           processChat(initialprompt);
         }
@@ -141,14 +167,33 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
     return(
         <div className="fixed inset-0 z-50 flex justify-end">
           <div className="absolute inset-0 bg-black/40" onClick={()=>onClose()}/>
-           <div className="relative flex bg-white w-full max-w-2xl shadow-2xl p-4">
+           <div className="relative flex flex-col bg-white  w-full max-w-2xl shadow-2xl p-4 overflow-hidden"
+           >
+            <button className="items-start justify-start">
+             <PanelLeftIcon onClick={()=>setopen(true)}/>
+            </button>
             {!chatId && (
                <NoresNodup
               handlesubmitnew={handlesubmitnew}
               handlechange={handlechange}
               dashboardprompt={dashboardprompt}/>
             )}
-             
+             <aside
+        className={`absolute flex left-0 top-0 h-full w-64 bg-white shadow-xl z-50 transform transition-transform duration-300 ${
+          open ? "translate-x-0" : "-translate-x-full"
+        }`}             
+             >
+            <div className="p-6">
+               <div className="flex flex-row gap-2">
+                 <h2 className="text-2xl font-bold text-gray-800 mb-6">Chat history</h2>
+                 <div className="flex flex-1 justify-end w-full">
+                  <XIcon className="w-5 h-5 text-red-500" onClick={()=>setopen(false)}/>
+                 </div>
+               </div>
+               <GetAllUserChats
+               userId={user._id}/>
+            </div>
+             </aside>
             {chatId && Aimessages.length > 0 &&  (
               <div className="flex flex-col border mt-6 w-full h-full p-3 gap-2 ">
                <div className="flex-1 overflow-y-auto p-4 space-y-4 border-2">
@@ -160,7 +205,7 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
                     </div>
                    ):(
                     <div className="flex justify-start mx-4">
-                                {message?.intenttype === "GREETING" && (
+                      {message?.intent === "GREETING" && (
 
           <h1 className="bg-slate-100 text-slate-800 px-4 py-3 rounded-2xl">
             {message?.content}
@@ -168,7 +213,7 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
 
         )}
 
-        {message?.intenttype === "COLLABORATION_SEARCH" && (
+        {message?.intent === "COLLABORATION_SEARCH" && (
             
               <div className="bg-slate-100 text-slate-800 px-4 py-3 rounded-2xl">
             <div className="justify-start max-w-20">
