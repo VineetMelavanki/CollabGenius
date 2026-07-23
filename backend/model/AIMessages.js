@@ -14,7 +14,12 @@ const AimessagesSchema=new mongoose.Schema({
         type:String,
         required:true,
     },
-});
+    intent:{
+        type:"String",
+        enum:["GREETING","COLLABORATION_SEARCH"],
+        default:"GREETING",
+    },
+},{timestamps:true});
 
 const Aimessage=mongoose.model("Aimessage",AimessagesSchema);
 
