@@ -36,11 +36,11 @@ export default function GetAllUserChats({ userId }) {
              {chats.map((chat)=>(
                <div key={chat._id} className="group flex items-center gap-3 w-full px-3 py-2.5
                          rounded-lg cursor-pointer
-                         hover:bg-gray-100
+                         hover:bg-blue-100
                          transition-colors duration-150"
                          onClick={()=>navigate(`/HomeScreen/chat/${chat._id}`)}
               >
-                  <h1 className="font-inter">{chat?.title}</h1>
+                  <h1 className="font-grotesk">{chat?.title}</h1>
                </div>
              ))}
            </div>

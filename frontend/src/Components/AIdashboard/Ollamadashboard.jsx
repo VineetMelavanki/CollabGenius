@@ -26,9 +26,21 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
           withCredentials:true,
          });
          console.log("The backend response is : ",response.data?.messages);
-         const chathistory=response.data?.messages;
-         console.log("The chathistory is : ",chathistory);
-         setAimessages(chathistory);
+         const chathistory=response.data?.messages ||[];
+         const formattedMessages=chathistory.map((message)=>{
+          if(message.role==="user")
+          {
+            return message;
+          }
+          return {
+            ...message,
+            content:
+              message.intent==="COLLABORATION_SEARCH"
+              ?JSON.parse(message.content)
+              :message.content
+          };
+         });
+         setAimessages(formattedMessages);
         }catch(error)
         {
             if(error.response)
@@ -41,6 +53,8 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
             }
         }
       },[chatId]);
+
+
       const handlefollowupSubmit=async(e)=>{
         e.preventDefault();
         const messagePrompt=dashboardprompt.prompt.trim();
@@ -196,8 +210,9 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
              </aside>
             {chatId && Aimessages.length > 0 &&  (
               <div className="flex flex-col border mt-6 w-full h-full p-3 gap-2 ">
-               <div className="flex-1 overflow-y-auto p-4 space-y-4 border-2">
+                <div className="flex-1 overflow-y-auto p-4 space-y-4 border-2">
                  {Aimessages.map((message,index)=>(
+
                   <div key={message?._id || `${message?.role || "message"}-${index}`}>
                    {message?.role ==="user" ?(
                     <div className="flex justify-end mx-4 ">
@@ -207,64 +222,82 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
                     <div className="flex justify-start mx-4">
                       {message?.intent === "GREETING" && (
 
-          <h1 className="bg-slate-100 text-slate-800 px-4 py-3 rounded-2xl">
-            {message?.content}
-          </h1>
+                         <h1 className="bg-slate-100 text-slate-800 px-4 py-3 rounded-2xl">
+                            {message?.content}
+                         </h1>
 
-        )}
+                      )}
 
-        {message?.intent === "COLLABORATION_SEARCH" && (
+                      {message?.intent === "COLLABORATION_SEARCH" && (
             
-              <div className="bg-slate-100 text-slate-800 px-4 py-3 rounded-2xl">
-            <div className="justify-start max-w-20">
-             <h1 className="font-bold text-white text-center mb-2 rounded-xl bg-yellow-500">Teams</h1>
-            </div>
+                      <div className="bg-slate-100 text-slate-800 px-4 py-3 rounded-2xl">
+                        
+                      {!message.content.team && (
+                          <div className="justify-start max-w-20">
+                          <h1 className="font-bold text-white text-center mb-2 rounded-xl bg-yellow-500">Teams</h1>
+                        </div>
+                      )}  
+                        
+                      
             
-            {message?.content?.teams?.map((team) => (
-              <div key={team.id} className="mb-3 border p-2 rounded-xl bg-gray-200">
-                <div className="flex flex-row gap-2 mb-2">
-                  <h3 className="font-bold">
-                    {team.title}
-                  </h3>
-                  <div className="flex flex-1 gap-2 justify-end mx-2">
-                   <button className="text-blue-600" onClick={()=>navigate(`/get-Team/${team.id}`)}>View</button>
-                  </div>
-                </div>
+                        { message?.content?.teams?.map((team) => (
+                        <div key={team.id} className="mb-3 border p-4 rounded-xl bg-gray-200 ">
+                            <div className="flex flex-row gap-2 mb-2">
+                              <h3 className="font-bold">
+                                {team.title}
+                              </h3>
+                                <div className="flex flex-1 gap-2 justify-end mx-2">
+                                   <button className="text-blue-600" onClick={()=>navigate(`/get-Team/${team.id}`)}>View</button>
+                                </div>
+                            </div>
 
-                <p>
-                  {team.description}
-                </p>
-              </div>
-            ))}
+                          <p>
+                           {team.description}
+                          </p>
+                       </div>
+                      ))}
+                     
+                      
+                       {!message.content.users && (
+                          <div className="justify-start max-w-20">
+                          <h1 className="font-bold text-white text-center mb-2 rounded-xl bg-yellow-500">Users</h1>
+                        </div>
+                       )} 
+                        {message?.content?.users?.map((user) => (
+                          <div key={user.id} className="mb-3 border p-2 rounded-xl bg-gray-200">
+                            
+                              <div className="flex flex-row gap-2 mb-2">
+                                <h3 className="font-bold">
+                                 {user.name}
+                                </h3>
+                                <div className="flex flex-1 gap-2 justify-end mx-2">
+                                   <button className="text-blue-600" onClick={()=>navigate(`/view-profile/${user.id}`)}>View</button>
+                                </div>
+                              </div>
+                              <p>
+                                {user.skills?.join(", ")}
+                              </p>
+                            
+                         </div>
+                        ))}
+                      
 
-            {message?.content?.users?.map((user) => (
-              <div key={user.id} className="mb-3">
-                <h3 className="font-bold">
-                  {user.name}
-                </h3>
+                      {message?.content?.Work?.map((work) => (
+                        <div key={work.id} className="mb-3">
+                          <h3 className="font-bold">
+                           {work.title}
+                         </h3>
+                        </div>
+                      ))}
 
-                <p>
-                  {user.skills?.join(", ")}
-                </p>
-              </div>
-            ))}
-
-            {message?.content?.Work?.map((work) => (
-              <div key={work.id} className="mb-3">
-                <h3 className="font-bold">
-                  {work.title}
-                </h3>
-              </div>
-            ))}
-
-          </div>
-
-        )}
                     </div>
-                   )}
-                  </div>
-                 ))}
-               </div>
+
+                    )}
+                 </div>
+                 )}
+                </div>
+               ))}
+              </div>
 
                <div className="border-2 bg-white p-4">
                   <form className="flex flex-row gap-2" onSubmit={handlefollowupSubmit}>

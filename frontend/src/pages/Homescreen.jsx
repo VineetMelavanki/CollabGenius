@@ -20,6 +20,7 @@ export default function Homescreen(){
    const[dupliprompt,setdupliprompt]=useState(null);
    const[addteam,setaddteam]=useState(false);
    const[answer,setanswer]=useState(null);
+   const {chatId}=useParams();
    const handlechange=(e)=>{
     setprompt(e.target.value);
    }
@@ -138,7 +139,7 @@ export default function Homescreen(){
 
     return(
         <div className="min-h-screen w-full bg-gradient-to-br from-purple-50 via-purple-50 to-indigo-50">
-          {openaisearch && <OllamaDashboard
+          {(openaisearch || chatId) && <OllamaDashboard
           onClose={()=>{setopenaisearch(false);navigate("/HomeScreen")}}
           prompt={prompt}
           answer={answer}
