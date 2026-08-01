@@ -1,26 +1,17 @@
-const { getcollection } = require("../chromadb/getcollection");
 const { buildcontext } = require("./Buildcontext");
 const { queryProcessor } = require("./Queryprocess");
-const { embeddedquery } = require("./queryembedding");
 const { CreatePrompt } = require("./CreatePrompt");
+const { getEnsembleRetriever } = require("./hybridRetriever");
 const { askollama } = require("../../services/ollamaservice");
-
 async function Retrivalpipeline(prompt) {
      
     const processedQuery = await queryProcessor(prompt);
 
-    const vectors = await embeddedquery(processedQuery);
+    const ensembleRetriever = getEnsembleRetriever();
+    const retrievedDocs = await ensembleRetriever.invoke(processedQuery);
 
-    const collection = await getcollection();
-
-    const results = await collection.query({
-        queryEmbeddings: [vectors],
-        include: ["documents", "metadatas"],
-        nResults: 5,
-    });
-
-    const docs = results.documents?.[0] || [];
-    const metadatas = results.metadatas?.[0] || [];
+    const docs = retrievedDocs.map((doc) => doc.pageContent);
+    const metadatas = retrievedDocs.map((doc) => doc.metadata);
 
     const context = await buildcontext(docs, metadatas);
 

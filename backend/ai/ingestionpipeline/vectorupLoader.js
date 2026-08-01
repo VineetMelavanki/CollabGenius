@@ -1,9 +1,9 @@
 const { generateembeddings } = require("../ingestionpipeline/embeddingGenerator");
 const { getcollection } = require("../chromadb/getcollection");
 
-async function vectoruploads() {
+async function vectoruploads(documents) {
     try {
-        const { documents, vectors } = await generateembeddings();
+        const vectors= await generateembeddings(documents);
         
         if (documents.length === 0) {
             console.log("No documents found to embed");
@@ -13,7 +13,7 @@ async function vectoruploads() {
         const ids = documents.map(doc => doc.metadata.id);
         const texts = documents.map(doc => doc.pageContent);
         const metadatas = documents.map(doc => doc.metadata);
-
+    
         const collection = await getcollection();
         await collection.add({
             ids,

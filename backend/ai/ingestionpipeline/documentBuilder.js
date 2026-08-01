@@ -2,7 +2,7 @@ const { fetchProfiles } = require("../ingestionpipeline/fetchProfiles");
 const { Document } = require("@langchain/core/documents");
 const { fetchTeams } = require("../ingestionpipeline/fetchProjects");
 const {fetchResearch}=require("../ingestionpipeline/FetchWork");
-async function documentbuider() {
+async function documentbuilder() {
     try {
         const Profiles = await fetchProfiles();
         const Teams = await fetchTeams();
@@ -53,4 +53,4 @@ async function documentbuider() {
     }
 }
 
-module.exports = { documentbuider };
+module.exports = { documentbuilder };

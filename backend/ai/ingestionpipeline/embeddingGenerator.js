@@ -1,15 +1,13 @@
 const { embeddocuments } = require("../embeddings/embeddings");
-const { documentbuider } = require("../ingestionpipeline/documentBuilder");
 
-async function generateembeddings() {
-    const documents = await documentbuider();
-    const texts = documents.map(doc => doc.pageContent);
+async function generateembeddings(documents) {
+    if(!documents || documents.length===0)
+    {
+        throw new Error("generateembeddings requires a non empty documents array");
+    }
+    const texts=documents.map(doc=>doc.pageContent);
     const vectors = await embeddocuments(texts);
-    
-    return {
-        documents,
-        vectors
-    };
+    return vectors;
 }
 
 module.exports = { generateembeddings };
