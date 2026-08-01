@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useRef } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom"
 import NoresNodup from "./NoresNodup";
 import GetAllUserChats from "../AIchats/getalluserchats";
@@ -6,6 +6,14 @@ import { PanelLeftIcon } from "lucide-react";
 import axios from "axios";
 import { XIcon } from "lucide-react";
 import { useAuth } from "../../AuthContext";
+
+const LoadingAnimation = () => (
+  <div className="flex items-center gap-1 px-4 py-3 bg-slate-100 rounded-2xl">
+    <div className="w-2 h-2 bg-violet-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+    <div className="w-2 h-2 bg-violet-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+    <div className="w-2 h-2 bg-violet-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+  </div>
+);
 export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
       const navigate=useNavigate();
       const location=useLocation();
@@ -16,6 +24,8 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
       });
       const {user}=useAuth();
       const[open,setopen]=useState(false);
+      const[isLoading,setIsLoading]=useState(false);
+      const messagesEndRef=useRef(null);
       const initialprompt=location.state?.prompt || initialPromptProp;
       const handlechange=async(e)=>{
         setdashboardprompt((prev)=>({...prev,[e.target.name]:e.target.value}));
@@ -63,6 +73,12 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
         {
           return ;
         }
+        
+        const tempUserMessage={role:"user",content:messagePrompt};
+        setAimessages((prev)=>[...prev,tempUserMessage]);
+        setdashboardprompt({prompt:""});
+        setIsLoading(true);
+        
         try{
            const response=await axios.post(`http://localhost:8000/api/ai/get-answers/${chatId}`,{
             prompt:messagePrompt,
@@ -83,8 +99,12 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
             ?JSON.parse(botMessage.content)
             :botMessage.content
            };
-           setAimessages((prev)=>[...prev,userMessage,botMessagewithintent]);
-           setdashboardprompt({prompt:""});
+           setAimessages((prev)=>{
+            const newMessages=[...prev];
+            newMessages[newMessages.length-1]=userMessage;
+            return [...newMessages,botMessagewithintent];
+           });
+           setIsLoading(false);
         }catch(error)
         {
           if(error.response)
@@ -96,10 +116,15 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
           {
             alert("Internal server error");
           }
+          setIsLoading(false);
         }
         
       }
       const processChat=useCallback(async(messagePrompt)=>{
+            const tempUserMessage={role:"user",content:messagePrompt};
+            setAimessages((prev)=>[...prev,tempUserMessage]);
+            setIsLoading(true);
+            
             try{
               console.log("Chat id : ",chatId);
                 const response=await axios.post(`http://localhost:8000/api/ai/get-answers/${chatId}`,{
@@ -122,8 +147,13 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
             ?JSON.parse(botMessage.content)
             :botMessage.content
            };
-           setAimessages((prev)=>[...prev,userMessage,botMessagewithintent]);
-            setdashboardprompt({prompt:""})
+           setAimessages((prev)=>{
+            const newMessages=[...prev];
+            newMessages[newMessages.length-1]=userMessage;
+            return [...newMessages,botMessagewithintent];
+           });
+            setdashboardprompt({prompt:""});
+            setIsLoading(false);
             }catch(error)
             {
                 if(error.response)
@@ -134,6 +164,7 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
                   {
                     alert("Internal server error");
                   }
+                  setIsLoading(false);
             }
           }, [chatId]);
 
@@ -148,11 +179,16 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
           processChat(initialprompt);
         }
       },[chatId, initialprompt, processChat]);
+
+      useEffect(()=>{
+        messagesEndRef.current?.scrollIntoView({behavior:"smooth"});
+      },[Aimessages,isLoading]);
        const handlesubmitnew=async(e)=>{
           e.preventDefault();
           if(!dashboardprompt.prompt?.trim()){
             return;
           }
+          setIsLoading(true);
           try{
          const response=await axios.post("http://localhost:8000/api/chat/create-chat",{
           prompt:dashboardprompt.prompt,
@@ -175,33 +211,37 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
            {
             alert("Internal server error");
            }
+           setIsLoading(false);
         }
        }
       
     return(
         <div className="fixed inset-0 z-50 flex justify-end">
-          <div className="absolute inset-0 bg-black/40" onClick={()=>onClose()}/>
-           <div className="relative flex flex-col bg-white  w-full max-w-2xl shadow-2xl p-4 overflow-hidden"
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={()=>onClose()}/>
+           <div className="relative flex flex-col bg-gradient-to-br from-white to-gray-50 w-full max-w-2xl shadow-2xl p-6 overflow-hidden rounded-l-2xl"
            >
-            <button className="items-start justify-start">
-             <PanelLeftIcon onClick={()=>setopen(true)}/>
+            <button className="absolute top-4 left-4 p-2 hover:bg-gray-100 rounded-lg transition-colors">
+             <PanelLeftIcon onClick={()=>setopen(true)} className="w-6 h-6 text-gray-600"/>
             </button>
             {!chatId && (
                <NoresNodup
               handlesubmitnew={handlesubmitnew}
               handlechange={handlechange}
-              dashboardprompt={dashboardprompt}/>
+              dashboardprompt={dashboardprompt}
+              isLoading={isLoading}/>
             )}
              <aside
-        className={`absolute flex left-0 top-0 h-full w-64 bg-white shadow-xl z-50 transform transition-transform duration-300 ${
+        className={`absolute flex left-0 top-0 h-full w-72 bg-gradient-to-b from-white to-gray-50 shadow-2xl z-50 transform transition-transform duration-300 ease-in-out ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}             
              >
             <div className="p-6">
-               <div className="flex flex-row gap-2">
-                 <h2 className="text-2xl font-bold text-gray-800 mb-6">Chat history</h2>
+               <div className="flex flex-row gap-2 items-center mb-6">
+                 <h2 className="text-2xl font-bold text-gray-800">Chat History</h2>
                  <div className="flex flex-1 justify-end w-full">
-                  <XIcon className="w-5 h-5 text-red-500" onClick={()=>setopen(false)}/>
+                  <button onClick={()=>setopen(false)} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                    <XIcon className="w-5 h-5 text-gray-500 hover:text-red-500"/>
+                  </button>
                  </div>
                </div>
                <GetAllUserChats
@@ -209,55 +249,54 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
             </div>
              </aside>
             {chatId && Aimessages.length > 0 &&  (
-              <div className="flex flex-col border mt-6 w-full h-full p-3 gap-2 ">
-                <div className="flex-1 overflow-y-auto p-4 space-y-4 border-2">
+              <div className="flex flex-col border mt-6 w-full h-full p-3 gap-2 rounded-xl">
+                <div className="flex-1 overflow-y-auto p-4 gap-2 space-y-4 border-2 border-gray-200 rounded-xl bg-white/50 backdrop-blur-sm">
                  {Aimessages.map((message,index)=>(
 
                   <div key={message?._id || `${message?.role || "message"}-${index}`}>
                    {message?.role ==="user" ?(
-                    <div className="flex justify-end mx-4 ">
-                       <h1 className="bg-violet-600 text-white px-4 py-3 rounded-2xl">{message?.content}</h1>
+                    <div className="flex justify-end mx-4 animate-fade-in">
+                       <div className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-5 py-3 rounded-2xl shadow-md max-w-[80%]">
+                         <p className="break-words">{message?.content}</p>
+                       </div>
                     </div>
                    ):(
-                    <div className="flex justify-start mx-4">
+                    <div className="flex justify-start mx-4 animate-fade-in">
                       {message?.intent === "GREETING" && (
 
-                         <h1 className="bg-slate-100 text-slate-800 px-4 py-3 rounded-2xl">
-                            {message?.content}
-                         </h1>
+                         <div className="bg-slate-100 text-slate-800 px-5 py-3 rounded-2xl shadow-sm max-w-[80%]">
+                           <p className="break-words">{message?.content}</p>
+                         </div>
 
                       )}
 
                       {message?.intent === "COLLABORATION_SEARCH" && (
             
-                      <div className="bg-slate-100 text-slate-800 px-4 py-3 rounded-2xl">
+                      <div className="flex flex-col  bg-slate-100 text-slate-800 px-4 py-3 rounded-2xl">
                         
-                      {!message.content.team && (
-                          <div className="justify-start max-w-20">
-                          <h1 className="font-bold text-white text-center mb-2 rounded-xl bg-yellow-500">Teams</h1>
-                        </div>
-                      )}  
-                        
-                      
-            
-                        { message?.content?.teams?.map((team) => (
-                        <div key={team.id} className="mb-3 border p-4 rounded-xl bg-gray-200 ">
-                            <div className="flex flex-row gap-2 mb-2">
-                              <h3 className="font-bold">
-                                {team.title}
-                              </h3>
-                                <div className="flex flex-1 gap-2 justify-end mx-2">
-                                   <button className="text-blue-600" onClick={()=>navigate(`/get-Team/${team.id}`)}>View</button>
-                                </div>
-                            </div>
-
-                          <p>
-                           {team.description}
-                          </p>
-                       </div>
-                      ))}
+                      <div className="mb-3">
+                        {!message.content.team && (
+                            <div className="justify-start max-w-20">
+                            <h1 className="font-bold text-white text-center mb-2 rounded-xl bg-yellow-500">Teams</h1>
+                          </div>
+                        )}
+                          { message?.content?.teams?.map((team) => (
+                          <div key={team.id} className="mb-3 border p-4 rounded-xl bg-gray-200 ">
+                              <div className="flex flex-row gap-2 mb-2">
+                                <h3 className="font-bold">
+                                  {team.title}
+                                </h3>
+                                  <div className="flex flex-1 gap-2 justify-end mx-2">
+                                     <button className="text-blue-600" onClick={()=>navigate(`/get-Team/${team.id}`)}>View</button>
+                                  </div>
+                              </div>
+                            <p>
+                             {team.description}
+                            </p>
+                         </div>
+                        ))}
+                      </div>
                      
-                      
                        {!message.content.users && (
                           <div className="justify-start max-w-20">
                           <h1 className="font-bold text-white text-center mb-2 rounded-xl bg-yellow-500">Users</h1>
@@ -297,20 +336,28 @@ export default function OllamaDashboard({ onClose, prompt: initialPromptProp }){
                  )}
                 </div>
                ))}
+                {isLoading && (
+                  <div className="flex justify-start mx-4">
+                    <LoadingAnimation />
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
               </div>
 
-               <div className="border-2 bg-white p-4">
-                  <form className="flex flex-row gap-2" onSubmit={handlefollowupSubmit}>
+               <div className="border-2 border-gray-200 bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-lg">
+                  <form className="flex flex-row gap-3" onSubmit={handlefollowupSubmit}>
                     <input type="text"
                     name="prompt"
-                    placeholder="Enter message"
+                    placeholder="Type your message..."
                     value={dashboardprompt.prompt}
                     onChange={handlechange}
-                    className="flex-1 px-4 py-3 rounded-lg border border-gray-200 outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="flex-1 px-4 py-3 rounded-lg border border-gray-300 outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                    disabled={isLoading}
                     />
                     <button type="submit"
-                    className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:shadow-lg transition font-medium whitespace-nowrap">
-                      Send
+                    disabled={isLoading}
+                    className={`px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all font-medium whitespace-nowrap ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                      {isLoading ? 'Sending...' : 'Send'}
                     </button>
                   </form>
                </div>
