@@ -41,6 +41,7 @@ const assignmentsocket=require("./sockets/Assignmentsocket");
 const FriendRequestRoutes=require("./routes/FriendReq");
 const AiserviceRoutes=require("./routes/Aiservices");
 const ChatRoutes=require("./routes/Chat");
+const { ingestionpipeline } = require("./ai/ingestionpipeline/ingestionPipeline");
 app.use("/api/User",Userroutes);
 app.use("/api/Team",Teamroutes);
 app.use("/api/Profile",Profileroutes);
@@ -63,6 +64,15 @@ connectmongodb("mongodb://127.0.0.1:27017/")
 .then(async ()=>
 {
     console.log("MOngodb connected");
+    server.listen(8000,()=>console.log(`Server started at ${port}`));
+    setTimeout(async () => {
+      try {
+        console.log("Starting AI ingestion pipeline...");
+        await ingestionpipeline();
+        console.log("AI ingestion pipeline completed successfully");
+      } catch (err) {
+        console.log("AI ingestion pipeline error:", err.message);
+      }
+    }, 2000);
 })
 .catch((err)=>console.log("Error",err));
-server.listen(8000,()=>console.log(`Server started at ${port}`));
