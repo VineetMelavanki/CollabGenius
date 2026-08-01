@@ -39,5 +39,5 @@ export default function Notificationsection({onClose}){
            {(activetab==="friend-requests" || activetab=="all") && (<FriendRequest/>)}    
             </div>
       </div>
-      )
+      );
 }
