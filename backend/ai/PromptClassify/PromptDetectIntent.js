@@ -22,4 +22,5 @@ User:
 Return ONLY the intent name.
 `;
 }
+
 module.exports={PrompttodetectIntent};

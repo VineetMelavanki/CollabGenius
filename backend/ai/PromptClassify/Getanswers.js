@@ -2,6 +2,7 @@ const {detectIntent}=require("../PromptClassify/DetectIntent");
 const {Retrivalpipeline}=require("../Retrivalpipeline/retrivalpipeline");
 const Aimessage=require("../../model/AIMessages");
 const Chat=require("../../model/Chat");
+const { askgeneric } = require("../../services/ollamaservice");
 async function getanswers(req,res)
 {
        try{
@@ -32,7 +33,7 @@ async function getanswers(req,res)
           switch(intent)
           {
             case "GREETING":
-                assistanceResponse="Hello! 👋 How can I help you today?";
+                assistanceResponse=askgeneric(prompt);
                 intenttype="GREETING";
                 break;
 
