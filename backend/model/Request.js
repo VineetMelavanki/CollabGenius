@@ -12,7 +12,7 @@ const RequestSchema=new mongoose.Schema({
     },
     TeamId:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"team",
+        ref:"Team",
         required:true,
     },
     message:{
