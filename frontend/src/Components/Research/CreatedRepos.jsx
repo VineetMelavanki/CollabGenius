@@ -1,7 +1,8 @@
 import React from "react";
 import axios from "axios";
 import { useState ,useEffect } from "react";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon,UserPlus } from "lucide-react";
+import { UserPlusIcon } from "@heroicons/react/24/outline";
 export default function CreatedRepos({TeamId,workId,Leader}){
     const[repolist,setrepolist]=useState([]);
     const[gitinfo,setgetinfo]=useState({
@@ -9,9 +10,12 @@ export default function CreatedRepos({TeamId,workId,Leader}){
          description:"",
          private:false,
        });
+    const[allmembers,setallmembers]=useState([]);
+    const[opencontributors,setopencontributors]=useState(false);
     const[repooption,setrepooption]=useState(false);
     const [msg, setmsg] = useState("");
     const [error, seterror] = useState("");
+    const[currentrepo,setcurrentrepo]=useState(null);
     useEffect(()=>{
      const getallRepo=async()=>{
         seterror("");
@@ -38,6 +42,47 @@ export default function CreatedRepos({TeamId,workId,Leader}){
      }
      getallRepo();
   },[workId,TeamId])
+   //ADD contributors
+
+   const addcontributors=async(repoOwner,repoName,collaboratorUserName)=>{
+    try{
+      const response=await axios.post(`http://localhost:8000/api/github/add-contributor/${repoOwner}/${repoName}/${collaboratorUserName}`,{},
+        {
+          withCredentials:true,
+        }
+      );
+      alert(response?.data?.msg);
+    }catch(error)
+    {
+      if(error.response)
+      {
+          alert("Cannot send request");
+      }
+      else
+      {
+        alert("Internal server error");
+      }
+    }
+   }
+   const getallmembers=async()=>{
+    try{
+        const response=await axios.get(`http://localhost:8000/api/Team/all-members/${TeamId}`,{
+          withCredentials:true,
+        });
+        setallmembers(response.data.members);
+     
+    }catch(error)
+    {
+        if(error.response)
+        {
+          alert("Unable to fetch members");
+        }
+        else
+        {
+          alert("Internal server error");
+        }
+    }
+  }
   const handlereposubmit=async(e)=>{
     e.preventDefault();
     seterror("");
@@ -64,6 +109,31 @@ export default function CreatedRepos({TeamId,workId,Leader}){
     
     return(
         <div className="flex bg-gray-100 flex-col gap-3 w-full h-full rounded-2xl">
+          {opencontributors &&  
+           <div onClick={()=>setopencontributors(false)} className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+             <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8" onClick={(e)=>e.stopPropagation()}>
+              <div className="flex flex-col gap-3 justify-center items-center ">
+                <div className="flex flex-col items-center justify-center font-grotesk w-full">
+                    <h1 className="text-lg text-white bg-red-500 rounded-xl p-2 font-bold mb-6">Select contributors</h1>
+                     <div className="flex flex-col gap-2 w-full">
+                       {allmembers.length > 0 && (
+                        <div className="flex flex-col bg-gray-50 border p-2 gap-2 overflow-y-auto">
+                          {allmembers.map((member)=>{
+                            const repoId=currentrepo;
+                            return(
+                              <div key={member._id} onClick={()=>addcontributors(repoId?.createdby,repoId?.name,member?.name)}  className="flex bg-blue-100 cursor-pointer flex-row items-center gap-3 rounded-xl p-3 transition hover:bg-blue-200">
+                                <img src={member.photo?.url} className="h-8 w-8 rounded-full object-cover" alt={member.name}/>
+                                <h1 className="text-lg font-playfair">{member?.name}</h1>
+                              </div>
+                            );
+                          })}
+                        </div>
+                       )}
+                     </div>
+                </div>
+              </div>
+             </div>
+            </div>}
             {repooption && 
            <div onClick={()=>setrepooption(false)} className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
            
@@ -115,17 +185,17 @@ export default function CreatedRepos({TeamId,workId,Leader}){
                     <div className="grid grid-col-1 gap-3">
                       {repolist.map((repo)=>(
                         <div key={repo._id}  className="flex flex-col  bg-white p-4 rounded-xl shadow hover:-translate-y-1 transition-all duration-200">
-                              <div className="flex flex-row ">
+                              <div className="flex flex-row  gap-3 ">
                                 <h1 className="text-blue-500 font-bold">{repo.name}</h1>
-                                 
-                                <div className="flex flex-1 justify-end mx-4">
-                                  <a href={repo.repourl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-blue-600 hover:text-blue-700 mt-4 inline-flex items-center gap-2 font-semibold " >
-                                    View
-                                  </a>
-                                </div>
+                                  <div className="flex flex-1 justify-end gap-2 ">
+                                    <UserPlus onClick={()=>{setopencontributors(true);setcurrentrepo(repo);getallmembers()}} className="w-5 h-5 mx-2 my-1 text-red-500 hover:bg-red-100 rounded-2xl"/>
+                                    <a href={repo.repourl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="flex text-blue-500 hover:bg-blue-50 px-2">
+                                      View
+                                    </a>
+                                  </div>
                               </div>
                               <p className="text-md font-thin">{repo.description}</p>
                         </div>
