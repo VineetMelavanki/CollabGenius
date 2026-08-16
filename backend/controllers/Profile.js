@@ -61,7 +61,8 @@ async function ViewProfile(req,res)
 }
 async function ViewprofileById(req,res) {
     try{
-      const Profilexists=await Profile.findOne({userId:req.params.id})
+      const {id}=req.params;
+      const Profilexists=await Profile.findOne({userId:id})
       .populate("photo","url");
       if(!Profilexists)
       {
