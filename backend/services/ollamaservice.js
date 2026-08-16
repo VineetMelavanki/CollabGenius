@@ -10,5 +10,14 @@ async function askollama(prompt) {
 
     return response.data.response;
 }
+async function askgeneric(prompt)
+{
+    const response = await axios.post(process.env.OLLAMA_URL, {
+        model: "llama3.1:8b",
+        prompt: prompt,
+        stream: false,
+    });
 
-module.exports = { askollama };
+    return response.data?.response;
+}
+module.exports = { askollama,askgeneric };
