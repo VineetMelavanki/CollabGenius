@@ -14,8 +14,6 @@ export default function Hero() {
       Connect with students who have the exact skills your project needs. 
       </p>
       <h1 className="text-lg text-gray-500">Research together, build together — all in one place.</h1>
-     
-
     </section>
   );
 }

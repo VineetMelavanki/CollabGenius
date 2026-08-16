@@ -81,12 +81,12 @@ export default function AllTeams()
       }
     },[formdata.title]);
   return (
-  <div className="min-h-full w-full p-6">
+  <div className="min-h-full bg-purple-100 w-full p-6">
 
     <div className="flex flex-row sm:max-w-sm md:max-w-lg lg:max-w-full border gap-3">
       <h1 className="text-2xl font-bold mb-6 sm:text-sm md:text-md lg:text-lg text-gray-800 my-4">
         All Teams
-      </h1>
+      </h1> 
       <form className="flex flex-row p-2 gap-4 mb-6 sm:text-sm" onSubmit={handleSubmit} >
         <input
         type="text"
