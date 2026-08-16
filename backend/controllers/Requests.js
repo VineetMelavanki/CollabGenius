@@ -48,7 +48,7 @@ async function getallRequests(req,res)
         return res.status(200).json({msg:"All requests found",allrequest:Requests,success:true});
     }catch(error)
     {
-       console.log(error);
+       console.log("The main error is : ",error);
        return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
@@ -69,23 +69,24 @@ async function acceptRequest(req,res)
         {
             return res.status(404).json({msg:"Request not found",success:false});
         }
-        const Team=await Team.findById(TeamId);
-        if(!Team)
+        const team=await Team.findById(TeamId);
+        if(!team)
         {
             return res.status(404).json({msg:"Team does not exists",success:false});
         }
-         const isMember=Team.members.some(
+         const isMember=team.members.some(
             member=>member._id.toString()===user._id.toString(),
          );
          if(!isMember)
          {
-            Team.members.push(user._id);
-            await Team.save();
+            team.members.push(user._id);
+            await team.save();
          }
          await Request.findByIdAndDelete(request._id);
          return res.status(200).json({msg:"Request accepted",success:true});
     }catch(error)
     {
+        console.log("The error is : ",error);
          return res.status(500).json({msg:"Internal server error",success:false});
     }
 }
