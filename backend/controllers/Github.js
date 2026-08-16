@@ -57,7 +57,7 @@ async function CreateRepo(req,res)
       );
       const githubRepo=response.data;
       const newGithubRepo=await GithubRepo.create({
-         name:name,
+         name:githubRepo.name,
          TeamId:TeamId,
          workId:workId,
          description:description,
@@ -97,4 +97,47 @@ async function GetAllRepo(req,res)
       return res.status(500).json({msg:"Internal server error",success:false});
    } 
 }
-module.exports={GithubLogin,CreateRepo,GetAllRepo};
+async function AddContributor(req,res)
+{
+   try{
+      
+       const{repoOwner,repoName,collaboratorUserName}=req.params;
+       
+       console.log("The repoName :",repoName);
+       console.log("The collaboratorName : ",collaboratorUserName);
+       const collaborator=await User.findOne({name:collaboratorUserName});
+       if(!collaborator || !collaborator?.githubaccess_token)
+       {
+         return res.status(409).json({msg:"Account not connected to github",success:false});
+       }
+
+       const owner=await User.findById(repoOwner);
+        console.log("The repoOwner :",owner?.name);
+       if(!owner || !owner.githubaccess_token)
+       {
+         return res.status(404).json({msg:"Leaders github account isnt connected",success:false});
+       }
+       const ownername=owner?.name;
+       const userToken=collaborator.githubaccess_token;
+       const githubUrl =`https://api.github.com/repos/${ownername}/${repoName}/collaborators/${collaboratorUserName}`;
+       
+       const response=await axios.put(
+         githubUrl,{},
+         {
+            headers :{
+               Authorization:`Bearer ${owner.githubaccess_token}`,
+               Accept: "application/vnd.github+json",
+               "X-GitHub-Api-Version": "2022-11-28",
+               "User-Agent": "CollabGenius-App",
+            }
+         }
+       );
+       return res.status(200).json({msg:"Sent request to contributor successfully",data:response?.data,success:true});
+   }catch(error)
+   {
+      console.log("The Add contributor error is : ",error);
+
+      return res.status(500).json({msg:"Internal server error",success:false});
+   }
+}
+module.exports={GithubLogin,CreateRepo,GetAllRepo,AddContributor};
