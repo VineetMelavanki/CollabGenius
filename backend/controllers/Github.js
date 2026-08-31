@@ -6,7 +6,16 @@ async function GithubLogin(req,res)
    try{
     const client_id=process.env.GITHUB_CLIENT_ID;
     const redirect_url=process.env.GITHUB_CALLBACK_URL;
-    const state=Math.random().toString(36).substring(2);
+    const crsfnonce=Math.random().toString(36).substring(2);
+    res.cookie("github_oauth_state",crsfnonce,{
+      httpOnly:true,
+      secure:process.env.NODE_ENV=="production",
+      sameSite:"lax",
+      maxAge:5*60*1000,
+    });
+
+    const statepayload=JSON.stringify({nonce:crsfnonce,userId:null});
+    const state=Buffer.from(statepayload).toString("base64url");
     const githubAuthURL=
     `https://github.com/login/oauth/authorize`+
     `?client_id=${client_id}`+
@@ -18,6 +27,36 @@ async function GithubLogin(req,res)
    { 
       console.log(error);
       return res.status(500).json({msg:"OAuth login failed"});
+   }
+}
+
+async function ConnectGithub(req,res)
+{
+  try{
+    const client_id=process.env.GITHUB_CLIENT_ID;
+    const redirect_url=process.env.GITHUB_CALLBACK_URL;
+    const crsfnonce=Math.random().toString(36).substring(2);
+    res.cookie("github_oauth_state",crsfnonce,{
+      httpOnly:true,
+      secure:process.env.NODE_ENV=="production",
+      sameSite:"lax",
+      maxAge:5 * 60* 1000,
+    });
+
+    const statepayload=JSON.stringify({nonce:crsfnonce,userId:req.user.id});
+    const state=Buffer.from(statepayload).toString("base64url");
+    const githubAuthURL=
+    `https://github.com/login/oauth/authorize`+
+    `?client_id=${client_id}`+
+    `&redirect_uri=${redirect_url}`+
+    `&scope=user:email,repo`+
+    `&state=${state}`;
+    console.log("Redirecting to another url");
+    return res.status(200).redirect(githubAuthURL);
+   }catch(error)
+   { 
+      console.log(error);
+      return res.status(500).json({msg:"OAuth Connect failed"});
    }
 }
 async function CreateRepo(req,res)
@@ -140,4 +179,4 @@ async function AddContributor(req,res)
       return res.status(500).json({msg:"Internal server error",success:false});
    }
 }
-module.exports={GithubLogin,CreateRepo,GetAllRepo,AddContributor};
+module.exports={GithubLogin,CreateRepo,GetAllRepo,AddContributor,ConnectGithub};

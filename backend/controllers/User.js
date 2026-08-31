@@ -168,5 +168,27 @@ async function logout(req,res)
         return res.status(500).json({msg:"Logout failed",success:false});
     }
 }
+async function verifygithubaccesstoken(req,res)
+{
+    try{
+       const{userId}=req.params;
+       const userexists=await User.findById(userId);
 
-module.exports={UserLogin,UserRegisteration,getuserbyId,getallusers,getuserByname,getme,logout};
+       if(!userexists)
+       {
+        return res.status(404).json({msg:"User does not exists",success:false});
+       }
+
+       if(!userexists.githubaccess_token)
+       {
+        return res.status(200).json({msg:"Github account of this user isnt connected",hasaccount:false,success:true});
+       }
+       return res.status(200).json({msg:"User is connected to the github",hasaccount:true,success:true});
+    }catch(error)
+    {
+        console.log(error);
+
+        return res.status(500).json({msg:"Internal server error",success:false});
+    }
+}
+module.exports={UserLogin,UserRegisteration,getuserbyId,getallusers,getuserByname,getme,logout,verifygithubaccesstoken};

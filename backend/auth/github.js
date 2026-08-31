@@ -12,6 +12,25 @@ async function GithubCallback(req,res)
     {
         return res.status(404).json({msg:"Code not found",success:false});
     }
+
+    if(!state)
+    {
+        return res.status(400).json({msg:"Missing state ",success:false});
+    }
+
+    let decodedState;
+    try{
+        decodedState=JSON.parse(Buffer.from(state,"base64url").toString());
+    }catch{
+        return res.status(400).json({msg:"Invalid state",success:false});
+    }
+
+    if(decodedState.nonce!==req.cookies?.github_oauth_state)
+    {
+        return res.status(400).json({msg:"State miss matched",success:false});
+    }
+    res.clearCookie("github_oauth_state");
+
     const tokenResponse=await axios.post(
         "https://github.com/login/oauth/access_token",
         {
@@ -46,7 +65,23 @@ async function GithubCallback(req,res)
             },
         }
     );
+
+    
     const primaryEmail=emailResponse.data.find((email)=>email.primary)?.email;
+    if(decodedState.userId)
+    {
+        const existingLink=await User.findOne({githubUsername:githubUser.login});
+         if (existingLink && existingLink._id.toString() !== decodedState.userId) {
+                return res.redirect("http://localhost:5173/HomeScreen");
+            }
+         await User.findByIdAndDelete(decodedState.userId,{
+            githubaccess_token:access_token,
+            githubUsername:githubUser.login,
+         });
+
+         return res.redirect("http://localhost:5173/HomeScreen");
+
+    }
     let user=await User.findOne({email:primaryEmail});
     if(!user)
     {
@@ -74,6 +109,5 @@ async function GithubCallback(req,res)
         console.log("Error : ",error);
         return res.status(500).json({msg:"OAuth failed",success:false});
     }
-
 }
 module.exports={GithubCallback};
