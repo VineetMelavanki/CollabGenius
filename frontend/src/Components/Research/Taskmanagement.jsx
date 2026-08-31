@@ -15,12 +15,12 @@ export default function TaskManagement({TeamId,workId,Leader,openSavedRepo}){
     const[ResearchTaskformdata,setResearchTaskformdata]=useState({
         description:"",
       })
-        const[memberslist,setmemberslist]=useState(null);
+    const[memberslist,setmemberslist]=useState(null);
     const[ResearchTasks,setResearchTasks]=useState([]);
     const[opentask,setopentask]=useState(null);
     const[openmembers,setopenmembers]=useState(null);
     
-    useEffect(()=>{
+          useEffect(()=>{
     const fetchTasks=async()=>{
        try{
           const response=await axios.get(`http://localhost:8000/api/ResearchTask/get-all-tasks/${TeamId}/${workId}`,{
@@ -66,7 +66,6 @@ export default function TaskManagement({TeamId,workId,Leader,openSavedRepo}){
   }
 
   const handledeletetask=async(TaskId)=>{
-   
     try{
         const response=await axios.delete(`http://localhost:8000/api/ResearchTask/delete-task/${TeamId}/${workId}/${TaskId}`,{
           withCredentials:true,
@@ -147,7 +146,7 @@ export default function TaskManagement({TeamId,workId,Leader,openSavedRepo}){
     }
   }
 
-  const fetchsavedgithubrepos=async()=>{
+  const fetchsavedgithubrepos=async()=>{   +
       try{
        const response=await axios.get(`http://localhost:8000/api/research/saved-github-repos/${TeamId}/${workId}`,{
         withCredentials:true,
@@ -165,7 +164,6 @@ export default function TaskManagement({TeamId,workId,Leader,openSavedRepo}){
           }
       }
     }
-
     return(
         <div className="flex  w-full flex-col gap-4 rounded-[24px] border border-slate-200/80 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.95),_rgba(248,250,252,0.9))] p-4 shadow-[0_20px_60px_-24px_rgba(15,23,42,0.38)]">
           <div className="flex flex-col gap-4 rounded-[20px] border border-slate-200/70 bg-white/80 p-4 shadow-sm sm:p-5">
@@ -336,7 +334,7 @@ export default function TaskManagement({TeamId,workId,Leader,openSavedRepo}){
                             }}
                             className="rounded-full bg-red-500 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-red-600"
                           >
-                            + Add
+                            +Add
                           </button>
                         </div>
                         <div className="grid grid-cols-1 gap-2">

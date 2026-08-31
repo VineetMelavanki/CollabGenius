@@ -2,20 +2,53 @@ import React from "react";
 import axios from "axios";
 import { useState ,useEffect } from "react";
 import { PlusIcon,UserPlus } from "lucide-react";
+import githublogo from "../../assets/logos/github.png"
 import { UserPlusIcon } from "@heroicons/react/24/outline";
+import { useAuth } from "../../AuthContext";
 export default function CreatedRepos({TeamId,workId,Leader}){
     const[repolist,setrepolist]=useState([]);
+    const {user}=useAuth();
     const[gitinfo,setgetinfo]=useState({
          name:"",
          description:"",
          private:false,
        });
+    const userId=user?._id;
+    const[githubaccess,setgithubaccess]=useState(false);
     const[allmembers,setallmembers]=useState([]);
     const[opencontributors,setopencontributors]=useState(false);
     const[repooption,setrepooption]=useState(false);
     const [msg, setmsg] = useState("");
     const [error, seterror] = useState("");
-    const[currentrepo,setcurrentrepo]=useState(null);
+    const[currentrepo,setcurrentrepo]=useState(null); 
+
+    useEffect(()=>{
+       if(!userId)
+      {
+        return;
+      }
+      const verifygithub=async()=>{
+        console.log("The userId is : ",userId);
+        try{
+           const response=await axios.get(`http://localhost:8000/api/User/github/verify-access-token/${userId}`,{
+            withCredentials:true,
+           });
+  
+           setgithubaccess(response.data?.hasaccount);
+        }catch(error)
+        {
+            if(error.response)
+            {
+              alert(error.response?.data?.msg || "Cannot verify github account");
+            }
+            else
+            {
+              alert("Internal server error");
+            }
+        }
+      }
+      verifygithub();
+    },[userId])
     useEffect(()=>{
      const getallRepo=async()=>{
         seterror("");
@@ -42,8 +75,12 @@ export default function CreatedRepos({TeamId,workId,Leader}){
      }
      getallRepo();
   },[workId,TeamId])
-   //ADD contributors
 
+ const handleConnectGithub = () => {
+  window.location.href ="http://localhost:8000/api/User/github/connect-github";
+};
+   //ADD contributors
+   
    const addcontributors=async(repoOwner,repoName,collaboratorUserName)=>{
     try{
       const response=await axios.post(`http://localhost:8000/api/github/add-contributor/${repoOwner}/${repoName}/${collaboratorUserName}`,{},
@@ -134,7 +171,7 @@ export default function CreatedRepos({TeamId,workId,Leader}){
               </div>
              </div>
             </div>}
-            {repooption && 
+            {repooption && githubaccess &&
            <div onClick={()=>setrepooption(false)} className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
            
               <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8"
@@ -169,6 +206,26 @@ export default function CreatedRepos({TeamId,workId,Leader}){
                 </div>
               </div>
             </div>}
+
+            {repooption && !githubaccess && (
+              <div onClick={()=>setrepooption(false)} className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div className="bg-black rounded-2xl shadow-xl w-full max-w-md p-8"
+               onClick={(e) => e.stopPropagation()}>
+                   <div className="flex flex-col gap-5 justify-center items-center b text-white ">
+                      <h1 className="text-lg p-2 font-grotesk">Connect GitHub to create a repository</h1>
+                      <div className="flex flex-1 justify-center items-center gap-2 p-2 w-full">
+                         <div className="flex flex-row rounded">
+                               <img src={githublogo} alt="github" className="w-12 h-12" />
+                               <button onClick={handleConnectGithub} className="bg-white text-black p-3 font-semibold rou ">CONNECT github</button>
+                            <div className="flex justify-end items-center mx-8 border px-4">
+                                <button>Not now</button>
+                            </div>
+                         </div>
+                      </div>
+                   </div>
+                </div>
+              </div>
+            )}
                   <div className="flex flex-col gap-2 p-3">
                     <div className="flex flex-row gap-3">
                       <h1 className="text-lg p-3 font-mono">GITHUB repositories </h1>
