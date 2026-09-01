@@ -14,8 +14,8 @@ export default function TaskManagement({TeamId,workId,Leader,openSavedRepo}){
     const[Taskedit,setTaskedit]=useState(false);
     const[ResearchTaskformdata,setResearchTaskformdata]=useState({
         description:"",
-      })
-        const[memberslist,setmemberslist]=useState(null);
+      });
+    const[memberslist,setmemberslist]=useState(null);
     const[ResearchTasks,setResearchTasks]=useState([]);
     const[opentask,setopentask]=useState(null);
     const[openmembers,setopenmembers]=useState(null);
