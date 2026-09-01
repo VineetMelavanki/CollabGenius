@@ -33,7 +33,7 @@ async function getanswers(req,res)
           switch(intent)
           {
             case "GREETING":
-                assistanceResponse=askgeneric(prompt);
+                assistanceResponse=await askgeneric(prompt);
                 intenttype="GREETING";
                 break;
 
